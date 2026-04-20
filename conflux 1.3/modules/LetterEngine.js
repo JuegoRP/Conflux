@@ -72,7 +72,7 @@ const LetterEngine = {
       // Po dopsání posledního řádku — zobraz tlačítka
       setTimeout(() => {
         controls.style.display = 'flex';
-        AudioSystem.playEffect('assets/audio/sfx/letter_done.mp3');
+        AudioSystem.playEffect('sfx_letter_done');
       }, 800);
     });
 

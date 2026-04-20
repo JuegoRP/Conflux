@@ -647,6 +647,43 @@ const GameState = {
     this.resetBattle();
   },
 
+  assets: {
+    portraits: {
+      kuryr:   'assets/images/portraits/kuryr.png',
+      monyra:  'assets/images/portraits/monyra.png',
+      rozara:  'assets/images/portraits/rozara.png',
+      romen:   'assets/images/portraits/romen.png',
+      marta:   'assets/images/portraits/marta.png',
+      eli:     'assets/images/portraits/eli.png',
+      voit:    'assets/images/portraits/voit.png',
+      lens:    'assets/images/portraits/lens.png',
+    },
+    cardBack: {
+      default:    'assets/images/cards/card_back.jpg',
+      synth:      'assets/images/cards/card_back.jpg',
+      organic:    'assets/images/cards/card_back.jpg',
+      hybrid:     'assets/images/cards/card_back.jpg',
+      corruption: 'assets/images/cards/card_back.jpg',
+    },
+  },
+
+  _backgroundMap: {
+    1:  'assets/images/backgrounds/act1_synth.jpg',
+    2:  'assets/images/backgrounds/act2_demarkace.jpg',
+    3:  'assets/images/backgrounds/act3_nexus.jpg',
+    4:  'assets/images/backgrounds/act4_syndikat.jpg',
+    5:  'assets/images/backgrounds/act5_stanice.jpg',
+    6:  'assets/images/backgrounds/act6_ruiny.jpg',
+    7:  'assets/images/backgrounds/act7_centrum.jpg',
+    8:  'assets/images/backgrounds/act8_mesto.png',
+    9:  'assets/images/backgrounds/act9_zrcadlo.jpg',
+    10: 'assets/images/backgrounds/act10_konvergence.jpg',
+  },
+
+  getBackground(actNumber) {
+    return this._backgroundMap[actNumber] || null;
+  },
+
   _musicMap: {
     menu_theme: 'assets/audio/menu_theme.mp3',
     act1_exploration: 'assets/audio/bgm/act1_exploration.mp3',
@@ -677,8 +714,9 @@ const GameState = {
     sfx_spell: 'assets/audio/sfx/spell.mp3',
     sfx_trap: 'assets/audio/sfx/trap.mp3',
     sfx_arena: 'assets/audio/sfx/arena.mp3',
-    sfx_victory: 'assets/audio/sfx/victory.mp3',
-    sfx_defeat: 'assets/audio/sfx/defeat.mp3',
+    sfx_victory:      'assets/audio/sfx/victory.mp3',
+    sfx_defeat:       'assets/audio/sfx/defeat.mp3',
+    sfx_letter_done:  'assets/audio/sfx/letter_done.mp3',
   },
   getMusic(key) {
     return this._musicMap[key] || null;
