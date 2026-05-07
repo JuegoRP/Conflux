@@ -174,7 +174,19 @@ const StoryEngine = {
       }
     }
     this._campaign = raw;
-    console.log('[StoryEngine] Přednahráno:', Object.keys(this._nodes).length, 'uzlů');
+    const nodeCount = Object.keys(this._nodes).length;
+    console.log('[StoryEngine] Přednahráno:', nodeCount, 'uzlů');
+
+    // Validace: odhal broken next pointery a uzly bez ID
+    const nodeIds = new Set(Object.keys(this._nodes));
+    const broken = [];
+    for(const [id, node] of Object.entries(this._nodes)) {
+      if(!id) { broken.push('uzel bez ID'); continue; }
+      if(node.next && !nodeIds.has(node.next)) broken.push(`'${id}' → next:'${node.next}' (nenalezen)`);
+      if(node.onWin  && !nodeIds.has(node.onWin))  broken.push(`'${id}' → onWin:'${node.onWin}' (nenalezen)`);
+      if(node.onLose && !nodeIds.has(node.onLose)) broken.push(`'${id}' → onLose:'${node.onLose}' (nenalezen)`);
+    }
+    if(broken.length) console.warn('[StoryEngine] Broken node links:', broken.length, '\n' + broken.slice(0,10).join('\n'));
   },
 
   async init(container, params = {}) {

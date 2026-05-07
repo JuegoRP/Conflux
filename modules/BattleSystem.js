@@ -180,6 +180,12 @@ const BattleSystem = {
 
     // LP škálování podle aktu — data mají 10000 default, přepíšeme
     const enemy = { ...found };
+
+    // Validace drop pool — neexistující karta by způsobila tiché selhání odměny
+    if(enemy.drops?.pool) {
+      const missing = enemy.drops.pool.filter(id => !GameState.getCard(id));
+      if(missing.length) console.warn(`[BattleSystem] Enemy '${enemyId}' drops pool: neexistující karta ID`, missing);
+    }
     if(enemy.lp === 10000 && enemy.actNumber) {
       const baseLp = [6000, 7000, 8000, 9000, 9500, 10000, 10500, 11000, 12000, 14000];
       const actLp = baseLp[Math.min(enemy.actNumber, baseLp.length - 1)] || 10000;

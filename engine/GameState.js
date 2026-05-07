@@ -14,6 +14,7 @@ const GameState = {
   // ── CARD DATA ─────────────────────────────────────────────────────────────
   cards:        [],
   _cardIndex:   null,
+  _storyCorruption: 0,  // accumulated corruption from story choices (independent of alignment)
   fusionIndex:  {},   // specific overrides: "4+21": 501
   _archetypeIndex: null, // Map<"faction|subcat|tier", archetypeCard> — buildí se v loadCards()
   starterDeck:  null,
@@ -306,8 +307,7 @@ const GameState = {
 
   adjustCorruption(delta) {
     if(!delta || delta === 0) return;
-    const prev = this.corruption.level || 0;
-    this.corruption = { ...this.corruption, level: Math.max(0, prev + delta) };
+    this._storyCorruption = Math.max(0, (this._storyCorruption || 0) + delta);
     this._updateCorruption();
     EventBus.emit('alignment:change', { alignment: this.player.alignment, delta: 0, prev: this.player.alignment, corruption: { ...this.corruption } });
     EventBus.emit('corruption:change', { level: this.corruption.level, side: this.corruption.side, corruption: { ...this.corruption } });
@@ -324,6 +324,10 @@ const GameState = {
       const abs = Math.abs(a);
       level = abs > 80 ? 5 : abs > 60 ? 4 : abs > 40 ? 3 : abs > 20 ? 2 : 1;
     }
+    // Story choices can independently push corruption (arena effects, dark choices)
+    const storyBonus = this._storyCorruption || 0;
+    level = Math.min(5, level + storyBonus);
+    if(level > 0 && !side) side = 'chaos';
     const clampedLevel = Math.min(level, 3);
     this.corruption = { level, side, visualClass: level > 0 ? `corruption-${side}-${clampedLevel}` : '', glitchIntensity: level / 5 };
     this.player.faction = level >= 3 ? (side === 'order' ? 'synth' : 'organic') : 'hybrid';
@@ -644,6 +648,7 @@ const GameState = {
     this.identity   = { memoryScore: 0, trustScore: 0, controlScore: 0, acceptanceScore: 0, profileText: null, endingType: null };
     this.checkpoint = { exists: false, nodeId: null, nodeNumber: 0, savedAt: null, narrativeText: '' };
     this.corruption = { level: 0, side: null, visualClass: '', glitchIntensity: 0 };
+    this._storyCorruption = 0;
     this.resetBattle();
   },
 
