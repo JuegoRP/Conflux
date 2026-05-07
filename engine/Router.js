@@ -43,8 +43,9 @@ const Router = {
     if(this._transitioning) {
       const elapsed = Date.now() - (this._transitionStart || 0);
       console.warn('[Router] _transitioning=true, elapsed:', elapsed, 'ms, goto:', name);
-      if(elapsed < 1000) return;
-      console.warn('[Router] _transitioning stuck — force reset');
+      if(elapsed < 5000) return;
+      console.error('[Router] _transitioning stuck po 5s — force reset, předchozí modul:', this._currentName);
+      if(this._current?.destroy) { try { this._current.destroy(); } catch(e) {} }
       this._transitioning = false;
     }
     this._transitioning = true;

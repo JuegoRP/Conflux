@@ -144,10 +144,15 @@ const StoryEngine = {
   _lastNav: 0,
 
   // Veřejný alias — Router může volat přímo
-  processNode(nodeId) {
+  processNode(nodeId, _retries = 0) {
     if(!this._nodes || Object.keys(this._nodes).length === 0) {
-      console.warn('[StoryEngine] processNode: uzly ještě nenačteny, odkládám...');
-      setTimeout(() => this._goToNode(nodeId), 200);
+      if(_retries >= 10) {
+        console.error('[StoryEngine] processNode: uzly nenačteny ani po 10 pokusech, nodeId:', nodeId);
+        this._renderError?.(`Nepodařilo se načíst uzel '${nodeId}' — obnovte stránku.`);
+        return;
+      }
+      console.warn('[StoryEngine] processNode: uzly ještě nenačteny, odkládám... pokus:', _retries + 1);
+      setTimeout(() => this.processNode(nodeId, _retries + 1), 200);
       return;
     }
     this._goToNode(nodeId);

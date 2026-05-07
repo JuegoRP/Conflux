@@ -276,10 +276,18 @@ const BattleSystem = {
         ...fSpells.map(c=>({...c})),
         ...(fPool.length === 0 ? pool.filter(c=>c.kind==='monster').slice(0,10).map(c=>({...c})) : [])
       ]);
-      const needed = 30 - enemyDeckCards.length;
-      for(let i = 0; i < needed; i++) {
-        if(!combined.length) break;
-        enemyDeckCards.push({...combined[i % combined.length]});
+      // Pokud je combined prázdný, použij všechny monster karty jako zálohu
+      if(!combined.length) {
+        const fallback = allCards().filter(c => c.kind === 'monster');
+        if(fallback.length) combined.push(...fallback.map(c => ({...c})));
+      }
+      // Garantovaně doplň na 30 — i pokud combined má méně karet než needed
+      if(combined.length) {
+        let fi = 0;
+        while(enemyDeckCards.length < 30) {
+          enemyDeckCards.push({...combined[fi % combined.length]});
+          fi++;
+        }
       }
     }
 
