@@ -2353,8 +2353,8 @@ const BattleSystem = {
         </div>` : ''}
 
         <div class="ov-actions">
-          ${(isVictory || (this._params.mode !== 'free' && (this._params.onLose || this._params.forcedLoss))) ? `<button class="ov-btn ov-btn-continue" id="ov-next">▶ POKRAČOVAT</button>` : ''}
-          <button class="ov-btn ov-btn-menu" id="ov-menu">← MENU</button>
+          ${(isVictory || this._params.forcedLoss) ? `<button class="ov-btn ov-btn-continue" id="ov-next">▶ POKRAČOVAT</button>` : ''}
+          ${(isVictory || this._params.forcedLoss) ? `<button class="ov-btn ov-btn-menu" id="ov-menu">← MENU</button>` : `<div class="ov-auto-menu" id="ov-auto-msg">→ menu za 3…</div>`}
         </div>
       </div>
     `;
@@ -2368,6 +2368,22 @@ const BattleSystem = {
       Router._transitioning = false;
       setTimeout(()=>Router.goto('menu'), 50);
     });
+
+    // Regular defeat — auto-redirect to menu with countdown
+    if(!isVictory && !this._params.forcedLoss) {
+      let secs = 3;
+      const msgEl = overlay.querySelector('#ov-auto-msg');
+      const tick = setInterval(() => {
+        secs--;
+        if(msgEl) msgEl.textContent = secs > 0 ? `→ menu za ${secs}…` : '→ menu';
+        if(secs <= 0) {
+          clearInterval(tick);
+          document.getElementById('battle-overlay')?.remove();
+          Router._transitioning = false;
+          Router.goto('menu');
+        }
+      }, 1000);
+    }
   },
 
   // Picker: Použít hned × Uložit na pole
@@ -4414,6 +4430,7 @@ const BattleSystem = {
       .ov-btn-continue:hover{box-shadow:0 0 14px rgba(79,163,224,0.3);background:rgba(79,163,224,0.06);}
       .ov-btn-menu{border-color:rgba(80,100,120,0.4);color:var(--dim);}
       .ov-btn-menu:hover{border-color:var(--dim);color:#8ab0c0;}
+      .ov-auto-menu{font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(96,128,160,0.5);letter-spacing:2px;padding:8px 0;}
 
       /* enemy-hand-row: styles in .hand-row section above */
 
