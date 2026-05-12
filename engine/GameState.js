@@ -555,70 +555,130 @@ const GameState = {
   },
 
   buildLetter() {
-    const p   = this.player;
-    const ps  = this.playstyle || {};
-    const name = p.name || 'Kurýr';
-    const totalBattles = (ps.attackedFirst||0) + (ps.builtDefenseFirst||0);
-    const alignment = p.alignment || 0;
-    const corruption = this.corruption?.level || 0;
+    const p  = this.player;
+    const ps = this.playstyle || {};
+    const name = p.name || 'Pozorovatel';
+
+    // Compute identity first so all scores are fresh
+    const id = this.buildIdentityProfile();
 
     const lines = [];
-    lines.push({ type: 'salutation', text: `${name}.` });
+    const totalBattles   = (ps.attackedFirst||0) + (ps.builtDefenseFirst||0);
+    const totalChoices   = (ps.choseSynth||0) + (ps.choseOrganic||0) + (ps.choseNeutral||0);
+    const lost           = this.campaign?.lostCards?.length || 0;
+    const alignment      = p.alignment || 0;
+    const corrLevel      = this.corruption?.level || 0;
+
+    // ── Greeting ─────────────────────────────────────────────────────────────
+    lines.push({ type: 'greeting', text: `${name}.` });
     lines.push({ type: 'space' });
 
+    // ── Memory / awareness ───────────────────────────────────────────────────
+    if(id.memoryScore > 70) {
+      lines.push({ type: 'body', text: 'Dopis se píše těžce, když druhý si pamatuje vše.' });
+    } else if(id.memoryScore > 40) {
+      lines.push({ type: 'body', text: 'Nevím kolik si pamatuješ. Možná ani ty ne.' });
+    } else {
+      lines.push({ type: 'body', text: 'Zapomínal jsi. Možná záměrně. Paměť je odpovědnost.' });
+    }
+
+    // ── Battle style ─────────────────────────────────────────────────────────
     if(totalBattles > 0) {
-      if((ps.attackedFirst||0) > (ps.builtDefenseFirst||0)) {
-        lines.push({ type: 'body', text: `Útočil jsi jako první. ${ps.attackedFirst}krát z ${totalBattles}.` });
+      const aggRate = (ps.attackedFirst||0) / totalBattles;
+      if(aggRate > 0.65) {
+        lines.push({ type: 'body', text: 'Útočil jsi jako první. Pořád. Jako by čekání bylo kapitulací.' });
+      } else if(aggRate < 0.35) {
+        lines.push({ type: 'body', text: 'Čekal jsi. Nechal jsi druhé udělat první krok. To taky říká něco o tobě.' });
       } else {
-        lines.push({ type: 'body', text: `Čekal jsi než zaútočíš. ${ps.builtDefenseFirst}krát z ${totalBattles}.` });
+        lines.push({ type: 'body', text: 'Útočil jsi i bránil — podle situace. Adaptabilita. Nebo nerozhodnost. Záleží na úhlu pohledu.' });
       }
     }
-    if((ps.usedFusions||0) > 0) {
-      lines.push({ type: 'body', text: `Fúzoval jsi ${ps.usedFusions}krát. Věřil jsi že celek je víc než součty.` });
+
+    // ── Fusions / risk ───────────────────────────────────────────────────────
+    if((ps.usedFusions||0) > 3) {
+      lines.push({ type: 'body', text: `Fúzoval jsi ${ps.usedFusions}krát. Věřil jsi syntéze — že dvě věci mohou být víc než jejich součet.` });
+    } else if((ps.usedFusions||0) > 0) {
+      lines.push({ type: 'body', text: 'Zkusil jsi fúzi. Přiblížil ses hranici kde dvě věci přestávají existovat zvlášť.' });
     }
-    if((ps.usedSpells||0) > 0 || (ps.usedTraps||0) > 0) {
-      const prefer = (ps.usedSpells||0) > (ps.usedTraps||0) ? 'kouzla' : 'pasti';
-      lines.push({ type: 'body', text: `Dával jsi přednost ${prefer}.` });
+
+    // ── Faction preference ───────────────────────────────────────────────────
+    const synthDom = (ps.synthCardsPlayed||0) > (ps.organicCardsPlayed||0) * 1.5;
+    const orgDom   = (ps.organicCardsPlayed||0) > (ps.synthCardsPlayed||0) * 1.5;
+    if(synthDom) {
+      lines.push({ type: 'body', text: 'Dával jsi přednost systémům. Kódu. Struktuře. Věřil jsi že svět je lépe čitelný než živý.' });
+    } else if(orgDom) {
+      lines.push({ type: 'body', text: 'Dával jsi přednost živému. Kořenům. Hluku. Organickému chaosu víc než protokolu.' });
     }
+
+    // ── Story choices ────────────────────────────────────────────────────────
+    if(totalChoices > 2) {
+      const synthRate = (ps.choseSynth||0) / totalChoices;
+      const orgRate   = (ps.choseOrganic||0) / totalChoices;
+      lines.push({ type: 'space' });
+      if(synthRate > 0.6) {
+        lines.push({ type: 'body', text: 'Ve volbách jsi se přikláněl k řádu. K čistotě systémů. K tomu co lze spočítat.' });
+      } else if(orgRate > 0.6) {
+        lines.push({ type: 'body', text: 'Ve volbách jsi se přikláněl k živému. K nepořádku. K tomu co nelze předpovědět.' });
+      } else {
+        lines.push({ type: 'body', text: 'Nenechal ses svést ani na jednu stranu. Hledal jsi třetí cestu — nebo jsi prostě nevěděl.' });
+      }
+    }
+
+    // ── Spells vs traps ──────────────────────────────────────────────────────
+    if((ps.usedSpells||0) > 2 || (ps.usedTraps||0) > 2) {
+      const prefer = (ps.usedSpells||0) > (ps.usedTraps||0) ? 'kouzla — přímou akci' : 'pasti — trpělivost';
+      lines.push({ type: 'body', text: `Volil jsi ${prefer}.` });
+    }
+
+    // ── Lost cards ───────────────────────────────────────────────────────────
+    if(lost > 3) {
+      lines.push({ type: 'body', text: `Ztratil jsi ${lost} karet. Permanentně. Každá z nich byla rozhodnutí — tvoje nebo systémové.` });
+    } else if(lost > 0) {
+      lines.push({ type: 'body', text: `${lost} karet zmizelo. Systém si to pamatuje i když ty ne.` });
+    }
+
+    // ── Corruption ───────────────────────────────────────────────────────────
+    if(corrLevel >= 3) {
+      lines.push({ type: 'body', text: `Přepis zanechal hluboké stopy. Nepřepisuješ ty systém — systém přepisuje tebe.` });
+    } else if(corrLevel > 0) {
+      lines.push({ type: 'body', text: 'Přepis zanechal stopy. Zatím mělké. Zatím.' });
+    }
+
     lines.push({ type: 'space' });
-    if(alignment > 40) {
-      lines.push({ type: 'body', text: 'Věřil jsi systému. Nebo sis to alespoň říkal.' });
-    } else if(alignment < -40) {
-      lines.push({ type: 'body', text: 'Věřil jsi živému. Kořenům. Chaosu.' });
-    } else if(Math.abs(alignment) < 15) {
-      lines.push({ type: 'body', text: 'Nestál jsi na žádné straně. To je také volba.' });
-    } else {
-      lines.push({ type: 'body', text: 'Osciloval jsi. Obě strany tě lákaly.' });
+
+    // ── Identity mirror — profile sentences one per line ────────────────────
+    if(id.profileText) {
+      const sentences = id.profileText.split(/(?<=\.)\s+/);
+      for(const sentence of sentences) {
+        const s = sentence.trim();
+        if(s) lines.push({ type: 'body', text: s });
+      }
+      lines.push({ type: 'space' });
     }
-    if(corruption > 60) {
-      lines.push({ type: 'body', text: `Přepis zanechal stopy. ${corruption > 80 ? 'Hluboké.' : 'Zatím mělké.'}` });
-    }
-    const lost = this.campaign?.lostCards?.length || 0;
-    if(lost > 0) {
-      lines.push({ type: 'body', text: `${lost} karet jsi ztratil. Permanentně.` });
-    }
-    lines.push({ type: 'space' });
-    const endingId = this.identity?.endingType || '';
-    const endings = {
-      synth: 'Dopis byl protokol. Byl jsi protokol. Systém si pamatuje.',
-      organic: 'Dopis byl semeno. Zasadil jsi ho. Co vyroste, nevíš.',
-      hybrid: 'Dopis byl klíč. Otevřel jsi dveře které nikdo nečekal.',
-      monyra: 'Dopis byl od ní. Vždy byl. Teď víš proč.',
-      corruption: 'Dopis byl ty. Vždy byl ty.',
-      corruption_early: 'Přepis tě dostal dřív než ses rozhodl. Nebo ses rozhodl.',
-      observer: 'Dopis byl záznam. Zůstaneš jako záznam.',
-      sold: 'Prodal jsi dopis. Byl prázdný. Vždy byl.',
-      surrender: 'Vzdal jsi se. Systém tě přijal bez komentáře.',
+
+    // ── Ending reflection ────────────────────────────────────────────────────
+    const endingReflections = {
+      assimilation: 'Systém tě vstřebal. Nebo ses vstřebal do systému. Hranice je v tomhle nejasná.',
+      flood:        'Přišel jsi jako přílivová vlna. Systém bude potřebovat čas aby tě zpracoval.',
+      fragmentation:'Rozpadl ses na kousky — a každý kousek šel jinam. Možná je to svoboda. Možná jen chaos.',
+      architect:    'Přišel jsi jako stavitel. Odcházíš s výkresem který si systém uloží.',
+      roots:        'Zakotvil jsi. Kořeny jsou pomalé ale jdou hluboko.',
     };
-    lines.push({ type: 'body', text: endings[endingId] || 'Dopis byl doručen.' });
+    const reflection = endingReflections[id.endingType];
+    if(reflection) lines.push({ type: 'closing', text: reflection });
+
     lines.push({ type: 'space' });
+
+    // ── Signature ────────────────────────────────────────────────────────────
     const signatures = {
-      monyra: 'M.', synth: '— Protokol', organic: '— Pramáti', hybrid: '— Lens',
-      corruption: '', corruption_early: '', observer: '— Pozorovatel',
-      sold: '— Syndikát', surrender: '— Systém',
+      assimilation: '— Systém',
+      flood:        '— Pramáti',
+      fragmentation:'— Zrcadlo',
+      architect:    '— Lens',
+      roots:        '— Pramáti',
     };
-    const sig = signatures[endingId];
-    if(sig) lines.push({ type: 'signature', text: sig });
+    lines.push({ type: 'signature', text: signatures[id.endingType] || '— Pozorovatel' });
+
     return lines;
   },
 
@@ -650,6 +710,7 @@ const GameState = {
     screen_collection:  'assets/audio/bgm/collection.mp3',
     screen_deckbuilder: 'assets/audio/bgm/deckbuilder.mp3',
     screen_freebattle:  'assets/audio/bgm/freebattle_menu.mp3',
+    screen_credits:     'assets/audio/bgm/story_slow.mp3',
 
     // ── PŘÍBĚH ──
     story_calm:    'assets/audio/bgm/story_calm.mp3',

@@ -5,7 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>CONFLUX</title>
   <link rel="icon" type="image/png" href="assets/images/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Share+Tech+Mono&display=block" rel="stylesheet">
   <link rel="stylesheet" href="styles/global.css">
+  <style>
+    /* Boot screen — dostupné hned, před JS */
+    .boot-screen {
+      position: fixed; inset: 0;
+      background: #030508;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 24px;
+    }
+    .boot-logo {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(18px, 4vw, 36px);
+      color: #4fa3e0;
+      letter-spacing: 0.3em;
+      text-shadow: 0 0 20px rgba(79,163,224,0.5);
+    }
+    .boot-message {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px; color: #3a5a70; letter-spacing: 2px;
+    }
+    .boot-screen--error .boot-logo { color: #e04f6a; }
+    .boot-screen--error .boot-message { color: #e04f6a; }
+  </style>
 </head>
 <body>
   <div id="app" class="screen"></div>

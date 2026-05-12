@@ -26,6 +26,7 @@ import Collection   from './modules/Collection.js';
 import StoryEngine  from './modules/StoryEngine.js';
 import Cutscene          from './modules/Cutscene.js';
 import LetterEngine       from './modules/LetterEngine.js';
+import Credits            from './modules/Credits.js';
 import CorruptionSystem   from './modules/CorruptionSystem.js';
 import CorruptionVisuals  from './modules/CorruptionVisuals.js';
 import FreeBattle         from './modules/FreeBattle.js';
@@ -100,6 +101,7 @@ async function boot() {
   Router.register('story',      StoryEngine);
   Router.register('cutscene',   Cutscene);
   Router.register('letter',     LetterEngine);
+  Router.register('credits',    Credits);
   Router.register('ending',     (c, p) => _showEnding(c, p));
 
   Router.setContainer(root);

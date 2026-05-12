@@ -1,6 +1,7 @@
 import EventBus   from '../engine/EventBus.js';
 import GameState  from '../engine/GameState.js';
 import AudioSystem from './AudioSystem.js';
+import Router      from '../engine/Router.js';
 
 /**
  * LetterEngine — CONFLUX
@@ -33,12 +34,7 @@ const LetterEngine = {
     // Sestav dopis z GameState
     this._lines = GameState.buildLetter();
 
-    // Hudba — tiché piano
-    AudioSystem.stopMusic(1000);
-    setTimeout(() => {
-      AudioSystem.playMusic('letter_theme', { loop: false, fadeIn: 1500 });
-    }, 1200);
-
+    AudioSystem.stopMusic(800);
     this._render();
   },
 
@@ -189,31 +185,7 @@ const LetterEngine = {
   // ═══════════════════════════════════════════════════════════════
 
   _handleEnd() {
-    AudioSystem.stopMusic(2000);
-
-    // Zobraz závěrečnou obrazovku
-    this._container.innerHTML = `
-      <div class="game-end-wrap">
-        <div class="game-end-title">CONFLUX</div>
-        <div class="game-end-subtitle">${this._endSubtitle()}</div>
-        <div class="game-end-actions">
-          <button class="game-end-btn" id="btn-new-game">Nová hra</button>
-          <button class="game-end-btn game-end-btn--secondary" id="btn-menu">
-            Hlavní menu
-          </button>
-        </div>
-      </div>`;
-
-    this._container.querySelector('#btn-new-game').addEventListener('click', () => {
-      GameState.reset();
-      GameState.clearCheckpoint();
-      // Router je dostupný přes EventBus
-      EventBus.emit('nav:goto', { route: 'menu' });
-    });
-
-    this._container.querySelector('#btn-menu').addEventListener('click', () => {
-      EventBus.emit('nav:goto', { route: 'menu' });
-    });
+    Router.goto('credits');
   },
 
   _endSubtitle() {
@@ -236,7 +208,7 @@ const LetterEngine = {
       .letter-scene {
         position: fixed;
         inset: 0;
-        background: #0a0a0f;
+        background: #0a0a0f url('assets/images/letter_paper.png') center/cover no-repeat;
         display: flex;
         align-items: center;
         justify-content: center;
