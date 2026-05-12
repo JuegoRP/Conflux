@@ -169,7 +169,10 @@ const BattleSystem = {
     const overlay = document.createElement('div');
     overlay.className = 'cf-overlay';
     overlay.innerHTML = `
-      <div class="cf-inner">
+      <div class="cf-cycle-screen" id="cf-cycle-screen">
+        <span class="cf-cycle-text">Cyklus pokračuje.</span>
+      </div>
+      <div class="cf-inner" id="cf-inner" style="opacity:0;pointer-events:none">
         <div class="cf-logo-wrap" id="cf-logo-wrap">
           <img class="cf-logo" id="cf-logo" src="assets/images/logo.png" alt="CONFLUX">
         </div>
@@ -229,10 +232,17 @@ const BattleSystem = {
         opacity: 0; min-height: 2.8em; text-align: center; line-height: 2;
         transition: opacity 0.4s ease;
       }
-      .cf-cycle {
-        display: block; font-size: 11px;
-        color: rgba(80,224,184,0.7); letter-spacing: 4px;
+      .cf-cycle-screen {
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        transition: opacity 0.6s ease;
       }
+      .cf-cycle-text {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 16px; letter-spacing: 6px;
+        color: rgba(200,215,230,0.75);
+      }
+      .cf-inner { transition: opacity 0.5s ease; }
     `;
     const existing = document.getElementById('cf-style');
     if(existing) existing.remove();
@@ -240,11 +250,21 @@ const BattleSystem = {
     container.style.position = 'relative';
     container.appendChild(overlay);
 
-    const logoWrap = overlay.querySelector('#cf-logo-wrap');
-    const logo     = overlay.querySelector('#cf-logo');
-    const hint     = overlay.querySelector('#cf-hint');
-    const result   = overlay.querySelector('#cf-result');
-    let spun       = false;
+    const cycleScreen = overlay.querySelector('#cf-cycle-screen');
+    const inner       = overlay.querySelector('#cf-inner');
+    const logoWrap    = overlay.querySelector('#cf-logo-wrap');
+    const logo        = overlay.querySelector('#cf-logo');
+    const hint        = overlay.querySelector('#cf-hint');
+    const result      = overlay.querySelector('#cf-result');
+    let spun          = false;
+
+    // Fáze 1: "Cyklus pokračuje." po 1.5s přejde na coinflip
+    setTimeout(() => {
+      cycleScreen.style.opacity = '0';
+      inner.style.opacity = '1';
+      inner.style.pointerEvents = 'auto';
+      setTimeout(() => { cycleScreen.style.display = 'none'; }, 600);
+    }, 1500);
 
     logoWrap.addEventListener('click', () => {
       if(spun) return;
@@ -253,12 +273,12 @@ const BattleSystem = {
       logo.classList.add('spinning');
 
       setTimeout(() => {
-        result.innerHTML = `${resultText}<span class="cf-cycle">Cyklus pokračuje.</span>`;
+        result.textContent = resultText;
         result.style.opacity = '1';
         setTimeout(() => {
           overlay.style.animation = 'cf-fadeout 0.5s ease forwards';
           setTimeout(() => { overlay.remove(); if(onDone) onDone(); }, 500);
-        }, 1600);
+        }, 1400);
       }, 750);
     });
   },
