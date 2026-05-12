@@ -416,10 +416,12 @@ export function injectCardStyles() {
       display:flex;flex-direction:column;align-items:center;justify-content:center;
     }
     .cx-lg .cx-emoji{font-size:96px;line-height:1;filter:drop-shadow(0 4px 10px rgba(0,0,0,0.9));}
+    /* Subcategory — centered at bottom of art hole */
     .cx-lg .cx-subcat{
-      position:absolute;bottom:4px;right:12px;
-      font-family:var(--px);font-size:6px;letter-spacing:1.5px;
-      text-shadow:0 1px 2px #000;opacity:0.75;
+      position:absolute;bottom:6px;left:50%;transform:translateX(-50%);
+      white-space:nowrap;
+      font-family:var(--px);font-size:6px;letter-spacing:2px;
+      text-shadow:0 0 8px rgba(0,0,0,0.95),0 1px 3px #000;opacity:0.85;
     }
     .cx-lg .cx-zone-stats{
       height:9%;display:flex;align-items:center;justify-content:space-around;
@@ -427,23 +429,24 @@ export function injectCardStyles() {
     }
     .cx-lg-stats{display:flex;gap:0;width:100%;justify-content:space-around;align-items:center;}
     .cx-lg-stat{
-      display:flex;flex-direction:column;align-items:center;gap:0;
+      display:flex;flex-direction:column;align-items:center;gap:2px;
     }
     .cx-lg-stat-label{
-      font-family:var(--px);font-size:5px;letter-spacing:2px;
-      color:rgba(160,180,200,0.55);
-      text-transform:uppercase;margin-bottom:1px;
+      font-family:var(--px);font-size:6px;letter-spacing:2px;
+      color:rgba(200,220,240,0.75);
+      text-shadow:0 1px 3px rgba(0,0,0,0.95);
+      text-transform:uppercase;
     }
     .cx-lg-stat-val{
-      font-family:var(--body);font-size:34px;line-height:1;
-      text-shadow:0 0 12px currentColor, 0 2px 4px rgba(0,0,0,0.95);
+      font-family:var(--body);font-size:36px;line-height:1;font-weight:normal;
+      text-shadow:0 0 14px currentColor, 0 0 6px currentColor, 0 2px 4px rgba(0,0,0,0.98);
     }
     .cx-lg-atk-block .cx-lg-stat-val{color:var(--atk-color);}
     .cx-lg-def-block .cx-lg-stat-val{color:var(--def-color);}
     /* divider between ATK and DEF */
     .cx-lg-stats::after{
       content:'·';
-      font-family:var(--body);font-size:28px;color:rgba(100,130,160,0.35);
+      font-family:var(--body);font-size:28px;color:rgba(150,170,190,0.4);
       align-self:center;margin:0 4px;
     }
     .cx-lg-kind-block{
