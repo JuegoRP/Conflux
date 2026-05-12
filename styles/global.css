@@ -16,10 +16,11 @@
 
 /* ── Proměnné ────────────────────────────────────────────────────── */
 :root {
-  /* Fonty */
-  --px:    'Pixelify Sans', monospace;
-  --mono:  'Share Tech Mono', monospace;
-  --serif: 'IM Fell English', 'Georgia', serif;
+  /* Fonty — musí odpovídat Google Fonts v index.html */
+  --px:    'Press Start 2P', monospace;   /* nadpisy, UI headers, tlačítka */
+  --mono:  'Share Tech Mono', monospace;  /* systémové texty, labely, kódy */
+  --vt:    'VT323', monospace;            /* čísla, stats, terminálové texty */
+  --serif: 'Georgia', serif;             /* příběhové dialogy */
 
   /* Barvy — základní */
   --bg:     #060809;

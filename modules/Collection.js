@@ -180,23 +180,23 @@ const Collection = {
       .col-header{display:flex;align-items:center;gap:16px;padding:12px 16px;border-bottom:1px solid #0d1520;flex-shrink:0;position:relative;z-index:1}
       .col-back{background:none;border:none;color:#607080;font-size:18px;cursor:pointer;padding:4px 8px}
       .col-back:hover{color:#c8d6e5}
-      .col-title-main{font-family:'Press Start 2P',monospace;font-size:11px;color:#c8d6e5}
-      .col-title-sub{font-family:monospace;font-size:10px;color:#3d4a5c;margin-left:12px}
+      .col-title-main{font-family:var(--px);font-size:11px;color:#c8d6e5}
+      .col-title-sub{font-family:var(--mono);font-size:11px;color:#4a6070;margin-left:12px}
       .col-filters{display:flex;flex-direction:column;gap:6px;padding:8px 16px;border-bottom:1px solid #0d1520;flex-shrink:0;position:relative;z-index:1}
       .col-filter-group{display:flex;gap:6px;flex-wrap:wrap}
-      .col-fbtn{background:rgba(10,15,24,0.85);border:1px solid #1a2535;color:#607080;font-family:monospace;font-size:10px;padding:4px 10px;cursor:pointer}
+      .col-fbtn{background:rgba(10,15,24,0.85);border:1px solid #1a2535;color:#607080;font-family:var(--mono);font-size:11px;padding:4px 10px;cursor:pointer}
       .col-fbtn:hover{border-color:#4fa3e0;color:#c8d6e5}
       .col-fbtn.active{border-color:#4fa3e0;color:#4fa3e0;background:#0d1a2a}
-      .col-search{background:#0a0f18;border:1px solid #1a2535;color:#c8d6e5;font-family:monospace;font-size:11px;padding:4px 10px;outline:none}
+      .col-search{background:#0a0f18;border:1px solid #1a2535;color:#c8d6e5;font-family:var(--mono);font-size:12px;padding:4px 10px;outline:none}
       .col-search:focus{border-color:#4fa3e0}
-      /* Card grid */
-      .col-grid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:6px;padding:12px 28px;align-content:flex-start;position:relative;z-index:1}
+      /* Card grid — centered */
+      .col-grid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;padding:12px 32px;justify-content:center;align-content:flex-start;position:relative;z-index:1}
       .col-grid::-webkit-scrollbar{width:4px}
       .col-grid::-webkit-scrollbar-thumb{background:#1a2535}
       .col-range-label{
         grid-column:1/-1;
-        font-family:'Share Tech Mono',monospace;font-size:9px;
-        color:#2a3a4a;letter-spacing:2px;
+        font-family:var(--mono);font-size:11px;
+        color:#607080;letter-spacing:3px;
         padding:10px 0 4px;margin-top:4px;
         border-top:1px solid #0d1520;
       }
@@ -207,7 +207,7 @@ const Collection = {
       .col-card-wrap.unowned{cursor:default;filter:brightness(0.5) saturate(0.3)}
       .col-card-wrap .cx-sm{width:100%;height:auto;aspect-ratio:2/3}
       .col-card-wrap .cx-back-img{width:100%;height:100%;object-fit:cover;border-radius:4px}
-      .col-empty{color:#3d4a5c;font-family:monospace;font-size:11px;padding:24px;grid-column:1/-1;text-align:center}
+      .col-empty{color:#4a6070;font-family:var(--mono);font-size:12px;padding:24px;grid-column:1/-1;text-align:center}
       .col-preview{position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:200;display:flex;align-items:center;justify-content:center}
       .col-preview-inner{position:relative;background:#0a0f18;border:1px solid #1a2535;padding:24px}
       .col-preview-close{position:absolute;top:8px;right:10px;background:none;border:none;color:#607080;font-size:14px;cursor:pointer}
