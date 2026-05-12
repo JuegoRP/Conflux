@@ -235,11 +235,11 @@ export function renderCardEl(card, size = 'md', opts = {}) {
     <img class="cx-frame" src="${frame}" onerror="this.style.display='none'" />
     <div class="cx-content">
       <div class="cx-zone-top">
+        <span class="cx-topname">${card.name}</span>
         <span class="cx-topid">#${String(card.id).padStart(3,'0')}</span>
       </div>
       <div class="cx-zone-art">
         <span class="cx-emoji${artPath ? ' cx-emoji-fallback' : ''}" data-sprite-id="${card.id}">${card.emoji || '?'}</span>
-        <div class="cx-nameplate"><span class="cx-topname">${card.name}</span></div>
         ${subHtml}
       </div>
       <div class="cx-zone-stats">${statsHtml}${kindHtml}</div>
@@ -393,27 +393,26 @@ export function injectCardStyles() {
        stats: y=880-960 (75-82%), desc: y=980-1160 (84-99%) */
     .cx-lg .cx-zone-top{
       height:19%;
-      display:flex;justify-content:flex-end;align-items:center;
-      padding:5% 8% 2% 8%;
+      display:flex;align-items:center;
+      padding:4% 6% 2% 14%;
+      gap:6px;
     }
-    .cx-lg .cx-topid{
-      font-family:var(--mono);font-size:9px;color:var(--dim);
-      text-shadow:0 1px 2px #000;white-space:nowrap;
-    }
-    /* Nameplate — centered name bar overlaid at bottom of the art zone */
-    .cx-nameplate{
-      position:absolute;bottom:0;left:0;right:0;
-      display:flex;justify-content:center;align-items:center;
-      padding:3px 10%;
-      background:rgba(0,0,0,0.65);
-      backdrop-filter:blur(2px);
-    }
+    /* Name fills the title bar space (after orb), centered */
     .cx-lg .cx-topname{
-      font-family:var(--px);font-size:7px;letter-spacing:0.5px;
-      color:#e8e0d0;text-shadow:0 1px 4px #000,0 0 8px rgba(0,0,0,0.8);
-      text-align:center;
+      flex:1;
+      font-family:var(--px);font-size:9px;letter-spacing:0.5px;
+      color:#f5eedf;
+      text-shadow:0 0 10px rgba(0,0,0,1),0 1px 4px #000,0 0 2px #000;
       overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-      max-width:100%;
+      text-align:center;
+    }
+    /* ID — right side of title bar, clearly visible */
+    .cx-lg .cx-topid{
+      font-family:var(--mono);font-size:15px;font-weight:bold;
+      color:#9ecae0;
+      text-shadow:0 0 10px rgba(80,160,220,0.7),0 1px 4px #000;
+      white-space:nowrap;flex-shrink:0;
+      letter-spacing:1.5px;
     }
     .cx-lg .cx-zone-art{
       height:56%;position:relative;
@@ -429,27 +428,38 @@ export function injectCardStyles() {
       height:9%;display:flex;align-items:center;justify-content:space-around;
       padding:0 13%;
     }
-    .cx-lg-stats{display:flex;gap:16px;width:100%;justify-content:space-around;}
+    .cx-lg-stats{display:flex;gap:0;width:100%;justify-content:space-around;align-items:center;}
     .cx-lg-stat{
-      display:flex;flex-direction:row;align-items:baseline;gap:5px;
-      background:rgba(0,0,0,0.6);border-radius:2px;padding:2px 10px;
+      display:flex;flex-direction:column;align-items:center;gap:0;
     }
-    .cx-lg-stat-label{font-family:var(--px);font-size:6px;letter-spacing:1px;color:#607080;}
-    .cx-lg-stat-val{font-family:var(--body);font-size:26px;line-height:1;}
-    .cx-lg-atk-block .cx-lg-stat-val{color:var(--atk-color);text-shadow:0 0 8px rgba(255,154,85,0.5);}
-    .cx-lg-def-block .cx-lg-stat-val{color:var(--def-color);text-shadow:0 0 8px rgba(91,184,255,0.5);}
+    .cx-lg-stat-label{
+      font-family:var(--px);font-size:5px;letter-spacing:2px;
+      color:rgba(160,180,200,0.55);
+      text-transform:uppercase;margin-bottom:1px;
+    }
+    .cx-lg-stat-val{
+      font-family:var(--body);font-size:34px;line-height:1;
+      text-shadow:0 0 12px currentColor, 0 2px 4px rgba(0,0,0,0.95);
+    }
+    .cx-lg-atk-block .cx-lg-stat-val{color:var(--atk-color);}
+    .cx-lg-def-block .cx-lg-stat-val{color:var(--def-color);}
+    /* divider between ATK and DEF */
+    .cx-lg-stats::after{
+      content:'·';
+      font-family:var(--body);font-size:28px;color:rgba(100,130,160,0.35);
+      align-self:center;margin:0 4px;
+    }
     .cx-lg-kind-block{
       display:flex;align-items:center;justify-content:center;
-      background:rgba(0,0,0,0.55);border-radius:2px;padding:4px 18px;
     }
-    .cx-lg-kind-text{font-family:var(--px);font-size:9px;letter-spacing:2px;color:#c8b880;text-shadow:0 1px 2px #000;}
+    .cx-lg-kind-text{font-family:var(--px);font-size:9px;letter-spacing:2px;color:#c8b880;text-shadow:0 0 8px rgba(200,184,128,0.4),0 1px 2px #000;}
     .cx-lg .cx-zone-info{
       height:16%;padding:3px 13% 5%;
       display:flex;align-items:flex-start;overflow:hidden;
     }
     .cx-lg .cx-desc{
-      font-family:var(--body);font-size:17px;line-height:1.25;color:#b0c4d4;
-      text-shadow:0 1px 3px rgba(0,0,0,0.95);
+      font-family:var(--body);font-size:19px;line-height:1.25;color:#b8cede;
+      text-shadow:0 1px 4px rgba(0,0,0,0.98),0 0 8px rgba(0,0,0,0.6);
     }
 
     /* States */
