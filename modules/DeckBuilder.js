@@ -1,6 +1,7 @@
 import Router      from '../engine/Router.js';
 import EventBus    from '../engine/EventBus.js';
 import GameState   from '../engine/GameState.js';
+import SaveManager from '../engine/SaveManager.js';
 import AudioSystem from './AudioSystem.js';
 import { renderCardEl, renderCardPreview, injectCardStyles } from './CardRenderer.js';
 
@@ -46,7 +47,7 @@ const DeckBuilder = {
   _fusionIds:  new Set(), // IDčka výsledků fúze — dostupné až jako drop, hráč je nezíská jinak
   _collection: [],   // kopie GameState.player.collection (pole ID)
   _deck:       [],   // kopie GameState.player.deck (pole ID)
-  _filter: { faction: 'all', kind: 'all', search: '', sort: 'id' },
+  _filter: { faction: 'all', kind: 'all', search: '', sort: 'id', sortDir: 'asc' },
   _preview:    null,
   _toastTimer: null,
 
@@ -56,8 +57,9 @@ const DeckBuilder = {
   // ── INIT ──────────────────────────────────────────────────────────────────
   async init(container, params = {}) {
     this._container = container;
-    this._filter = { faction: 'all', kind: 'all', search: '', sort: 'id' };
+    this._filter = { faction: 'all', kind: 'all', search: '', sort: 'id', sortDir: 'asc' };
     this._preview = null;
+    injectCardStyles();
     this._injectStyles();
     container.innerHTML = `<div class="db-loading"><span>načítám kolekci...</span></div>`;
 
@@ -147,9 +149,9 @@ const DeckBuilder = {
           <div class="db-filter-group">
             <span class="db-sort-label">ŘADIT:</span>
             <button class="db-filter-btn ${this._filter.sort==='id'?'active':''}"    data-filter="sort" data-val="id">#</button>
-            <button class="db-filter-btn ${this._filter.sort==='atk'?'active':''}"   data-filter="sort" data-val="atk">ATK↓</button>
-            <button class="db-filter-btn ${this._filter.sort==='def'?'active':''}"   data-filter="sort" data-val="def">DEF↓</button>
-            <button class="db-filter-btn ${this._filter.sort==='power'?'active':''}" data-filter="sort" data-val="power">POWER↓</button>
+            <button class="db-filter-btn ${this._filter.sort==='atk'?'active':''}"   data-filter="sort" data-val="atk">ATK${this._filter.sort==='atk'?(this._filter.sortDir==='asc'?'↑':'↓'):'↓'}</button>
+            <button class="db-filter-btn ${this._filter.sort==='def'?'active':''}"   data-filter="sort" data-val="def">DEF${this._filter.sort==='def'?(this._filter.sortDir==='asc'?'↑':'↓'):'↓'}</button>
+            <button class="db-filter-btn ${this._filter.sort==='power'?'active':''}" data-filter="sort" data-val="power">PWR${this._filter.sort==='power'?(this._filter.sortDir==='asc'?'↑':'↓'):'↓'}</button>
             <button class="db-filter-btn ${this._filter.sort==='name'?'active':''}"  data-filter="sort" data-val="name">A-Z</button>
           </div>
           <input class="db-search" id="db-search" type="text"
@@ -198,10 +200,11 @@ const DeckBuilder = {
 
     // Sort
     const getCard = id => this._cardById(id);
+    const dir = f.sortDir === 'asc' ? 1 : -1;
     switch(f.sort) {
-      case 'atk':   ids.sort((a,b) => (getCard(b)?.atk||0) - (getCard(a)?.atk||0)); break;
-      case 'def':   ids.sort((a,b) => (getCard(b)?.def||0) - (getCard(a)?.def||0)); break;
-      case 'power': ids.sort((a,b) => ((getCard(b)?.atk||0)+(getCard(b)?.def||0)) - ((getCard(a)?.atk||0)+(getCard(a)?.def||0))); break;
+      case 'atk':   ids.sort((a,b) => dir * ((getCard(a)?.atk||0) - (getCard(b)?.atk||0))); break;
+      case 'def':   ids.sort((a,b) => dir * ((getCard(a)?.def||0) - (getCard(b)?.def||0))); break;
+      case 'power': ids.sort((a,b) => dir * (((getCard(a)?.atk||0)+(getCard(a)?.def||0)) - ((getCard(b)?.atk||0)+(getCard(b)?.def||0)))); break;
       case 'name':  ids.sort((a,b) => (getCard(a)?.name||'').localeCompare(getCard(b)?.name||'')); break;
       default:      ids.sort((a,b) => a - b); break;
     }
@@ -260,6 +263,9 @@ const DeckBuilder = {
       const c  = this._cardById(id);
       if(!c) return '';
       const fc = factionColor(c.faction);
+      const statsHtml = c.kind === 'monster'
+        ? `<span class="db-de-atk">⚔${c.atk}</span><span class="db-de-def">🛡${c.def}</span>`
+        : '';
       return `
         <div class="db-deck-entry" data-remove="${c.id}" style="--fc:${fc}">
           <div class="db-de-bar" style="background:${fc}"></div>
@@ -267,6 +273,7 @@ const DeckBuilder = {
           <div class="db-de-info">
             <div class="db-de-name">${c.name}</div>
             <div class="db-de-sub" style="color:${fc}">${factionLabel(c.faction)} · ${kindLabel(c.kind)}</div>
+            ${statsHtml ? `<div class="db-de-stats">${statsHtml}</div>` : ''}
           </div>
           ${counts[id]>1 ? `<div class="db-de-count" style="color:${fc}">×${counts[id]}</div>` : ''}
           <div class="db-de-remove">−</div>
@@ -372,6 +379,8 @@ const DeckBuilder = {
     }
     GameState.player.deck = [...this._deck];
     EventBus.emit('deck:saved', { deck: this._deck });
+    // Persist to save slot so deck changes survive reload
+    try { SaveManager.save(GameState._lastSaveSlot ?? 0); } catch(e) {}
     if(this._returnTo) {
       // Návrat do boje po úpravě decku
       setTimeout(() => {
@@ -441,9 +450,20 @@ const DeckBuilder = {
     c.querySelectorAll('.db-filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const ft = btn.dataset.filter, val = btn.dataset.val;
-        this._filter[ft] = val;
-        c.querySelectorAll(`.db-filter-btn[data-filter="${ft}"]`)
-          .forEach(b => b.classList.toggle('active', b.dataset.val === val));
+        if(ft === 'sort' && this._filter.sort === val && ['atk','def','power'].includes(val)) {
+          // Toggle direction on re-click
+          this._filter.sortDir = this._filter.sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+          if(ft === 'sort') this._filter.sortDir = val === 'name' ? 'asc' : 'desc';
+          this._filter[ft] = val;
+          c.querySelectorAll(`.db-filter-btn[data-filter="${ft}"]`)
+            .forEach(b => b.classList.toggle('active', b.dataset.val === val));
+        }
+        // Update arrow label on active sort button
+        if(ft === 'sort' && ['atk','def','power'].includes(val)) {
+          const labels = { atk: 'ATK', def: 'DEF', power: 'PWR' };
+          btn.textContent = labels[val] + (this._filter.sortDir === 'asc' ? '↑' : '↓');
+        }
         this._refreshFilter();
       });
     });
@@ -685,6 +705,9 @@ const DeckBuilder = {
       .db-de-name   { font-family:'Press Start 2P',monospace; font-size:4.5px; color:#c8d6e5; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
       .db-de-sub    { font-family:'Press Start 2P',monospace; font-size:4px; margin-top:2px; }
       .db-de-count  { font-family:'Press Start 2P',monospace; font-size:7px; flex-shrink:0; }
+      .db-de-stats { display:flex; gap:5px; margin-top:2px; }
+      .db-de-atk { font-family:'Share Tech Mono',monospace; font-size:9px; color:#e8723a; }
+      .db-de-def { font-family:'Share Tech Mono',monospace; font-size:9px; color:#4fa3e0; }
       .db-de-remove { font-family:'Press Start 2P',monospace; font-size:10px; color:#3d4a5c; opacity:0; transition:opacity 0.1s,color 0.1s; flex-shrink:0; padding:0 2px; cursor:pointer; }
       .db-de-remove:hover { color:#e8723a; }
       .db-deck-actions { flex-shrink:0; padding-top:8px; border-top:1px solid #1a1e2a; }

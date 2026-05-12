@@ -1,7 +1,7 @@
 import Router      from '../engine/Router.js';
 import GameState   from '../engine/GameState.js';
 import AudioSystem from './AudioSystem.js';
-import { renderCardEl, renderCardPreview, injectCardStyles } from './CardRenderer.js';
+import { renderCardPreview, injectCardStyles, factionColor } from './CardRenderer.js';
 
 const Collection = {
   _container:  null,
@@ -17,8 +17,8 @@ const Collection = {
     container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#060a0f"><div style="color:#3d4a5c;font-family:monospace;font-size:11px;letter-spacing:3px">NAČÍTÁM...</div></div>';
 
     await GameState.loadCards();
-    injectCardStyles();
     this._injectOwnStyles();
+    injectCardStyles();
     AudioSystem.playForScreen('collection', { fade: 1500 });
 
     this._fusionIds = new Set(Object.values(GameState.fusionIndex || {}));
@@ -36,8 +36,7 @@ const Collection = {
   destroy() {},
 
   _render() {
-    const ownedUniq  = [...new Set(this._collection.map(Number))];
-    const totalOwned = ownedUniq.length;
+    const totalOwned = new Set(this._collection.map(Number)).size;
     const totalCards = this._allCards.length;
 
     this._container.innerHTML = `
@@ -69,13 +68,13 @@ const Collection = {
     this._bind();
   },
 
-  _getFilteredIds() {
+  _getFilteredCards() {
     const search = this._filter.search.toLowerCase();
-    return [...new Set(this._collection.map(Number))]
-      .sort((a, b) => a - b)
-      .filter(id => {
-        const c = this._cardById(id);
-        if(!c) return false;
+    const ownedSet = new Set(this._collection.map(Number));
+    return this._allCards
+      .slice()
+      .sort((a, b) => a.id - b.id)
+      .filter(c => {
         if(this._filter.faction !== 'all' && c.faction !== this._filter.faction) return false;
         if(this._filter.kind    !== 'all' && c.kind    !== this._filter.kind)    return false;
         if(search && !c.name.toLowerCase().includes(search)) return false;
@@ -84,15 +83,25 @@ const Collection = {
   },
 
   _renderGrid() {
-    const ids = this._getFilteredIds();
-    if(!ids.length) return '<div class="col-empty">Žádné karty</div>';
-    return ids.map(id => {
-      const c      = this._cardById(id);
-      if(!c) return '';
-      const owned   = this._collection.filter(x => Number(x) === id).length;
-      const inDeck  = (GameState.player.deck||[]).filter(x => Number(x) === id).length;
-      const isFused = this._fusionIds.has(c.id);
-      return `<div class="col-card-wrap" data-id="${c.id}">${renderCardEl(c,'md',{inFuse:isFused,owned:owned>1?owned:null,inDeck:inDeck||null})}</div>`;
+    const cards = this._getFilteredCards();
+    if(!cards.length) return '<div class="col-empty">Žádné karty</div>';
+    const ownedSet = new Set(this._collection.map(Number));
+    return cards.map(c => {
+      const owned = ownedSet.has(c.id);
+      const fc    = factionColor(c.faction);
+      const inDeck = owned ? (GameState.player.deck||[]).filter(x => Number(x) === c.id).length : 0;
+      if(owned) {
+        return `<div class="col-mini owned" data-id="${c.id}" title="${c.name}" style="--fc:${fc}">
+          <div class="col-mini-top" style="background:${fc}"></div>
+          <div class="col-mini-emoji">${c.emoji || '?'}</div>
+          ${inDeck ? `<div class="col-mini-indeck">D</div>` : ''}
+        </div>`;
+      } else {
+        return `<div class="col-mini unowned" data-id="${c.id}" title="???" style="--fc:#1a2535">
+          <div class="col-mini-top" style="background:#1a2535"></div>
+          <div class="col-mini-back">?</div>
+        </div>`;
+      }
     }).join('');
   },
 
@@ -101,7 +110,8 @@ const Collection = {
     if(!numId) return;
     const c = this._cardById(numId);
     if(!c) return;
-    const owned   = this._collection.filter(x => Number(x) === numId).length;
+    const ownedCount = this._collection.filter(x => Number(x) === numId).length;
+    if(!ownedCount) return; // unowned cards have no detail preview
     const inDeck  = (GameState.player.deck||[]).filter(x => Number(x) === numId).length;
     const isFused = this._fusionIds.has(c.id);
     const scarData = GameState.getScarData?.(c.id) || null;
@@ -110,7 +120,7 @@ const Collection = {
     el.innerHTML = `
       <div class="col-preview-inner">
         <button class="col-preview-close" id="colp-close">✕</button>
-        ${renderCardPreview(c, { owned, inDeck, isFused, scarData, readOnly: true })}
+        ${renderCardPreview(c, { owned: ownedCount, inDeck, isFused, scarData, readOnly: true })}
       </div>`;
     el.style.display = 'flex';
     const close = () => { el.style.display = 'none'; };
@@ -137,8 +147,8 @@ const Collection = {
   },
 
   _bindGrid() {
-    this._container.querySelectorAll('.col-card-wrap').forEach(wrap => {
-      wrap.addEventListener('click', () => this._showPreview(wrap.dataset.id));
+    this._container.querySelectorAll('.col-mini.owned').forEach(el => {
+      el.addEventListener('click', () => this._showPreview(el.dataset.id));
     });
   },
 
@@ -171,10 +181,27 @@ const Collection = {
       .col-fbtn.active{border-color:#4fa3e0;color:#4fa3e0;background:#0d1a2a}
       .col-search{background:#0a0f18;border:1px solid #1a2535;color:#c8d6e5;font-family:monospace;font-size:11px;padding:4px 10px;outline:none}
       .col-search:focus{border-color:#4fa3e0}
-      .col-grid{flex:1;overflow-y:auto;display:flex;flex-wrap:wrap;gap:10px;padding:14px 16px;align-content:flex-start;position:relative;z-index:1}
-      .col-empty{color:#3d4a5c;font-family:monospace;font-size:11px;padding:24px;width:100%;text-align:center}
-      .col-card-wrap{cursor:pointer}
-      .col-card-wrap:hover .conflux-card{border-color:var(--fc,#4fa3e0)}
+      /* Mini card grid */
+      .col-grid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:4px;padding:10px 14px;align-content:flex-start;position:relative;z-index:1}
+      .col-grid::-webkit-scrollbar{width:4px}
+      .col-grid::-webkit-scrollbar-thumb{background:#1a2535}
+      .col-mini{
+        position:relative;width:100%;aspect-ratio:2/3;background:#08111a;
+        border:1px solid var(--fc,#1a2535);border-top:3px solid var(--fc,#1a2535);
+        display:flex;flex-direction:column;align-items:center;justify-content:center;
+        cursor:pointer;user-select:none;transition:transform 0.1s,box-shadow 0.1s;
+      }
+      .col-mini.owned:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.5),0 0 0 1px var(--fc)}
+      .col-mini.unowned{opacity:0.35;cursor:default}
+      .col-mini-top{position:absolute;top:0;left:0;right:0;height:3px}
+      .col-mini-emoji{font-size:20px;line-height:1}
+      .col-mini-back{font-family:'Press Start 2P',monospace;font-size:14px;color:#1a2535}
+      .col-mini-indeck{
+        position:absolute;bottom:2px;right:3px;
+        font-family:'Press Start 2P',monospace;font-size:4px;
+        color:#4fa3e0;background:rgba(4,8,16,0.8);padding:1px 2px;
+      }
+      .col-empty{color:#3d4a5c;font-family:monospace;font-size:11px;padding:24px;grid-column:1/-1;text-align:center}
       .col-preview{position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:200;display:flex;align-items:center;justify-content:center}
       .col-preview-inner{position:relative;background:#0a0f18;border:1px solid #1a2535;padding:24px}
       .col-preview-close{position:absolute;top:8px;right:10px;background:none;border:none;color:#607080;font-size:14px;cursor:pointer}

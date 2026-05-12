@@ -2353,7 +2353,7 @@ const BattleSystem = {
         </div>` : ''}
 
         <div class="ov-actions">
-          ${isVictory ? `<button class="ov-btn ov-btn-continue" id="ov-next">▶ POKRAČOVAT</button>` : ''}
+          ${(isVictory || (this._params.mode !== 'free' && (this._params.onLose || this._params.forcedLoss))) ? `<button class="ov-btn ov-btn-continue" id="ov-next">▶ POKRAČOVAT</button>` : ''}
           <button class="ov-btn ov-btn-menu" id="ov-menu">← MENU</button>
         </div>
       </div>
@@ -2363,7 +2363,6 @@ const BattleSystem = {
     overlay.classList.add('show');
 
     overlay.querySelector('#ov-next')?.addEventListener('click', navigate);
-    ;
     overlay.querySelector('#ov-menu')?.addEventListener('click', ()=>{
       document.getElementById('battle-overlay')?.remove();
       Router._transitioning = false;
