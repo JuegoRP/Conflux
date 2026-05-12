@@ -340,7 +340,7 @@ export function injectCardStyles() {
       object-fit:cover;
       object-position:center 30%;
       z-index:1;pointer-events:none;
-      clip-path:inset(15% 7% 21% 7%);
+      clip-path:inset(14% 6% 20% 6%);
     }
     .cx-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:2;pointer-events:none;}
     .cx-content{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;pointer-events:none;}
@@ -408,7 +408,7 @@ export function injectCardStyles() {
       text-shadow:0 0 10px rgba(80,160,220,0.7),0 1px 4px #000;
       white-space:nowrap;flex-shrink:0;
       letter-spacing:1.5px;
-      margin-right:4px;
+      margin-right:10px;
     }
     .cx-lg .cx-zone-art{
       height:56%;position:relative;
