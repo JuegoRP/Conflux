@@ -753,6 +753,7 @@ const DeckBuilder = {
 
   destroy() {
     clearTimeout(this._toastTimer);
+    AudioSystem.stopMusic(600);
   }
 };
 

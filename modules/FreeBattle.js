@@ -73,7 +73,7 @@ const FreeBattle = {
     AudioSystem.playForScreen('freebattle', { fade: 1500 });
     this._render();
   },
-  destroy() { this._container = null; },
+  destroy() { AudioSystem.stopMusic(600); this._container = null; },
 
   _fbRecord(eid) {
     try { return JSON.parse(localStorage.getItem('conflux_fb_' + eid) || '{"w":0,"l":0}'); }

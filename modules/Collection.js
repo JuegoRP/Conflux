@@ -33,7 +33,7 @@ const Collection = {
     this._render();
   },
 
-  destroy() {},
+  destroy() { AudioSystem.stopMusic(600); },
 
   _render() {
     const totalOwned = new Set(this._collection.map(Number)).size;
