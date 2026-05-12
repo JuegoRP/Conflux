@@ -388,8 +388,8 @@ export function injectCardStyles() {
        stats: y=880-960 (75-82%), desc: y=980-1160 (84-99%) */
     .cx-lg .cx-zone-top{
       height:19%;
-      display:flex;align-items:flex-end;
-      padding:0 6% 4% 14%;
+      display:flex;align-items:center;
+      padding:2% 6% 0 14%;
       gap:6px;
     }
     /* Name fills the title bar space (after orb), centered */
@@ -400,9 +400,8 @@ export function injectCardStyles() {
       text-shadow:0 0 10px rgba(0,0,0,1),0 1px 4px #000,0 0 2px #000;
       overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
       text-align:center;
-      padding-bottom:2px;
     }
-    /* ID — right side of title bar, slightly inset from edge, slightly lower */
+    /* ID — right side of title bar */
     .cx-lg .cx-topid{
       font-family:var(--mono);font-size:15px;font-weight:bold;
       color:#9ecae0;
@@ -427,28 +426,24 @@ export function injectCardStyles() {
       height:9%;display:flex;align-items:center;justify-content:space-around;
       padding:0 13%;
     }
-    .cx-lg-stats{display:flex;gap:0;width:100%;justify-content:space-around;align-items:center;}
+    /* ATK / DEF — horizontal: [label] [value]   [label] [value] */
+    .cx-lg-stats{display:flex;gap:20px;width:100%;justify-content:center;align-items:baseline;}
     .cx-lg-stat{
-      display:flex;flex-direction:column;align-items:center;gap:2px;
+      display:flex;flex-direction:row;align-items:baseline;gap:5px;
     }
     .cx-lg-stat-label{
-      font-family:var(--px);font-size:6px;letter-spacing:2px;
-      color:rgba(200,220,240,0.75);
+      font-family:var(--px);font-size:7px;letter-spacing:1.5px;
       text-shadow:0 1px 3px rgba(0,0,0,0.95);
-      text-transform:uppercase;
+      text-transform:uppercase;opacity:0.7;
     }
+    .cx-lg-atk-block .cx-lg-stat-label{color:var(--atk-color);}
+    .cx-lg-def-block .cx-lg-stat-label{color:var(--def-color);}
     .cx-lg-stat-val{
-      font-family:var(--body);font-size:36px;line-height:1;font-weight:normal;
-      text-shadow:0 0 14px currentColor, 0 0 6px currentColor, 0 2px 4px rgba(0,0,0,0.98);
+      font-family:var(--body);font-size:34px;line-height:1;font-weight:normal;
+      text-shadow:0 0 14px currentColor, 0 0 5px currentColor, 0 2px 4px rgba(0,0,0,0.98);
     }
     .cx-lg-atk-block .cx-lg-stat-val{color:var(--atk-color);}
     .cx-lg-def-block .cx-lg-stat-val{color:var(--def-color);}
-    /* divider between ATK and DEF */
-    .cx-lg-stats::after{
-      content:'·';
-      font-family:var(--body);font-size:28px;color:rgba(150,170,190,0.4);
-      align-self:center;margin:0 4px;
-    }
     .cx-lg-kind-block{
       display:flex;align-items:center;justify-content:center;
     }
@@ -458,7 +453,7 @@ export function injectCardStyles() {
       display:flex;align-items:flex-start;overflow:hidden;
     }
     .cx-lg .cx-desc{
-      font-family:var(--body);font-size:19px;line-height:1.25;color:#b8cede;
+      font-family:var(--body);font-size:16px;line-height:1.2;color:#b8cede;
       text-shadow:0 1px 4px rgba(0,0,0,0.98),0 0 8px rgba(0,0,0,0.6);
     }
 
