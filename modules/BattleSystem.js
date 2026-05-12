@@ -5,6 +5,7 @@ import Router     from '../engine/Router.js';
 import { ENEMIES_DATA } from '../data/enemies.js';
 import EventBus    from '../engine/EventBus.js';
 import GameState   from '../engine/GameState.js';
+import AudioSystem from './AudioSystem.js';
 import AssetLoader from '../engine/AssetLoader.js';
 import SaveManager from '../engine/SaveManager.js';
 import { renderCardEl as _rcEl, injectCardStyles } from './CardRenderer.js';
@@ -107,6 +108,7 @@ const BattleSystem = {
     container.innerHTML = `<div class="b-loading"><span>A cycle begins...</span></div>`;
     injectCardStyles();
     this._injectStyles();
+    AudioSystem.playBattleMusic(!!params.freeBattle);
 
     // Zaručit že cards.json je načtené — pokud ne (např. přímý přechod do bitvy), načti nyní
     if(GameState.cards.length === 0) {

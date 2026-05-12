@@ -1,5 +1,6 @@
-import Router     from '../engine/Router.js';
-import GameState  from '../engine/GameState.js';
+import Router      from '../engine/Router.js';
+import GameState   from '../engine/GameState.js';
+import AudioSystem from './AudioSystem.js';
 import { ENEMIES_DATA } from '../data/enemies.js';
 
 /**
@@ -69,6 +70,7 @@ const FreeBattle = {
     this._container = container;
     this._openAct = null;
     this._injectStyles();
+    AudioSystem.playForScreen('freebattle', { fade: 1500 });
     this._render();
   },
   destroy() { this._container = null; },

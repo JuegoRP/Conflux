@@ -1,5 +1,6 @@
-import Router    from '../engine/Router.js';
-import GameState from '../engine/GameState.js';
+import Router      from '../engine/Router.js';
+import GameState   from '../engine/GameState.js';
+import AudioSystem from './AudioSystem.js';
 import { renderCardEl, renderCardPreview, injectCardStyles } from './CardRenderer.js';
 
 const Collection = {
@@ -18,6 +19,7 @@ const Collection = {
     await GameState.loadCards();
     injectCardStyles();
     this._injectOwnStyles();
+    AudioSystem.playForScreen('collection', { fade: 1500 });
 
     this._fusionIds = new Set(Object.values(GameState.fusionIndex || {}));
     this._allCards  = GameState.cards.filter(c => !c.special && c.kind !== 'letter');

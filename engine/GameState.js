@@ -642,37 +642,50 @@ const GameState = {
   },
 
   _musicMap: {
-    menu_theme: 'assets/audio/menu_theme.mp3',
-    act1_exploration: 'assets/audio/bgm/act1_exploration.mp3',
-    act1_battle: 'assets/audio/bgm/act1_battle.mp3',
-    act1_boss: 'assets/audio/bgm/act1_boss.mp3',
-    act2_exploration: 'assets/audio/bgm/act2_exploration.mp3',
-    act2_battle: 'assets/audio/bgm/act2_battle.mp3',
-    act2_boss: 'assets/audio/bgm/act2_boss.mp3',
-    act3_battle: 'assets/audio/bgm/act3_battle.mp3',
-    act3_boss: 'assets/audio/bgm/act3_boss.mp3',
-    act4_battle: 'assets/audio/bgm/act4_battle.mp3',
-    act4_boss_theme: 'assets/audio/bgm/act4_boss.mp3',
-    act5_eli_battle: 'assets/audio/bgm/act5_eli_battle.mp3',
-    act6_battle: 'assets/audio/bgm/act6_battle.mp3',
-    act7_battle: 'assets/audio/bgm/act7_battle.mp3',
-    act7_boss_theme: 'assets/audio/bgm/act7_boss.mp3',
-    act8_boss_theme: 'assets/audio/bgm/act8_boss.mp3',
-    act9_battle_theme: 'assets/audio/bgm/act9_battle.mp3',
-    act10_boss_synth: 'assets/audio/bgm/act10_boss_synth.mp3',
-    act10_boss_organic: 'assets/audio/bgm/act10_boss_organic.mp3',
-    act10_boss_paradox: 'assets/audio/bgm/act10_boss_paradox.mp3',
-    act10_boss_monyra: 'assets/audio/bgm/act10_boss_monyra.mp3',
-    sfx_card_play: 'assets/audio/sfx/card_play.mp3',
-    sfx_fusion: 'assets/audio/sfx/fusion.mp3',
-    sfx_clash: 'assets/audio/sfx/clash.mp3',
-    sfx_damage: 'assets/audio/sfx/damage.mp3',
-    sfx_direct_attack: 'assets/audio/sfx/direct_attack.mp3',
-    sfx_spell: 'assets/audio/sfx/spell.mp3',
-    sfx_trap: 'assets/audio/sfx/trap.mp3',
-    sfx_arena: 'assets/audio/sfx/arena.mp3',
-    sfx_victory: 'assets/audio/sfx/victory.mp3',
-    sfx_defeat: 'assets/audio/sfx/defeat.mp3',
+    // ── MENU ──
+    menu_theme: 'assets/audio/bgm/menu_theme.mp3',
+
+    // ── SCREENY ──
+    screen_collection:  'assets/audio/bgm/collection.mp3',
+    screen_deckbuilder: 'assets/audio/bgm/deckbuilder.mp3',
+    screen_freebattle:  'assets/audio/bgm/freebattle_menu.mp3',
+
+    // ── PŘÍBĚH ──
+    story_calm:    'assets/audio/bgm/story_calm.mp3',
+    story_quiet:   'assets/audio/bgm/story_quiet.mp3',
+    story_slow:    'assets/audio/bgm/story_slow.mp3',
+    story_tension: 'assets/audio/bgm/story_tension.mp3',
+    story_dramatic:'assets/audio/bgm/story_dramatic.mp3',
+    story_hybrid:  'assets/audio/bgm/story_hybrid.mp3',
+
+    // ── BITVA ──
+    battle_story_clean:      'assets/audio/bgm/story_battle_low_corruption.mp3',
+    battle_story_corrupted:  'assets/audio/bgm/story_battle_high_corruption.mp3',
+    battle_free:             'assets/audio/bgm/freebattle_battle.mp3',
+
+    // ── LEGACY KLÍČE (story uzly mohou odkazovat na tyto) ──
+    act1_exploration: 'assets/audio/bgm/story_calm.mp3',
+    act2_exploration: 'assets/audio/bgm/story_quiet.mp3',
+    act3_exploration: 'assets/audio/bgm/story_tension.mp3',
+    act4_exploration: 'assets/audio/bgm/story_dramatic.mp3',
+    act5_exploration: 'assets/audio/bgm/story_hybrid.mp3',
+    act6_exploration: 'assets/audio/bgm/story_slow.mp3',
+    act7_exploration: 'assets/audio/bgm/story_tension.mp3',
+    act8_exploration: 'assets/audio/bgm/story_dramatic.mp3',
+    act9_exploration: 'assets/audio/bgm/story_hybrid.mp3',
+    act10_exploration:'assets/audio/bgm/story_dramatic.mp3',
+
+    // ── SFX ──
+    sfx_card_play:    'assets/audio/sfx/card_play.mp3',
+    sfx_fusion:       'assets/audio/sfx/fusion.mp3',
+    sfx_clash:        'assets/audio/sfx/clash.mp3',
+    sfx_damage:       'assets/audio/sfx/damage.mp3',
+    sfx_direct_attack:'assets/audio/sfx/direct_attack.mp3',
+    sfx_spell:        'assets/audio/sfx/spell.mp3',
+    sfx_trap:         'assets/audio/sfx/trap.mp3',
+    sfx_arena:        'assets/audio/sfx/arena.mp3',
+    sfx_victory:      'assets/audio/sfx/victory.mp3',
+    sfx_defeat:       'assets/audio/sfx/defeat.mp3',
   },
   getMusic(key) {
     return this._musicMap[key] || null;

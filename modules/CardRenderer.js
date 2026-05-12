@@ -142,6 +142,7 @@ export function renderCardEl(card, size = 'md', opts = {}) {
 
   const frame = framePath(card);
   const scarSvg = scarOverlay(card.id, phase, card.faction);
+  const artPath = card.id ? `assets/images/cards/${String(card.id).padStart(3,'0')}.jpg` : null;
 
   // ── SMALL SIZES (sm/md) ──
   if (isSmall) {
@@ -162,11 +163,16 @@ export function renderCardEl(card, size = 'md', opts = {}) {
       opts.used ? '<div class="cx-used-overlay"></div>' : '',
     ].join('');
 
+    const artHtml = artPath
+      ? `<img class="cx-art" src="${artPath}" onerror="this.style.display='none';var f=this.parentElement.querySelector('.cx-emoji-fallback');if(f)f.style.display='';" />`
+      : '';
+    const emojiHtml = `<span class="cx-emoji${artPath ? ' cx-emoji-fallback' : ''}" data-sprite-id="${card.id}">${card.emoji || '?'}</span>`;
+
     return `<div class="${cls}" style="--fc:${fc};--fbg:${fbg}" data-card-id="${card.id}">
       <img class="cx-frame" src="${frame}" onerror="this.style.display='none'" />
       <div class="cx-content cx-content-sm">
         <div class="cx-sm-emoji-wrap">
-          <span class="cx-emoji" data-sprite-id="${card.id}">${card.emoji || '?'}</span>
+          ${artHtml}${emojiHtml}
         </div>
         ${statsBottom}
       </div>
@@ -213,7 +219,8 @@ export function renderCardEl(card, size = 'md', opts = {}) {
         <span class="cx-topid">#${String(card.id).padStart(3,'0')}</span>
       </div>
       <div class="cx-zone-art">
-        <span class="cx-emoji" data-sprite-id="${card.id}">${card.emoji || '?'}</span>
+        ${artPath ? `<img class="cx-art" src="${artPath}" onerror="this.style.display='none';var f=this.parentElement.querySelector('.cx-emoji-fallback');if(f)f.style.display='';" />` : ''}
+        <span class="cx-emoji${artPath ? ' cx-emoji-fallback' : ''}" data-sprite-id="${card.id}">${card.emoji || '?'}</span>
         ${subHtml}
       </div>
       <div class="cx-zone-stats">${statsHtml}${kindHtml}</div>
@@ -313,12 +320,18 @@ export function injectCardStyles() {
     .cx-content-sm{padding:8% 10% 10%;}
     .cx-sm-emoji-wrap{
       flex:1;display:flex;align-items:center;justify-content:center;
+      position:relative;overflow:hidden;
       background:rgba(0,0,0,0.25);
       border:1px solid rgba(255,255,255,0.08);
       border-radius:3px;
     }
-    .cx-sm .cx-emoji{font-size:32px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.8));}
-    .cx-md .cx-emoji{font-size:44px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.8));}
+    .cx-art{
+      position:absolute;inset:0;width:100%;height:100%;
+      object-fit:cover;z-index:0;border-radius:2px;
+    }
+    .cx-emoji-fallback{display:none;}
+    .cx-sm .cx-emoji{font-size:32px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.8));position:relative;z-index:1;}
+    .cx-md .cx-emoji{font-size:44px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.8));position:relative;z-index:1;}
 
     .cx-sm-stats{
       display:flex;align-items:center;justify-content:center;gap:4px;
@@ -365,7 +378,7 @@ export function injectCardStyles() {
       height:45%;position:relative;
       display:flex;flex-direction:column;align-items:center;justify-content:center;
     }
-    .cx-lg .cx-emoji{font-size:120px;line-height:1;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.8));}
+    .cx-lg .cx-emoji{font-size:120px;line-height:1;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.8));position:relative;z-index:1;}
     .cx-lg .cx-subcat{
       position:absolute;bottom:8px;right:16px;
       font-family:var(--px);font-size:8px;letter-spacing:1.5px;

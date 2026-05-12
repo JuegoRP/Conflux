@@ -85,8 +85,50 @@ const AudioSystem = {
   // Automatický výběr hudby podle ACT a situace
   playForContext(actNumber, situation = 'battle') {
     const key = `act${actNumber}_${situation}`;
-    if(this._current?.key === key) return;  // již hraje
+    if(this._current?.key === key) return;
     this.playMusic(key, { fadeIn: 1500 });
+  },
+
+  // Hudba pro konkrétní screen (collection, deckbuilder, freebattle, story)
+  playForScreen(screen, { fade = 1500 } = {}) {
+    const key = `screen_${screen}`;
+    if(this._current?.key === key) return;
+    this.playMusic(key, { fadeIn: fade });
+  },
+
+  // Výběr battle hudby podle korupce a kontextu
+  // isFree=true → free battle, isFree=false → příběhová bitva
+  playBattleMusic(isFree = false) {
+    if(isFree) {
+      const key = 'battle_free';
+      if(this._current?.key === key) return;
+      this.playMusic(key, { fadeIn: 1200 });
+      return;
+    }
+    const corruption = GameState.corruption?.level ?? 0;
+    const key = corruption >= 3 ? 'battle_story_corrupted' : 'battle_story_clean';
+    if(this._current?.key === key) return;
+    this.playMusic(key, { fadeIn: 1200 });
+  },
+
+  // Hudba pro příběhový uzel — vybírá z story_* podle korupce a aktu
+  playStoryMusic(actNumber = 1, forceKey = null) {
+    if(forceKey) {
+      if(this._current?.key === forceKey) return;
+      this.playMusic(forceKey, { fadeIn: 2000 });
+      return;
+    }
+    const corruption = GameState.corruption?.level ?? 0;
+    const alignment  = GameState.player?.alignment ?? 0;
+    let key;
+    if(corruption >= 4)      key = 'story_dramatic';
+    else if(corruption >= 2) key = 'story_tension';
+    else if(Math.abs(alignment) < 20) key = 'story_hybrid';
+    else if(actNumber <= 2)  key = 'story_calm';
+    else if(actNumber <= 5)  key = 'story_quiet';
+    else                     key = 'story_slow';
+    if(this._current?.key === key) return;
+    this.playMusic(key, { fadeIn: 2000 });
   },
 
   // ══════════════════════════════════════════════════════════════

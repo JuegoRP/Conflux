@@ -311,7 +311,7 @@ const StoryEngine = {
     if(isActEnd) {
       // Přepni hudbu na next akt
       const nextActNum = (GameState.campaign.actNumber || 1) + 1;
-      try { AudioSystem?.crossfade?.(null, `act${nextActNum}_exploration`, 2000); } catch(e) {}
+      try { AudioSystem?.playStoryMusic?.(nextActNum); } catch(e) {}
       GameState.campaign.actNumber = nextActNum;
       if(node.next) setTimeout(() => this._goToNode(node.next, true), 400);
       else Router.goto('menu');
@@ -354,7 +354,9 @@ const StoryEngine = {
     if(node.setFlag)        GameState.setFlag(node.setFlag);
     // Přepni hudbu pokud uzel specifikuje music (pro všechny typy uzlů)
     if(node.music) {
-      try { AudioSystem?.crossfade?.(null, node.music, 1500); } catch(e) {}
+      try { AudioSystem?.playStoryMusic?.(GameState.campaign.actNumber, node.music); } catch(e) {}
+    } else {
+      try { AudioSystem?.playStoryMusic?.(GameState.campaign.actNumber); } catch(e) {}
     }
     if(node.alignmentDelta) GameState.adjustAlignment(node.alignmentDelta);
     if(_eff.flags?.set)     for(const f of _eff.flags.set) GameState.setFlag(f);
@@ -1633,7 +1635,9 @@ const StoryEngine = {
     }
     // Přepni hudbu pokud uzel specifikuje music
     if(node.music) {
-      try { AudioSystem?.crossfade?.(null, node.music, 1500); } catch(e) {}
+      try { AudioSystem?.playStoryMusic?.(GameState.campaign.actNumber, node.music); } catch(e) {}
+    } else {
+      try { AudioSystem?.playStoryMusic?.(GameState.campaign.actNumber); } catch(e) {}
     }
 
     // branchOn — podmíněné větvení (první splněná podmínka vyhraje)

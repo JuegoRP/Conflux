@@ -1,6 +1,7 @@
-import Router    from '../engine/Router.js';
-import EventBus  from '../engine/EventBus.js';
-import GameState from '../engine/GameState.js';
+import Router      from '../engine/Router.js';
+import EventBus    from '../engine/EventBus.js';
+import GameState   from '../engine/GameState.js';
+import AudioSystem from './AudioSystem.js';
 import { renderCardEl, renderCardPreview, injectCardStyles } from './CardRenderer.js';
 
 /**
@@ -62,6 +63,7 @@ const DeckBuilder = {
 
     // Načti cards.json pokud ještě není (singleton — volání je bezpečné)
     await GameState.loadCards();
+    AudioSystem.playForScreen('deckbuilder', { fade: 1500 });
 
     // Sestav množinu fusion výsledků — ty nelze přidat ručně
     this._fusionIds = new Set(Object.values(GameState.fusionIndex || {}));
