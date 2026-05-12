@@ -334,10 +334,10 @@ export function injectCardStyles() {
     .cx-lg{width:336px;height:504px;}
 
     /* Artwork constrained to the frame's transparent art-hole only.
-       Frame scan: art area = left 13%, right 10%, top 19%, bottom 25% */
+       Slightly conservative to fit all frame variants (different border widths). */
     .cx-art{
       position:absolute;
-      top:19%;left:13%;right:10%;bottom:25%;
+      top:20%;left:14%;right:13%;bottom:26%;
       object-fit:cover;z-index:1;pointer-events:none;
     }
     .cx-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:2;pointer-events:none;}
@@ -347,7 +347,7 @@ export function injectCardStyles() {
     .cx-emoji-fallback{display:none;}
 
     /* SMALL CONTENT */
-    .cx-content-sm{padding:19% 13% 7%;}
+    .cx-content-sm{padding:20% 14% 7%;}
     .cx-sm-emoji-wrap{
       flex:1;display:flex;align-items:center;justify-content:center;
     }
