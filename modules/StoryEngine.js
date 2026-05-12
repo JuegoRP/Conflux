@@ -39,17 +39,26 @@ const StoryEngine = {
   // value: { portrait: filename bez .png, side: 'left'|'right' }
   // Hráčovy postavy / spojenci = left. Ostatní = right.
   _speakerMap: {
-    'player':  { portrait: 'kuryr',   side: 'left'  },
-    'kuryr':   { portrait: 'kuryr',   side: 'left'  },
-    'monyra':  { portrait: 'monyra',  side: 'left'  },
-    'rozara':  { portrait: 'rozara',  side: 'right' },
-    'romen':   { portrait: 'romen',   side: 'right' },
-    'marta':   { portrait: 'marta',   side: 'right' },
-    'eli':     { portrait: 'eli',     side: 'right' },
-    'voit':    { portrait: 'voit',    side: 'right' },
-    'lens':    { portrait: 'lens',    side: 'right' },
-    // bez portraitu — jen jméno (system, stráže, NPC bez artwork)
-    // tito nebudou mít portrait ve scéně
+    'player':       { portrait: 'kuryr',        side: 'left'  },
+    'kuryr':        { portrait: 'kuryr',        side: 'left'  },
+    'monyra':       { portrait: 'monyra',       side: 'left'  },
+    'rozara':       { portrait: 'rozara',       side: 'right' },
+    'romen':        { portrait: 'romen',        side: 'right' },
+    'marta':        { portrait: 'marta',        side: 'right' },
+    'eli':          { portrait: 'eli',          side: 'right' },
+    'voit':         { portrait: 'voit',         side: 'right' },
+    'lens':         { portrait: 'lens',         side: 'right' },
+    // Postavy čekající na artwork (soubory budou přidány postupně)
+    'spravce':      { portrait: 'spravce',      side: 'right' },
+    'správce':      { portrait: 'spravce',      side: 'right' },
+    'veritel':      { portrait: 'veritel',      side: 'right' },
+    'agent':        { portrait: 'agent',        side: 'right' },
+    'sigma':        { portrait: 'sigma',        side: 'right' },
+    'pramati':      { portrait: 'pramati',      side: 'left'  },
+    'pozorovatel':  { portrait: 'pozorovatel',  side: 'right' },
+    'rekalibrator': { portrait: 'rekalibrator', side: 'right' },
+    'reka':         { portrait: 'rekalibrator', side: 'right' },
+    'paradox':      { portrait: 'paradox',      side: 'right' },
   },
   _resolveSpeaker(speakerKey) {
     if (!speakerKey) return null;
@@ -67,60 +76,62 @@ const StoryEngine = {
   // Pro akty 1-10 existuje jeden nebo dva "hero" backgroundy, všechny scény
   // v rámci aktu používají jeden z nich podle charakteru lokace.
   _bgAlias: {
-    // ═══ ACT 1 ═══ (máme act1_synth, act1_organic)
-    'act1_city_gate':'act1_synth', 'act1_checkpoint':'act1_synth',
-    'act1_city_streets':'act1_synth', 'act1_admin':'act1_synth',
-    'act1_synth_checkpoint':'act1_synth', 'act1_synth_zone':'act1_synth',
-    'act1_forest_edge':'act1_organic', 'act1_crossroads':'act1_synth',
-    'act1_gate_inner':'act1_synth', 'act1_beyond_gate':'act1_organic',
-    // ═══ ACT 2 ═══ (máme act2_demarkace)
-    'act2_border':'act2_demarkace', 'act2_synth_border':'act1_synth',
-    'act2_forest_deep':'act1_organic', 'act2_forest_hidden':'act1_organic',
-    'act2_crossroads':'act2_demarkace', 'act2_synth_deep':'act1_synth',
-    'act2_ruins':'act6_ruiny', 'act2_before_boss':'act2_demarkace',
-    'act2_gate':'act2_demarkace', 'act2_beyond':'act2_demarkace',
+    // ═══ ACT 1 ═══ — reálné soubory existují pro většinu
+    // act1_city_gate, act1_city_streets, act1_crossroads, act1_forest_edge,
+    // act1_admin, act1_gate_inner, act1_checkpoint, act1_synth_checkpoint,
+    // act1_beyond_gate → soubory existují, aliasy nepotřeba
+    'act1_synth_zone':'act1_synth_checkpoint',
+    // ═══ ACT 2 ═══ — act2_border, act2_forest_deep, act2_forest_hidden existují
+    'act2_synth_border':'act1_synth_checkpoint',
+    'act2_crossroads':'act2_border',
+    'act2_synth_deep':'act1_admin',
+    'act2_ruins':'act2_ruins',          // soubor existuje
+    'act2_before_boss':'act2_border',
+    'act2_gate':'act1_gate_inner',
+    'act2_beyond':'act1_beyond_gate',
     // ═══ ACT 3 ═══ (máme act3_nexus)
     'act3_nexus':'act3_nexus', 'act3_nexus_deep':'act3_nexus',
     'act3_nexus_edge':'act3_nexus', 'act3_fusion_zone':'act3_nexus',
     'act3_before_boss':'act3_nexus', 'act3_duel_arena':'act3_nexus',
-    'act3_beyond':'act2_demarkace', 'act3_horizon':'act3_nexus',
-    // ═══ ACT 4 ═══ (máme act4_syndikat)
-    'act4_border_dusk':'act4_syndikat', 'act4_city_corridor':'act1_synth',
+    'act3_beyond':'act2_border', 'act3_horizon':'act3_nexus',
+    // ═══ ACT 4 ═══ (máme act4_syndikat; act1_admin použijeme pro office)
+    'act4_border_dusk':'act4_syndikat', 'act4_city_corridor':'act1_city_streets',
     'act4_red_zone':'act4_syndikat', 'act4_syndicate_hall':'act4_syndikat',
     'act4_sector7':'act4_syndikat', 'act4_syndicate':'act4_syndikat',
-    'act4_veritel_office':'act4_syndikat',
-    // ═══ ACT 5 ═══ (máme act5_stanice)
+    'act4_veritel_office':'act1_admin',
+    // ═══ ACT 5 ═══ (máme act5_stanice; act5_duel_memory → korupce)
     'act5_outer_ring':'act5_stanice', 'act5_transit_station':'act5_stanice',
-    'act5_duel_memory':'act9_zrcadlo', 'act5_road_evening':'act5_stanice',
+    'act5_duel_memory':'act7_distorted_road', 'act5_road_evening':'act5_stanice',
     'act5_road_dusk':'act5_stanice',
-    // ═══ ACT 6 ═══ (máme act6_ruiny)
+    // ═══ ACT 6 ═══ (máme act6_ruiny; les pro forest; korupce pro void)
     'act6_crossing':'act6_ruiny', 'act6_crossing_fight':'act6_ruiny',
-    'act6_ruins':'act6_ruiny', 'act6_open_road':'act2_demarkace',
-    'act6_horizon':'act6_ruiny', 'act6_city':'mesto_intro',
-    'act6_synth_hq':'act1_synth',
-    // ═══ ACT 7 ═══ (máme act7_centrum)
-    'act7_distorted_road':'act7_centrum', 'act7_checkpoint':'act1_synth',
+    'act6_ruins':'act2_ruins', 'act6_open_road':'act2_border',
+    'act6_horizon':'act6_ruiny', 'act6_city':'act1_city_streets',
+    'act6_synth_hq':'act1_admin',
+    // ═══ ACT 7 ═══ (máme act7_centrum; distorted/void → korupce)
+    // act7_distorted_road existuje (korupce)
+    'act7_checkpoint':'act1_synth_checkpoint',
     'act7_checkpoint_fight':'act7_centrum', 'act7_deep_road':'act7_centrum',
     'act7_core_facility':'act7_centrum', 'act7_core_inner':'act7_centrum',
     'act7_core_battle':'act7_centrum', 'act7_exit':'act7_centrum',
-    'act7_horizon_glitch':'act9_zrcadlo',
-    // ═══ ACT 8 ═══ (máme act8_mesto)
+    'act7_horizon_glitch':'act7_distorted_road',
+    // ═══ ACT 8 ═══ (máme act8_mesto; act8_void existuje)
     'act8_border_town':'act8_mesto', 'act8_battle_town':'act8_mesto',
-    'act8_road_after':'act2_demarkace', 'act8_horizon_clear':'act8_mesto',
-    'act8_void':'act9_zrcadlo',
+    'act8_road_after':'act2_border', 'act8_horizon_clear':'act8_mesto',
+    // act8_void existuje (korupce)
     // ═══ ACT 9 ═══ (máme act9_zrcadlo)
     'act9_convergence_plain':'act9_zrcadlo', 'act9_memory_space':'act9_zrcadlo',
     'act9_mirror_space':'act9_zrcadlo', 'act9_threshold':'act9_zrcadlo',
     'act9_threshold_open':'act9_zrcadlo', 'act9_transition_fight':'act9_zrcadlo',
-    'act9_synth_gate':'synth_brana', 'act9_organic_gate':'act1_organic',
-    'act9_center_gate':'act9_zrcadlo', 'act9_fourth_gate':'act9_zrcadlo',
+    'act9_synth_gate':'act1_gate_inner', 'act9_organic_gate':'act1_beyond_gate',
+    'act9_center_gate':'act7_distorted_road', 'act9_fourth_gate':'act7_distorted_road',
     // ═══ ACT 10 ═══ (máme act10_konvergence)
     'act10_convergence':'act10_konvergence', 'act10_synth_core':'act10_konvergence',
     'act10_synth_battle':'act10_konvergence', 'act10_synth_horizon':'act10_konvergence',
-    'act10_organic_deep':'act1_organic', 'act10_organic_battle':'act1_organic',
-    'act10_organic_horizon':'act1_organic', 'act10_center_void':'act10_konvergence',
-    'act10_void':'act10_konvergence', 'act10_void_battle':'act10_konvergence',
-    'act10_fourth_space':'act10_konvergence', 'act10_fourth_horizon':'act10_konvergence',
+    'act10_organic_deep':'act1_beyond_gate', 'act10_organic_battle':'act1_beyond_gate',
+    'act10_organic_horizon':'act1_beyond_gate', 'act10_center_void':'act7_distorted_road',
+    'act10_void':'act8_void', 'act10_void_battle':'act8_void',
+    'act10_fourth_space':'act7_distorted_road', 'act10_fourth_horizon':'act7_distorted_road',
     'act10_protocol_space':'act10_konvergence', 'act10_open_horizon':'act10_konvergence',
   },
   _resolveBgName(name) {
