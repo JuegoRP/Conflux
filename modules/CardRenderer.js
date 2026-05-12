@@ -27,7 +27,7 @@ function framePath(card) {
   if (kind === 'arena')  return FRAME_BASE + 'frame_arena.png';
   if (kind === 'spell')  return FRAME_BASE + 'frame_spell.png';
   if (kind === 'trap')   return FRAME_BASE + 'frame_trap.png';
-  if (kind === 'letter') return FRAME_BASE + 'frame_neutral.png';
+  if (kind === 'letter') return FRAME_BASE + 'frame_corruption_alt.png';
   // faction-based frames — soubory přejmenovány dle frakce:
   const f = card.faction || 'neutral';
   const fMap = {
