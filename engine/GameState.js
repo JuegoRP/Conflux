@@ -148,18 +148,7 @@ const GameState = {
   },
 
   _computeFusion(idA, idB) {
-    const a = this.getCard(idA);
-    const b = this.getCard(idB);
-    if(!a || !b) return null;
-    // Fúzovat se dají jen monstra (ne kouzla/pasti/arény)
-    if(a.kind !== 'monster' || b.kind !== 'monster') return null;
-
-    const outFaction = this._fusionFaction(a.faction || 'neutral', b.faction || 'neutral');
-    const outSubcat  = this._fusionSubcat(a.subcategory || 'balanced', b.subcategory || 'balanced');
-    const samePair   = a.faction === b.faction && a.subcategory === b.subcategory;
-    const outTier    = this._fusionTier(a.atk || 0, b.atk || 0, samePair);
-
-    return this._findArchetype(outFaction, outSubcat, outTier);
+    return null;
   },
 
   // Frakce matrix

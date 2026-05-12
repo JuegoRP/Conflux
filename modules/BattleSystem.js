@@ -786,7 +786,7 @@ const BattleSystem = {
     const cardRender = popup.querySelector('#fp-card-render');
     if(cardRender) {
       cardRender.innerHTML = this._renderCardEl(
-        { ...result, kind: 'monster' }, 'lg', {}
+        { ...result, kind: 'monster' }, 'md', {}
       );
     }
 
@@ -3079,11 +3079,16 @@ const BattleSystem = {
       <div class="row" id="player-spell-row">${this._renderSpellRow('p')}</div>
       <div id="fuse-popup" class="fuse-popup" style="display:none">
         <div class="fp-title">FUZE</div>
-        <div class="fp-card"><div id="fp-card-render"></div><div class="fp-source" id="fp-source"></div></div>
-        <div class="fp-buttons">
-          <div id="fp-exp-note" class="fp-exp-note" style="display:none">Experimentalni</div>
-          <button class="btn-fuse" id="btn-confirm-fuse">FUZOVAT</button>
-          <button class="btn-cancel-fuse" id="btn-cancel-fuse">ZRUSIT</button>
+        <div class="fp-card">
+          <div id="fp-card-render"></div>
+          <div class="fp-info">
+            <div class="fp-source" id="fp-source"></div>
+            <div class="fp-buttons">
+              <div id="fp-exp-note" class="fp-exp-note" style="display:none">Experimentalni</div>
+              <button class="btn-fuse" id="btn-confirm-fuse">FUZOVAT</button>
+              <button class="btn-cancel-fuse" id="btn-cancel-fuse">ZRUSIT</button>
+            </div>
+          </div>
         </div>
       </div>
     `;
@@ -4396,12 +4401,13 @@ const BattleSystem = {
       @keyframes cf{0%{opacity:1}100%{opacity:0}}
 
       /* ── FÚZE POPUP ── */
-      .fuse-popup{position:fixed;inset:0;z-index:120;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(2,4,8,0.92);backdrop-filter:blur(6px);animation:fp-in .18s ease;}
+      .fuse-popup{position:fixed;inset:0;z-index:120;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(2,4,8,0.92);backdrop-filter:blur(6px);animation:fp-in .18s ease;}
       @keyframes fp-in{from{opacity:0}to{opacity:1}}
-      .fp-title{font-family:var(--px);font-size:12px;color:var(--hybrid);letter-spacing:4px;margin-bottom:16px;}
-      .fp-card{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:16px;}
+      .fp-title{font-family:var(--px);font-size:11px;color:var(--hybrid);letter-spacing:4px;}
+      .fp-card{display:flex;flex-direction:row;align-items:center;gap:20px;}
       .fp-source{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:1px;}
-      .fp-buttons{display:flex;gap:12px;flex-direction:column;align-items:center;}
+      .fp-buttons{display:flex;gap:10px;flex-direction:column;align-items:flex-start;}
+      .fp-info{display:flex;flex-direction:column;gap:8px;}
       .btn-fuse{font-family:var(--px);font-size:10px;padding:10px 24px;background:transparent;border:1px solid var(--hybrid);color:var(--hybrid);cursor:pointer;letter-spacing:2px;transition:all .2s;}
       .btn-fuse:hover{box-shadow:0 0 18px rgba(80,224,184,0.3);background:rgba(80,224,184,0.06);}
       .btn-cancel-fuse{font-family:var(--mono);font-size:11px;padding:6px 16px;background:transparent;border:1px solid rgba(80,100,120,0.3);color:var(--dim);cursor:pointer;transition:all .2s;}

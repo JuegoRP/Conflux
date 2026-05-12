@@ -395,12 +395,117 @@ const StoryEngine = {
           Router.goto('letter', { endingId: node.endingId || GameState.identity?.endingType });
         }, 300);
         return;
-      case 'end':      this._renderEnd(node);              break;
+      case 'end':        this._renderEnd(node);                break;
+      case 'fusionDemo': this._renderFusionDemo(nodeId, node); break;
       default:
         // Neznámý typ — pokud má next, jen přeskočíme
         if(node.next) { this._goToNode(node.next, true); return; }
         this._renderError(`Neznámý typ uzlu: ${node.type}`);
     }
+  },
+
+  // ── FUSION DEMO (tutoriál) ────────────────────────────────────────────────
+  _renderFusionDemo(nodeId, node) {
+    this._addStyles();
+
+    const ca  = GameState.getCard(node.cardA);
+    const cb  = GameState.getCard(node.cardB);
+    const cr  = GameState.getCard(node.result);
+    if(!ca || !cb || !cr) { if(node.next) this._goToNode(node.next); return; }
+
+    const factionColor = f => ({ synth:'#4fa3e0', organic:'#e04f6a', hybrid:'#50e0b8', corruption:'#9b59b6', neutral:'#8a9ab0' }[f] || '#8a9ab0');
+
+    const cardHtml = (c, extraClass='') => `
+      <div class="fd-card ${extraClass}" data-faction="${c.faction}">
+        <div class="fd-emoji">${c.emoji||'?'}</div>
+        <div class="fd-name">${c.name}</div>
+        <div class="fd-stats">${c.atk} / ${c.def}</div>
+        <div class="fd-faction" style="color:${factionColor(c.faction)}">${c.faction.toUpperCase()}</div>
+      </div>`;
+
+    this._container.innerHTML = `
+      <div class="vn-screen fade-in">
+        <div class="vn-bg"><div class="vn-bg-overlay"></div></div>
+        <div class="fd-stage">
+          <div class="fd-row" id="fd-row">
+            ${cardHtml(ca,'fd-card-a')}
+            <div class="fd-plus" id="fd-plus">+</div>
+            ${cardHtml(cb,'fd-card-b')}
+            <div class="fd-arrow" id="fd-arrow">→</div>
+            ${cardHtml(cr,'fd-card-r fd-hidden')}
+          </div>
+        </div>
+        <div class="vn-panel">
+          <div class="vn-text" id="fd-text"></div>
+          <div class="vn-choices" id="fd-btns"></div>
+        </div>
+      </div>`;
+
+    const intro  = node.intro  || [];
+    const outro  = node.outro  || [];
+    const textEl = this._container.querySelector('#fd-text');
+    const btnsEl = this._container.querySelector('#fd-btns');
+    const arrowEl = this._container.querySelector('#fd-arrow');
+    const resultEl = this._container.querySelector('.fd-card-r');
+
+    const setLine = (speaker, text) => {
+      const col = factionColor({ monyra:'hybrid', player:'neutral' }[speaker] || 'neutral');
+      textEl.innerHTML = `<span class="vn-speaker" style="color:${col}">${speaker.toUpperCase()}</span>${text}`;
+    };
+
+    const showBtn = (label, onClick) => {
+      btnsEl.innerHTML = `<button class="vn-btn">${label}</button>`;
+      btnsEl.querySelector('.vn-btn').addEventListener('click', onClick);
+    };
+
+    // Sequence: intro lines → merge button → merge animation → outro lines → continue
+    let step = 0;
+    const advance = () => {
+      if(step < intro.length) {
+        const l = intro[step++];
+        setLine(l.speaker, l.text);
+        const isLast = step === intro.length;
+        showBtn(isLast ? '▶ SPOJIT' : '▶', isLast ? doMerge : advance);
+      } else if(step === intro.length) {
+        doMerge();
+      }
+    };
+
+    const doMerge = () => {
+      btnsEl.innerHTML = '';
+      // Animace — plus → → result appears
+      const plusEl = this._container.querySelector('#fd-plus');
+      plusEl.style.transition = 'opacity 0.3s';
+      plusEl.style.opacity = '0';
+      setTimeout(() => {
+        arrowEl.classList.remove('fd-hidden');
+        arrowEl.style.animation = 'fd-pop 0.4s ease';
+        setTimeout(() => {
+          resultEl.classList.remove('fd-hidden');
+          resultEl.style.animation = 'fd-pop 0.5s ease';
+          step = intro.length + 1; // skip past intro, into outro
+          setTimeout(showOutro, 500);
+        }, 350);
+      }, 300);
+    };
+
+    const showOutro = () => {
+      let outroIdx = 0;
+      const nextOutro = () => {
+        if(outroIdx < outro.length) {
+          const l = outro[outroIdx++];
+          setLine(l.speaker, l.text);
+          const isLast = outroIdx === outro.length;
+          showBtn(isLast ? '▶ POKRAČOVAT' : '▶', isLast ? () => this._goToNode(node.next) : nextOutro);
+        } else {
+          this._goToNode(node.next);
+        }
+      };
+      nextOutro();
+    };
+
+    // Start
+    advance();
   },
 
   // ── STORY RENDER ──────────────────────────────────────────────────────────
