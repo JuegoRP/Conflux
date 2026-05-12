@@ -3,12 +3,16 @@ import GameState   from '../engine/GameState.js';
 import AudioSystem from './AudioSystem.js';
 import { renderCardEl, renderCardPreview, injectCardStyles } from './CardRenderer.js';
 
+const PAGE = 60;
+
 const Collection = {
-  _container:  null,
-  _filter:     { faction: 'all', kind: 'all', search: '' },
-  _allCards:   [],
-  _collection: [],
-  _fusionIds:  new Set(),
+  _container:    null,
+  _filter:       { faction: 'all', kind: 'all', search: '' },
+  _allCards:     [],
+  _collection:   [],
+  _fusionIds:    new Set(),
+  _filteredCards: [],
+  _renderedUntil: 0,
 
   async init(container) {
     this._container = container;
@@ -82,35 +86,58 @@ const Collection = {
       });
   },
 
-  _renderGrid() {
-    const cards = this._getFilteredCards();
-    if(!cards.length) return '<div class="col-empty">Žádné karty</div>';
-    const ownedSet = new Set(this._collection.map(Number));
-
-    // Group cards into chunks of 10, each chunk gets a range label
-    const CHUNK = 10;
-    let html = '';
-    for(let i = 0; i < cards.length; i += CHUNK) {
-      const chunk = cards.slice(i, i + CHUNK);
-      const first = chunk[0].id;
-      const last  = chunk[chunk.length - 1].id;
-      html += `<div class="col-range-label">#${first} — #${last}</div>`;
-      html += chunk.map(c => {
-        const owned   = ownedSet.has(c.id);
-        const inDeck  = owned ? (GameState.player.deck||[]).filter(x => Number(x) === c.id).length : 0;
-        const isFused = this._fusionIds.has(c.id);
-        if(owned) {
-          return `<div class="col-card-wrap owned" data-id="${c.id}">
-            ${renderCardEl(c, 'sm', { inDeck: inDeck || null, inFuse: isFused })}
-          </div>`;
-        } else {
-          return `<div class="col-card-wrap unowned" data-id="${c.id}">
-            ${renderCardEl(c, 'sm', { faceDown: true })}
-          </div>`;
-        }
-      }).join('');
+  _renderCardHtml(c, ownedSet) {
+    const owned   = ownedSet.has(c.id);
+    const inDeck  = owned ? (GameState.player.deck||[]).filter(x => Number(x) === c.id).length : 0;
+    const isFused = this._fusionIds.has(c.id);
+    if(owned) {
+      return `<div class="col-card-wrap owned" data-id="${c.id}">
+        ${renderCardEl(c, 'sm', { inDeck: inDeck || null, inFuse: isFused })}
+      </div>`;
     }
+    return `<div class="col-card-wrap unowned" data-id="${c.id}">
+      ${renderCardEl(c, 'sm', { faceDown: true })}
+    </div>`;
+  },
+
+  _renderGrid() {
+    this._filteredCards = this._getFilteredCards();
+    this._renderedUntil = 0;
+    if(!this._filteredCards.length) return '<div class="col-empty">Žádné karty</div>';
+    return this._buildCardHtml(0, Math.min(PAGE, this._filteredCards.length));
+  },
+
+  _buildCardHtml(from, to) {
+    const cards    = this._filteredCards;
+    const ownedSet = new Set(this._collection.map(Number));
+    const CHUNK    = 10;
+    let html = '';
+    let lastLabel = -1;
+
+    for(let i = from; i < to; i++) {
+      const c = cards[i];
+      const groupStart = Math.floor(i / CHUNK) * CHUNK;
+      if(groupStart !== lastLabel) {
+        const chunkEnd = Math.min(groupStart + CHUNK - 1, cards.length - 1);
+        html += `<div class="col-range-label">${i === 0 ? '' : ''}#${cards[groupStart].id} — #${cards[chunkEnd].id}</div>`;
+        lastLabel = groupStart;
+      }
+      html += this._renderCardHtml(c, ownedSet);
+    }
+    this._renderedUntil = to;
     return html;
+  },
+
+  _appendMore() {
+    const grid = this._container?.querySelector('#col-grid');
+    if(!grid) return;
+    const from = this._renderedUntil;
+    const to   = Math.min(from + PAGE, this._filteredCards.length);
+    if(from >= this._filteredCards.length) return;
+    const tmp = document.createElement('div');
+    tmp.innerHTML = this._buildCardHtml(from, to);
+    while(tmp.firstChild) grid.appendChild(tmp.firstChild);
+    this._bindGrid();
   },
 
   _showPreview(id) {
@@ -158,6 +185,15 @@ const Collection = {
     this._container.querySelectorAll('.col-card-wrap.owned').forEach(el => {
       el.addEventListener('click', () => this._showPreview(el.dataset.id));
     });
+    const grid = this._container.querySelector('#col-grid');
+    if(grid && !grid._scrollBound) {
+      grid._scrollBound = true;
+      grid.addEventListener('scroll', () => {
+        if(grid.scrollTop + grid.clientHeight >= grid.scrollHeight - 200) {
+          this._appendMore();
+        }
+      }, { passive: true });
+    }
   },
 
   _refreshGrid() {
@@ -190,7 +226,7 @@ const Collection = {
       .col-search{background:#0a0f18;border:1px solid #1a2535;color:#c8d6e5;font-family:var(--mono);font-size:12px;padding:4px 10px;outline:none}
       .col-search:focus{border-color:#4fa3e0}
       /* Card grid — centered */
-      .col-grid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;padding:12px 32px;justify-content:center;align-content:flex-start;position:relative;z-index:1}
+      .col-grid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,88px);gap:8px;padding:12px 32px;justify-content:center;align-content:flex-start;position:relative;z-index:1}
       .col-grid::-webkit-scrollbar{width:4px}
       .col-grid::-webkit-scrollbar-thumb{background:#1a2535}
       .col-range-label{
