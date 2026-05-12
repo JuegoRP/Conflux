@@ -23,11 +23,25 @@ const FRAME_BASE = 'assets/images/frames/';
 function framePath(card) {
   if (!card) return FRAME_BASE + 'frame_neutral.png';
   const kind = card.kind || 'monster';
-  if (kind === 'arena') return FRAME_BASE + 'frame_arena.png';
-  if (kind === 'spell') return FRAME_BASE + 'frame_spell.png';
-  if (kind === 'trap') return FRAME_BASE + 'frame_trap.png';
+  // kind-based frames (by actual frame file colors):
+  // arena → dark/black (frame_trap.png is darkest neutral grey)
+  // spell/skill → brown/bronze (frame_hybrid.png)
+  // trap → orange-brown (frame_corruption_alt.png)
+  // letter/story → light blue (frame_spell.png blue-grey)
+  if (kind === 'arena')  return FRAME_BASE + 'frame_trap.png';
+  if (kind === 'spell')  return FRAME_BASE + 'frame_hybrid.png';
+  if (kind === 'trap')   return FRAME_BASE + 'frame_corruption_alt.png';
+  if (kind === 'letter') return FRAME_BASE + 'frame_spell.png';
+  // faction-based frames (verified by pixel color scan):
+  // synth=blue, organic=red(arena file), hybrid=green(organic file), corruption=purple, neutral=grey
   const f = card.faction || 'neutral';
-  const fMap = {synth:'frame_synth.png', organic:'frame_organic.png', hybrid:'frame_hybrid.png', corruption:'frame_corruption.png', neutral:'frame_neutral.png'};
+  const fMap = {
+    synth:      'frame_synth.png',
+    organic:    'frame_arena.png',
+    hybrid:     'frame_organic.png',
+    corruption: 'frame_corruption.png',
+    neutral:    'frame_neutral.png',
+  };
   return FRAME_BASE + (fMap[f] || 'frame_neutral.png');
 }
 
@@ -52,7 +66,7 @@ export const factionLabel = f => ({
 }[f] || (f || '').toUpperCase());
 
 export const kindLabel = k => ({
-  monster: 'MONSTER', spell: 'KOUZLO', trap: 'PAST', arena: 'ARÉNA', letter: 'DOPIS'
+  monster: 'MONSTER', spell: 'SKILL', trap: 'PAST', arena: 'ARÉNA', letter: 'DOPIS'
 }[k] || (k || '').toUpperCase());
 
 const subcatColors = {
@@ -221,11 +235,11 @@ export function renderCardEl(card, size = 'md', opts = {}) {
     <img class="cx-frame" src="${frame}" onerror="this.style.display='none'" />
     <div class="cx-content">
       <div class="cx-zone-top">
-        <span class="cx-topname">${card.name}</span>
         <span class="cx-topid">#${String(card.id).padStart(3,'0')}</span>
       </div>
       <div class="cx-zone-art">
         <span class="cx-emoji${artPath ? ' cx-emoji-fallback' : ''}" data-sprite-id="${card.id}">${card.emoji || '?'}</span>
+        <div class="cx-nameplate"><span class="cx-topname">${card.name}</span></div>
         ${subHtml}
       </div>
       <div class="cx-zone-stats">${statsHtml}${kindHtml}</div>
@@ -372,17 +386,27 @@ export function injectCardStyles() {
        stats: y=880-960 (75-82%), desc: y=980-1160 (84-99%) */
     .cx-lg .cx-zone-top{
       height:19%;
-      display:flex;justify-content:space-between;align-items:center;
-      padding:5% 8% 2% 13%;gap:6px;
+      display:flex;justify-content:flex-end;align-items:center;
+      padding:5% 8% 2% 8%;
+    }
+    .cx-lg .cx-topid{
+      font-family:var(--mono);font-size:9px;color:var(--dim);
+      text-shadow:0 1px 2px #000;white-space:nowrap;
+    }
+    /* Nameplate — centered name bar overlaid at bottom of the art zone */
+    .cx-nameplate{
+      position:absolute;bottom:0;left:0;right:0;
+      display:flex;justify-content:center;align-items:center;
+      padding:3px 10%;
+      background:rgba(0,0,0,0.65);
+      backdrop-filter:blur(2px);
     }
     .cx-lg .cx-topname{
       font-family:var(--px);font-size:7px;letter-spacing:0.5px;
       color:#e8e0d0;text-shadow:0 1px 4px #000,0 0 8px rgba(0,0,0,0.8);
-      max-width:78%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-    }
-    .cx-lg .cx-topid{
-      font-family:var(--mono);font-size:9px;color:var(--dim);
-      text-shadow:0 1px 2px #000;white-space:nowrap;flex-shrink:0;
+      text-align:center;
+      overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+      max-width:100%;
     }
     .cx-lg .cx-zone-art{
       height:56%;position:relative;
@@ -518,11 +542,6 @@ export function injectCardStyles() {
     .cx-f-hybrid:not(.cx-scarred):hover{box-shadow:0 0 12px rgba(80,224,184,0.3);}
     .cx-f-corruption:not(.cx-scarred):hover{box-shadow:0 0 12px rgba(181,112,224,0.3);}
 
-    /* Per-faction frame tuning */
-    .cx-lg.cx-f-synth .cx-zone-top{padding-left:13%;}
-    .cx-lg.cx-f-organic .cx-zone-top{padding-left:15%;}
-    .cx-lg.cx-f-corruption .cx-zone-top{padding-left:14%;}
-    .cx-lg.cx-k-spell .cx-zone-top,.cx-lg.cx-k-trap .cx-zone-top,.cx-lg.cx-k-arena .cx-zone-top{padding-left:14%;}
 
     /* ═══ PREVIEW ═══ */
     .cp-layout{display:flex;gap:28px;align-items:flex-start;}

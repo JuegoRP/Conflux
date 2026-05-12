@@ -190,16 +190,18 @@ const AudioSystem = {
   // ══════════════════════════════════════════════════════════════
 
   _fadeTo(audio, targetVolume, duration) {
+    if(audio._fadeTimer) { clearInterval(audio._fadeTimer); audio._fadeTimer = null; }
     const steps    = 30;
     const interval = duration / steps;
     const delta    = (targetVolume - audio.volume) / steps;
     let   step     = 0;
-    const timer = setInterval(() => {
+    audio._fadeTimer = setInterval(() => {
       step++;
       audio.volume = Math.max(0, Math.min(1, audio.volume + delta));
       if(step >= steps) {
         audio.volume = targetVolume;
-        clearInterval(timer);
+        clearInterval(audio._fadeTimer);
+        audio._fadeTimer = null;
       }
     }, interval);
   },
