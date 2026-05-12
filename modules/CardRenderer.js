@@ -54,12 +54,12 @@ export const factionColor = f => ({
 }[f] || '#c8d6e5');
 
 export const factionBgGradient = f => ({
-  synth:     'linear-gradient(135deg, #0d1829 0%, #1a2f4a 100%)',
-  organic:   'linear-gradient(135deg, #290d14 0%, #4a1a24 100%)',
-  hybrid:    'linear-gradient(135deg, #0d2924 0%, #1a4a3d 100%)',
-  corruption:'linear-gradient(135deg, #1f0d29 0%, #3d1a4a 100%)',
-  neutral:   'linear-gradient(135deg, #1a1f24 0%, #2a3038 100%)',
-}[f] || 'linear-gradient(135deg, #1a1f24 0%, #2a3038 100%)');
+  synth:     'linear-gradient(135deg, #04080e 0%, #080f18 100%)',
+  organic:   'linear-gradient(135deg, #0a0305 0%, #0f0508 100%)',
+  hybrid:    'linear-gradient(135deg, #030a08 0%, #060f0c 100%)',
+  corruption:'linear-gradient(135deg, #07030c 0%, #0c0512 100%)',
+  neutral:   'linear-gradient(135deg, #060809 0%, #090c0e 100%)',
+}[f] || 'linear-gradient(135deg, #060809 0%, #090c0e 100%)');
 
 export const factionLabel = f => ({
   synth: '⬡ SYNTH', organic: '☘ ORGANIC', hybrid: '✦ HYBRID', corruption: '◈ CORRUPTION', neutral: '— NEUTRAL'
@@ -343,9 +343,9 @@ export function injectCardStyles() {
       inset:0;
       width:100%;height:100%;
       object-fit:cover;
-      object-position:center 35%;
+      object-position:center 30%;
       z-index:1;pointer-events:none;
-      clip-path:inset(20% 13% 26% 13%);
+      clip-path:inset(17% 9% 23% 9%);
     }
     .cx-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:2;pointer-events:none;}
     .cx-content{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;pointer-events:none;}
@@ -393,8 +393,8 @@ export function injectCardStyles() {
        stats: y=880-960 (75-82%), desc: y=980-1160 (84-99%) */
     .cx-lg .cx-zone-top{
       height:19%;
-      display:flex;align-items:center;
-      padding:4% 6% 2% 14%;
+      display:flex;align-items:flex-end;
+      padding:0 6% 4% 14%;
       gap:6px;
     }
     /* Name fills the title bar space (after orb), centered */
@@ -405,14 +405,16 @@ export function injectCardStyles() {
       text-shadow:0 0 10px rgba(0,0,0,1),0 1px 4px #000,0 0 2px #000;
       overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
       text-align:center;
+      padding-bottom:2px;
     }
-    /* ID — right side of title bar, clearly visible */
+    /* ID — right side of title bar, slightly inset from edge, slightly lower */
     .cx-lg .cx-topid{
       font-family:var(--mono);font-size:15px;font-weight:bold;
       color:#9ecae0;
       text-shadow:0 0 10px rgba(80,160,220,0.7),0 1px 4px #000;
       white-space:nowrap;flex-shrink:0;
       letter-spacing:1.5px;
+      margin-right:4px;
     }
     .cx-lg .cx-zone-art{
       height:56%;position:relative;
@@ -620,4 +622,51 @@ export function injectCardStyles() {
       }
     }, true);
   }
+}
+
+// ── Fullscreen card zoom overlay ──────────────────────────────────────────────
+// Použití: showCardZoom(card) — zobrazí kartu na průhledném přes celou obrazovku.
+// Klik / klávesa Escape = zavře.
+export function showCardZoom(card, opts = {}) {
+  if (!card) return;
+  injectCardStyles();
+  document.getElementById('cx-zoom-overlay')?.remove();
+
+  if (!document.getElementById('cx-zoom-style')) {
+    const z = document.createElement('style');
+    z.id = 'cx-zoom-style';
+    z.textContent = `
+      #cx-zoom-overlay{
+        position:fixed;inset:0;z-index:9999;
+        display:flex;align-items:center;justify-content:center;
+        background:rgba(2,4,8,0.82);backdrop-filter:blur(4px);
+        animation:cxz-in .18s ease;cursor:pointer;
+      }
+      @keyframes cxz-in{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}
+      #cx-zoom-overlay .cx-card{
+        transform:scale(1.12);
+        box-shadow:0 12px 60px rgba(0,0,0,0.95),0 0 0 1px rgba(255,255,255,0.05);
+        cursor:default;
+      }
+      #cx-zoom-close{
+        position:absolute;top:16px;right:20px;
+        font-family:var(--mono,monospace);font-size:14px;
+        color:rgba(255,255,255,0.3);background:none;border:none;cursor:pointer;
+        transition:color .15s;padding:4px 8px;
+      }
+      #cx-zoom-close:hover{color:#fff;}
+    `;
+    document.head.appendChild(z);
+  }
+
+  const ov = document.createElement('div');
+  ov.id = 'cx-zoom-overlay';
+  ov.innerHTML = `<button id="cx-zoom-close">✕ zavřít</button>` + renderCardEl(card, 'lg', opts);
+
+  const close = () => { ov.remove(); document.removeEventListener('keydown', onKey); };
+  const onKey = (e) => { if(e.key === 'Escape') close(); };
+  ov.addEventListener('click', e => { if(!e.target.closest('.cx-card')) close(); });
+  ov.querySelector('#cx-zoom-close').addEventListener('click', close);
+  document.addEventListener('keydown', onKey);
+  document.body.appendChild(ov);
 }

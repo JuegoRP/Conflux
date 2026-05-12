@@ -8,7 +8,7 @@ import GameState   from '../engine/GameState.js';
 import AudioSystem from './AudioSystem.js';
 import AssetLoader from '../engine/AssetLoader.js';
 import SaveManager from '../engine/SaveManager.js';
-import { renderCardEl as _rcEl, injectCardStyles } from './CardRenderer.js';
+import { renderCardEl as _rcEl, injectCardStyles, showCardZoom } from './CardRenderer.js';
 
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
@@ -787,9 +787,10 @@ const BattleSystem = {
     // Renderuj kartu jako skutečnou herní kartu (lg velikost)
     const cardRender = popup.querySelector('#fp-card-render');
     if(cardRender) {
-      cardRender.innerHTML = this._renderCardEl(
-        { ...result, kind: 'monster' }, 'md', {}
-      );
+      const fusedCard = { ...result, kind: 'monster' };
+      cardRender.innerHTML = this._renderCardEl(fusedCard, 'lg', {});
+      // Klik na kartu = zoom
+      cardRender.querySelector?.('.cx-card')?.addEventListener('click', () => showCardZoom(fusedCard));
     }
 
     // Legacy hodnoty (pro zpětnou kompatibilitu)
@@ -3595,6 +3596,8 @@ const BattleSystem = {
     // Zavřít
     popup.querySelector('#cpp-close').addEventListener('click', () => popup.remove());
     popup.addEventListener('click', e => { if(e.target === popup) popup.remove(); });
+    // Klik na samotnou kartu v popup = zoom overlay
+    popup.querySelector('.cx-card')?.addEventListener('click', (e) => { e.stopPropagation(); showCardZoom(card); });
 
     // Akce
     popup.querySelectorAll('[data-cp-action]').forEach(btn => {
@@ -4419,7 +4422,7 @@ const BattleSystem = {
       @keyframes cf{0%{opacity:1}100%{opacity:0}}
 
       /* ── FÚZE POPUP ── */
-      .fuse-popup{position:fixed;inset:0;z-index:120;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(2,4,8,0.92);backdrop-filter:blur(6px);animation:fp-in .18s ease;}
+      .fuse-popup{position:fixed;inset:0;z-index:120;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(2,4,8,0.60);backdrop-filter:blur(8px);animation:fp-in .18s ease;}
       @keyframes fp-in{from{opacity:0}to{opacity:1}}
       .fp-title{font-family:var(--px);font-size:11px;color:var(--hybrid);letter-spacing:4px;}
       .fp-card{display:flex;flex-direction:row;align-items:center;gap:20px;}
