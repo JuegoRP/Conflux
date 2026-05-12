@@ -190,31 +190,31 @@ const BattleSystem = {
       @keyframes cf-fadein  { from{opacity:0} to{opacity:1} }
       @keyframes cf-fadeout { from{opacity:1} to{opacity:0} }
       @keyframes cf-spin {
-        0%   { transform: rotate(0deg);    filter: drop-shadow(0 0 10px rgba(79,163,224,0.5)); }
-        30%  { filter: drop-shadow(0 0 24px rgba(79,163,224,0.9)); }
-        70%  { filter: drop-shadow(0 0 28px rgba(80,224,184,0.8)); }
-        100% { transform: rotate(1080deg); filter: drop-shadow(0 0 16px rgba(80,224,184,0.6)); }
+        0%   { transform: rotate(0deg);    filter: drop-shadow(0 0 12px rgba(79,163,224,0.5)); }
+        30%  { filter: drop-shadow(0 0 28px rgba(79,163,224,0.95)); }
+        70%  { filter: drop-shadow(0 0 32px rgba(80,224,184,0.85)); }
+        100% { transform: rotate(1080deg); filter: drop-shadow(0 0 18px rgba(80,224,184,0.65)); }
       }
       .cf-inner {
         display: flex; flex-direction: column;
-        align-items: center; gap: 24px;
+        align-items: center; gap: 28px;
       }
       .cf-logo-wrap {
         cursor: pointer;
         display: flex; align-items: center; justify-content: center;
       }
       .cf-logo {
-        width: 130px; height: 130px;
+        width: 200px; height: 200px;
         object-fit: contain;
-        filter: drop-shadow(0 0 10px rgba(79,163,224,0.4));
+        filter: drop-shadow(0 0 12px rgba(79,163,224,0.4));
         transition: filter 0.3s ease;
         display: block;
       }
       .cf-logo-wrap:hover .cf-logo {
-        filter: drop-shadow(0 0 18px rgba(79,163,224,0.75));
+        filter: drop-shadow(0 0 22px rgba(79,163,224,0.8));
       }
       .cf-logo.spinning {
-        animation: cf-spin 1.1s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+        animation: cf-spin 0.75s cubic-bezier(0.2, 0.05, 0.3, 1) forwards;
         cursor: default;
       }
       .cf-hint {
@@ -226,8 +226,12 @@ const BattleSystem = {
         font-family: 'Share Tech Mono', monospace;
         font-size: 14px; letter-spacing: 2px;
         color: rgba(200, 215, 230, 0.95);
-        opacity: 0; min-height: 1.4em; text-align: center;
+        opacity: 0; min-height: 2.8em; text-align: center; line-height: 2;
         transition: opacity 0.4s ease;
+      }
+      .cf-cycle {
+        display: block; font-size: 11px;
+        color: rgba(80,224,184,0.7); letter-spacing: 4px;
       }
     `;
     const existing = document.getElementById('cf-style');
@@ -249,13 +253,13 @@ const BattleSystem = {
       logo.classList.add('spinning');
 
       setTimeout(() => {
-        result.textContent = resultText;
+        result.innerHTML = `${resultText}<span class="cf-cycle">Cyklus pokračuje.</span>`;
         result.style.opacity = '1';
         setTimeout(() => {
           overlay.style.animation = 'cf-fadeout 0.5s ease forwards';
           setTimeout(() => { overlay.remove(); if(onDone) onDone(); }, 500);
-        }, 1400);
-      }, 1100);
+        }, 1600);
+      }, 750);
     });
   },
 
@@ -4865,6 +4869,9 @@ BattleSystem.destroy = function() {
   this._enemy = null;
   this._params = null;
   this._clickTimers = null;
+
+  // Zastav hudbu
+  AudioSystem.stopMusic(600);
 
   // Reset body class (battle phase CSS)
   document.body.className = '';
