@@ -166,31 +166,27 @@ const BattleSystem = {
     const who = this._state.coinflipResult;
     const resultText = who === 'player' ? 'Začínáš ty.' : 'Začíná protivník.';
 
-    const overlay = document.createElement('div');
-    overlay.className = 'cf-overlay';
-    overlay.innerHTML = `
-      <div class="cf-cycle-screen" id="cf-cycle-screen">
-        <span class="cf-cycle-text">Cyklus pokračuje.</span>
-      </div>
-      <div class="cf-inner" id="cf-inner" style="opacity:0;pointer-events:none">
-        <div class="cf-logo-wrap" id="cf-logo-wrap">
-          <img class="cf-logo" id="cf-logo" src="assets/images/logo.png" alt="CONFLUX">
-        </div>
-        <div class="cf-hint" id="cf-hint">klikni</div>
-        <div class="cf-result" id="cf-result"></div>
-      </div>`;
-
     const style = document.createElement('style');
     style.id = 'cf-style';
     style.textContent = `
+      .cf-transition {
+        position: fixed; inset: 0; z-index: 200;
+        background: #000;
+        display: flex; align-items: center; justify-content: center;
+        opacity: 1; transition: opacity 0.5s ease;
+      }
+      .cf-transition-text {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 15px; letter-spacing: 7px;
+        color: rgba(200,215,230,0.6);
+      }
       .cf-overlay {
-        position: absolute; inset: 0; z-index: 90;
-        background: rgba(4, 6, 8, 0.78);
+        position: fixed; inset: 0; z-index: 190;
+        background: rgba(4,6,8,0.85);
         display: flex; align-items: center; justify-content: center;
         backdrop-filter: blur(4px);
-        animation: cf-fadein 0.4s ease;
+        opacity: 0; transition: opacity 0.5s ease;
       }
-      @keyframes cf-fadein  { from{opacity:0} to{opacity:1} }
       @keyframes cf-fadeout { from{opacity:1} to{opacity:0} }
       @keyframes cf-spin {
         0%   { transform: rotate(0deg);    filter: drop-shadow(0 0 12px rgba(79,163,224,0.5)); }
@@ -222,49 +218,51 @@ const BattleSystem = {
       }
       .cf-hint {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 10px; color: rgba(96, 128, 160, 0.55);
+        font-size: 10px; color: rgba(96,128,160,0.55);
         letter-spacing: 3px; transition: opacity 0.3s;
       }
       .cf-result {
         font-family: 'Share Tech Mono', monospace;
         font-size: 14px; letter-spacing: 2px;
-        color: rgba(200, 215, 230, 0.95);
+        color: rgba(200,215,230,0.95);
         opacity: 0; min-height: 1.4em; text-align: center;
         transition: opacity 0.4s ease;
       }
-      .cf-cycle-screen {
-        position: absolute; inset: 0;
-        display: flex; align-items: center; justify-content: center;
-        transition: opacity 0.6s ease;
-      }
-      .cf-cycle-text {
-        font-family: 'Share Tech Mono', monospace;
-        font-size: 16px; letter-spacing: 6px;
-        color: rgba(200,215,230,0.75);
-      }
-      .cf-inner { transition: opacity 0.5s ease; }
     `;
     const existing = document.getElementById('cf-style');
     if(existing) existing.remove();
     document.head.appendChild(style);
-    container.style.position = 'relative';
-    container.appendChild(overlay);
 
-    const cycleScreen = overlay.querySelector('#cf-cycle-screen');
-    const inner       = overlay.querySelector('#cf-inner');
-    const logoWrap    = overlay.querySelector('#cf-logo-wrap');
-    const logo        = overlay.querySelector('#cf-logo');
-    const hint        = overlay.querySelector('#cf-hint');
-    const result      = overlay.querySelector('#cf-result');
-    let spun          = false;
+    // Fáze 1: černá přechodová obrazovka "Cyklus pokračuje."
+    const transition = document.createElement('div');
+    transition.className = 'cf-transition';
+    transition.innerHTML = `<span class="cf-transition-text">Cyklus pokračuje.</span>`;
+    document.body.appendChild(transition);
 
-    // Fáze 1: "Cyklus pokračuje." po 1.5s přejde na coinflip
+    // Fáze 2: po 1.5s fade-out přechodu, fade-in coinflip
+    const overlay = document.createElement('div');
+    overlay.className = 'cf-overlay';
+    overlay.innerHTML = `
+      <div class="cf-inner">
+        <div class="cf-logo-wrap" id="cf-logo-wrap">
+          <img class="cf-logo" id="cf-logo" src="assets/images/logo.png" alt="CONFLUX">
+        </div>
+        <div class="cf-hint" id="cf-hint">klikni</div>
+        <div class="cf-result" id="cf-result"></div>
+      </div>`;
+    document.body.appendChild(overlay);
+
     setTimeout(() => {
-      cycleScreen.style.opacity = '0';
-      inner.style.opacity = '1';
-      inner.style.pointerEvents = 'auto';
-      setTimeout(() => { cycleScreen.style.display = 'none'; }, 600);
+      transition.style.opacity = '0';
+      overlay.style.opacity = '1';
+      setTimeout(() => transition.remove(), 500);
     }, 1500);
+
+    const logoWrap = overlay.querySelector('#cf-logo-wrap');
+    const logo     = overlay.querySelector('#cf-logo');
+    const hint     = overlay.querySelector('#cf-hint');
+    const result   = overlay.querySelector('#cf-result');
+    let spun       = false;
 
     logoWrap.addEventListener('click', () => {
       if(spun) return;
