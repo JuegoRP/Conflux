@@ -333,12 +333,19 @@ export function injectCardStyles() {
     .cx-md{width:100px;height:150px;}
     .cx-lg{width:336px;height:504px;}
 
-    /* Artwork constrained to the frame's transparent art-hole only.
-       Slightly conservative to fit all frame variants (different border widths). */
+    /* Artwork — fills the full card, then hard-clipped to the art-hole area.
+       clip-path is definitive: artwork cannot bleed through frame borders
+       regardless of PNG transparency or z-index rendering quirks.
+       Values tuned to sit safely inside all frame variants.
+       inset(top, right, bottom, left) */
     .cx-art{
       position:absolute;
-      top:20%;left:14%;right:13%;bottom:26%;
-      object-fit:cover;z-index:1;pointer-events:none;
+      inset:0;
+      width:100%;height:100%;
+      object-fit:cover;
+      object-position:center 35%;
+      z-index:1;pointer-events:none;
+      clip-path:inset(20% 13% 26% 13%);
     }
     .cx-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:2;pointer-events:none;}
     .cx-content{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;pointer-events:none;}
@@ -347,7 +354,7 @@ export function injectCardStyles() {
     .cx-emoji-fallback{display:none;}
 
     /* SMALL CONTENT */
-    .cx-content-sm{padding:20% 14% 7%;}
+    .cx-content-sm{padding:20% 13% 7%;}
     .cx-sm-emoji-wrap{
       flex:1;display:flex;align-items:center;justify-content:center;
     }
