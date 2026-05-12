@@ -70,6 +70,7 @@ const Router = {
       if(this._container) {
         this._container.innerHTML = '';
         this._container.className = `screen screen-${name}`;
+        this._container.removeAttribute('style');
         this._container.style.opacity = '0';
       }
 
