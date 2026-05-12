@@ -150,7 +150,7 @@ const BattleSystem = {
     setTimeout(() => {
       // Coinflip oznámení
       const who = this._state.coinflipResult;
-      const msg = who === 'player' ? '⚡ Začínáš ty!' : '⚡ Začíná protivník!';
+      const msg = who === 'player' ? 'Začínáš ty.' : 'Začíná protivník.';
       container.innerHTML = `<div class="b-loading"><span>${msg}</span></div>`;
       setTimeout(() => {
         this._render();

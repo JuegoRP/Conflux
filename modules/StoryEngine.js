@@ -703,8 +703,8 @@ const StoryEngine = {
             <div class="deck-choice-title">PŘIPRAVUJEŠ SE NA BOJ</div>
             <div class="deck-choice-sub">Chceš upravit deck před bitvou?</div>
             <div class="deck-choice-btns">
-              <button class="vn-btn" id="deck-choice-edit">✦ Upravit deck</button>
-              <button class="vn-btn vn-btn--fight" id="deck-choice-fight">⚔ Do boje</button>
+              <button class="vn-btn" id="deck-choice-edit">Upravit deck</button>
+              <button class="vn-btn vn-btn--fight" id="deck-choice-fight">Do boje</button>
             </div>
           </div>
         </div>`;

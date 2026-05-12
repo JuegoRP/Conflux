@@ -229,7 +229,7 @@ const DeckBuilder = {
       const scarCount = scarData?.scars || 0;
 
       const statsStr = c.kind === 'monster'
-        ? `<span class="db-row-atk">⚔${c.atk}</span><span class="db-row-def">🛡${c.def}</span>`
+        ? `<span class="db-row-atk">A:${c.atk}</span><span class="db-row-def">D:${c.def}</span>`
         : `<span class="db-row-kind">${kindLabel(c.kind)}</span>`;
       return `
         <div class="db-row ${canAdd ? 'db-row-addable' : 'db-row-maxed'} ${inDeck > 0 ? 'db-row-indeck' : ''}"
@@ -264,12 +264,11 @@ const DeckBuilder = {
       if(!c) return '';
       const fc = factionColor(c.faction);
       const statsHtml = c.kind === 'monster'
-        ? `<span class="db-de-atk">⚔${c.atk}</span><span class="db-de-def">🛡${c.def}</span>`
+        ? `<span class="db-de-atk">A:${c.atk}</span><span class="db-de-def">D:${c.def}</span>`
         : '';
       return `
         <div class="db-deck-entry" data-remove="${c.id}" style="--fc:${fc}">
           <div class="db-de-bar" style="background:${fc}"></div>
-          <div class="db-de-emoji">${c.emoji || '?'}</div>
           <div class="db-de-info">
             <div class="db-de-name">${c.name}</div>
             <div class="db-de-sub" style="color:${fc}">${factionLabel(c.faction)} · ${kindLabel(c.kind)}</div>
