@@ -23,22 +23,17 @@ const FRAME_BASE = 'assets/images/frames/';
 function framePath(card) {
   if (!card) return FRAME_BASE + 'frame_neutral.png';
   const kind = card.kind || 'monster';
-  // kind-based frames (by actual frame file colors):
-  // arena → dark/black (frame_trap.png is darkest neutral grey)
-  // spell/skill → brown/bronze (frame_hybrid.png)
-  // trap → orange-brown (frame_corruption_alt.png)
-  // letter/story → light blue (frame_spell.png blue-grey)
-  if (kind === 'arena')  return FRAME_BASE + 'frame_trap.png';
-  if (kind === 'spell')  return FRAME_BASE + 'frame_hybrid.png';
-  if (kind === 'trap')   return FRAME_BASE + 'frame_corruption_alt.png';
-  if (kind === 'letter') return FRAME_BASE + 'frame_spell.png';
-  // faction-based frames (verified by pixel color scan):
-  // synth=blue, organic=red(arena file), hybrid=green(organic file), corruption=purple, neutral=grey
+  // kind-based frames — soubory přejmenovány uživatelem dle typu:
+  if (kind === 'arena')  return FRAME_BASE + 'frame_arena.png';
+  if (kind === 'spell')  return FRAME_BASE + 'frame_spell.png';
+  if (kind === 'trap')   return FRAME_BASE + 'frame_trap.png';
+  if (kind === 'letter') return FRAME_BASE + 'frame_neutral.png';
+  // faction-based frames — soubory přejmenovány dle frakce:
   const f = card.faction || 'neutral';
   const fMap = {
     synth:      'frame_synth.png',
-    organic:    'frame_arena.png',
-    hybrid:     'frame_organic.png',
+    organic:    'frame_organic.png',
+    hybrid:     'frame_hybrid.png',
     corruption: 'frame_corruption.png',
     neutral:    'frame_neutral.png',
   };
