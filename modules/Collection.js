@@ -86,20 +86,31 @@ const Collection = {
     const cards = this._getFilteredCards();
     if(!cards.length) return '<div class="col-empty">Žádné karty</div>';
     const ownedSet = new Set(this._collection.map(Number));
-    return cards.map(c => {
-      const owned  = ownedSet.has(c.id);
-      const inDeck = owned ? (GameState.player.deck||[]).filter(x => Number(x) === c.id).length : 0;
-      const isFused = this._fusionIds.has(c.id);
-      if(owned) {
-        return `<div class="col-card-wrap owned" data-id="${c.id}">
-          ${renderCardEl(c, 'sm', { inDeck: inDeck || null, inFuse: isFused })}
-        </div>`;
-      } else {
-        return `<div class="col-card-wrap unowned" data-id="${c.id}">
-          ${renderCardEl(c, 'sm', { faceDown: true })}
-        </div>`;
-      }
-    }).join('');
+
+    // Group cards into chunks of 10, each chunk gets a range label
+    const CHUNK = 10;
+    let html = '';
+    for(let i = 0; i < cards.length; i += CHUNK) {
+      const chunk = cards.slice(i, i + CHUNK);
+      const first = chunk[0].id;
+      const last  = chunk[chunk.length - 1].id;
+      html += `<div class="col-range-label">#${first} — #${last}</div>`;
+      html += chunk.map(c => {
+        const owned   = ownedSet.has(c.id);
+        const inDeck  = owned ? (GameState.player.deck||[]).filter(x => Number(x) === c.id).length : 0;
+        const isFused = this._fusionIds.has(c.id);
+        if(owned) {
+          return `<div class="col-card-wrap owned" data-id="${c.id}">
+            ${renderCardEl(c, 'sm', { inDeck: inDeck || null, inFuse: isFused })}
+          </div>`;
+        } else {
+          return `<div class="col-card-wrap unowned" data-id="${c.id}">
+            ${renderCardEl(c, 'sm', { faceDown: true })}
+          </div>`;
+        }
+      }).join('');
+    }
+    return html;
   },
 
   _showPreview(id) {
@@ -179,9 +190,17 @@ const Collection = {
       .col-search{background:#0a0f18;border:1px solid #1a2535;color:#c8d6e5;font-family:monospace;font-size:11px;padding:4px 10px;outline:none}
       .col-search:focus{border-color:#4fa3e0}
       /* Card grid */
-      .col-grid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:6px;padding:12px 14px;align-content:flex-start;position:relative;z-index:1}
+      .col-grid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:6px;padding:12px 28px;align-content:flex-start;position:relative;z-index:1}
       .col-grid::-webkit-scrollbar{width:4px}
       .col-grid::-webkit-scrollbar-thumb{background:#1a2535}
+      .col-range-label{
+        grid-column:1/-1;
+        font-family:'Share Tech Mono',monospace;font-size:9px;
+        color:#2a3a4a;letter-spacing:2px;
+        padding:10px 0 4px;margin-top:4px;
+        border-top:1px solid #0d1520;
+      }
+      .col-range-label:first-child{border-top:none;margin-top:0;padding-top:4px}
       .col-card-wrap{cursor:pointer;transition:transform 0.1s,filter 0.1s;user-select:none}
       .col-card-wrap.owned:hover{transform:translateY(-3px)}
       .col-card-wrap.owned:hover .cx-card{box-shadow:0 6px 20px rgba(0,0,0,0.7),0 0 0 1px var(--fc,#4fa3e0)}
