@@ -76,6 +76,7 @@ const GameState = {
 
   settings: {
     volume: 0.7, sfx: 0.8, music: 0.5, language: 'cs',
+    keyboardShortcuts: true,
   },
 
   // ── CARD LOADING ──────────────────────────────────────────────────────────

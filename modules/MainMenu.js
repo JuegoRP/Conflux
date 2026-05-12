@@ -583,6 +583,13 @@ const MainMenu = {
         <span class="m-row-label">JAZYK</span>
         <button class="m-tog m-tog--on" disabled>CS</button>
       </div>
+      <div class="m-row">
+        <span class="m-row-label">KLÁVESNICE</span>
+        <button class="m-tog ${s.keyboardShortcuts !== false ? 'm-tog--on' : ''}" id="tog-keyboard">
+          ${s.keyboardShortcuts !== false ? 'ON' : 'OFF'}
+        </button>
+      </div>
+      <div class="m-row-hint">Enter · Mezerník · Esc</div>
 
       <div class="m-row m-row--danger" style="margin-top:20px">
         <span class="m-row-label" style="color:#3d4a5c">RESET</span>
@@ -602,6 +609,7 @@ const MainMenu = {
     };
     tog('#tog-music', 'music');
     tog('#tog-sfx', 'sfx');
+    tog('#tog-keyboard', 'keyboardShortcuts');
 
     ov.querySelector('#tog-reset')?.addEventListener('click', e => {
       if(e.target.dataset.confirm !== '1') {
@@ -1224,6 +1232,10 @@ const MainMenu = {
 .m-tog:hover:not([disabled]) { border-color: #3d4a5c; color: var(--text); }
 .m-tog--on  { border-color: #4fa3e0; color: #4fa3e0; }
 .m-tog--danger { border-color: #3d1520; color: #e04f6a; }
+.m-row-hint {
+  font-family: 'VT323', monospace; font-size: 13px; color: #2a3546;
+  letter-spacing: 1.5px; padding: 0 0 4px 0; text-align: right;
+}
 
 /* ── SLOT LIST ── */
 .m-slot-list { display: flex; flex-direction: column; gap: 2px; margin-bottom: 8px; }

@@ -30,6 +30,7 @@ import CorruptionSystem   from './modules/CorruptionSystem.js';
 import CorruptionVisuals  from './modules/CorruptionVisuals.js';
 import FreeBattle         from './modules/FreeBattle.js';
 import SpriteSheet        from './modules/SpriteSheet.js';
+import KeyboardController from './modules/KeyboardController.js';
 
 // ── Root element ──────────────────────────────────────────────────────────────
 const root = document.getElementById('app');
@@ -62,6 +63,7 @@ async function boot() {
 
   // 3. Audio — inicializace (AudioContext se spustí až po prvním kliku)
   AudioSystem.init();
+  KeyboardController.init();
 
   // SFX event handler — BattleSystem emituje 'sfx:play' s typem zvuku
   EventBus.on('sfx:play', (type) => {
