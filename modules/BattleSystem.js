@@ -170,92 +170,92 @@ const BattleSystem = {
     overlay.className = 'cf-overlay';
     overlay.innerHTML = `
       <div class="cf-inner">
-        <div class="cf-coin" id="cf-coin">
-          <div class="cf-face cf-face-front">CONFLUX</div>
-          <div class="cf-face cf-face-back">CONFLUX</div>
+        <div class="cf-logo-wrap" id="cf-logo-wrap">
+          <img class="cf-logo" id="cf-logo" src="assets/images/logo.png" alt="CONFLUX">
         </div>
         <div class="cf-hint" id="cf-hint">klikni</div>
         <div class="cf-result" id="cf-result"></div>
       </div>`;
 
     const style = document.createElement('style');
+    style.id = 'cf-style';
     style.textContent = `
       .cf-overlay {
         position: absolute; inset: 0; z-index: 90;
-        background: rgba(4, 6, 8, 0.72);
+        background: rgba(4, 6, 8, 0.78);
         display: flex; align-items: center; justify-content: center;
-        backdrop-filter: blur(3px);
+        backdrop-filter: blur(4px);
         animation: cf-fadein 0.4s ease;
       }
-      @keyframes cf-fadein { from{opacity:0} to{opacity:1} }
+      @keyframes cf-fadein  { from{opacity:0} to{opacity:1} }
       @keyframes cf-fadeout { from{opacity:1} to{opacity:0} }
+      @keyframes cf-spin {
+        0%   { transform: rotate(0deg);    filter: drop-shadow(0 0 10px rgba(79,163,224,0.5)); }
+        30%  { filter: drop-shadow(0 0 24px rgba(79,163,224,0.9)); }
+        70%  { filter: drop-shadow(0 0 28px rgba(80,224,184,0.8)); }
+        100% { transform: rotate(1080deg); filter: drop-shadow(0 0 16px rgba(80,224,184,0.6)); }
+      }
       .cf-inner {
         display: flex; flex-direction: column;
-        align-items: center; gap: 20px;
+        align-items: center; gap: 24px;
       }
-      .cf-coin {
-        width: 88px; height: 88px;
-        position: relative;
-        transform-style: preserve-3d;
-        perspective: 600px;
+      .cf-logo-wrap {
         cursor: pointer;
-      }
-      .cf-face {
-        position: absolute; inset: 0;
-        border-radius: 50%;
-        border: 1px solid rgba(100, 180, 240, 0.35);
         display: flex; align-items: center; justify-content: center;
-        font-family: 'Press Start 2P', monospace;
-        font-size: 6px; letter-spacing: 2px;
-        color: rgba(100, 180, 240, 0.6);
-        backface-visibility: hidden;
-        background: rgba(4, 8, 16, 0.6);
-        transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
       }
-      .cf-face-back { transform: rotateY(180deg); }
-      .cf-coin.spinning .cf-face-front { transform: rotateY(720deg); }
-      .cf-coin.spinning .cf-face-back  { transform: rotateY(900deg); }
+      .cf-logo {
+        width: 130px; height: 130px;
+        object-fit: contain;
+        filter: drop-shadow(0 0 10px rgba(79,163,224,0.4));
+        transition: filter 0.3s ease;
+        display: block;
+      }
+      .cf-logo-wrap:hover .cf-logo {
+        filter: drop-shadow(0 0 18px rgba(79,163,224,0.75));
+      }
+      .cf-logo.spinning {
+        animation: cf-spin 1.1s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+        cursor: default;
+      }
       .cf-hint {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 10px; color: rgba(96, 128, 160, 0.5);
-        letter-spacing: 3px;
-        transition: opacity 0.3s;
+        font-size: 10px; color: rgba(96, 128, 160, 0.55);
+        letter-spacing: 3px; transition: opacity 0.3s;
       }
       .cf-result {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 13px; letter-spacing: 2px;
-        color: rgba(200, 215, 230, 0.9);
-        opacity: 0; min-height: 1.4em;
+        font-size: 14px; letter-spacing: 2px;
+        color: rgba(200, 215, 230, 0.95);
+        opacity: 0; min-height: 1.4em; text-align: center;
         transition: opacity 0.4s ease;
       }
     `;
+    const existing = document.getElementById('cf-style');
+    if(existing) existing.remove();
     document.head.appendChild(style);
     container.style.position = 'relative';
     container.appendChild(overlay);
 
-    const coin    = overlay.querySelector('#cf-coin');
-    const hint    = overlay.querySelector('#cf-hint');
-    const result  = overlay.querySelector('#cf-result');
-    let flipped   = false;
+    const logoWrap = overlay.querySelector('#cf-logo-wrap');
+    const logo     = overlay.querySelector('#cf-logo');
+    const hint     = overlay.querySelector('#cf-hint');
+    const result   = overlay.querySelector('#cf-result');
+    let spun       = false;
 
-    coin.addEventListener('click', () => {
-      if(flipped) return;
-      flipped = true;
+    logoWrap.addEventListener('click', () => {
+      if(spun) return;
+      spun = true;
       hint.style.opacity = '0';
-      coin.classList.add('spinning');
+      logo.classList.add('spinning');
 
       setTimeout(() => {
         result.textContent = resultText;
         result.style.opacity = '1';
-
         setTimeout(() => {
           overlay.style.animation = 'cf-fadeout 0.5s ease forwards';
-          setTimeout(() => {
-            overlay.remove();
-            if(onDone) onDone();
-          }, 500);
+          setTimeout(() => { overlay.remove(); if(onDone) onDone(); }, 500);
         }, 1400);
-      }, 820);
+      }, 1100);
     });
   },
 
