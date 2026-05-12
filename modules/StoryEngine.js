@@ -558,20 +558,25 @@ const StoryEngine = {
       const screen = this._container.querySelector('.vn-screen');
       if(screen) {
         screen.style.cursor = 'pointer';
-        const handler = () => {
-          if(this._typewriterTimer) {
-            // Text ještě píše — skip na konec
-            clearInterval(this._typewriterTimer);
-            this._typewriterTimer = null;
-            const el = this._container.querySelector('.typewriter-text');
-            if(el) this._skipTypewriter(el);
-          } else {
-            // Text dočten — pokračuj
-            screen.removeEventListener('click', handler);
-            this._goToNode(node.next);
-          }
+        const MIN_DWELL = 400;
+        let dwellOk = false;
+        setTimeout(() => { dwellOk = true; }, MIN_DWELL);
+        const bindNext = () => {
+          screen.addEventListener('click', () => {
+            if(!dwellOk) return;
+            if(this._typewriterTimer) {
+              clearInterval(this._typewriterTimer);
+              this._typewriterTimer = null;
+              const el = this._container.querySelector('.typewriter-text');
+              if(el) this._skipTypewriter(el);
+              // Rebind po skip — hráč musí kliknout znovu pro pokračování
+              setTimeout(bindNext, 50);
+            } else {
+              this._goToNode(node.next);
+            }
+          }, { once: true });
         };
-        screen.addEventListener('click', handler, { once: true });
+        bindNext();
       }
     }
   },
@@ -770,19 +775,15 @@ const StoryEngine = {
     if(node.next) this._goToNode(node.next);
   },
 
-  // Cutscene jako textové snímky s pomlkami
-  // nodeBackground: fallback bg pokud frame nemá vlastní image
+  // Cutscene jako textové snímky — klik pro pokračování, pause = min. čekání
   _playFrames(frames, nextNodeId, nodeBackground) {
     let idx = 0;
     const nodeBgStyle = nodeBackground ? this._bgStyle(nodeBackground) : '';
     const show = () => {
       if(idx >= frames.length) {
         if(this._params?._returnToMenu) { Router.goto('menu'); return; }
-        // _setFlagOnReturn — nastav flag po dohraní cutsceny (v2017 mechanismus)
         if(this._params?._setFlagOnReturn) GameState.setFlag(this._params._setFlagOnReturn);
         if(nextNodeId) { this._goToNode(nextNodeId, true); return; }
-        // Žádný next — zkontroluj jestli aktuální node je ending (isEnding: true)
-        // Pokud ano, zobraz _renderEnd. Jinak jen menu.
         const curNode = this._currentNode;
         if(curNode?.isEnding || curNode?.endingId) {
           this._renderEnd(curNode);
@@ -792,12 +793,10 @@ const StoryEngine = {
         return;
       }
       const f = frames[idx++];
-      // Priorita: frame.image → frame.background → node.background
       const bgStyle = f.image
         ? `background-image:url('${f.image}')`
         : (f.background ? this._bgStyle(f.background) : nodeBgStyle);
 
-      // Portrait ve scéně (pokud frame má speakera/portrait)
       const portraitKey = f.portrait || f.speaker;
       const portraitInfo = this._resolveSpeaker(portraitKey);
       const portraitSide = portraitInfo?.side || 'left';
@@ -806,23 +805,36 @@ const StoryEngine = {
         ? `<div class="vn-portrait vn-portrait--${portraitSide} vn-portrait--active"
              style="background-image:url('assets/images/portraits/${portraitFile}.png')"></div>`
         : '';
+      const speakerHtml = (f.speaker || f.portrait)
+        ? `<div class="vn-nameplate"><span class="vn-nameplate-dot"></span>${(f.speaker||f.portrait).toUpperCase()}</div>`
+        : '';
 
+      this._addStyles();
       this._container.innerHTML = `
         <div class="vn-screen fade-in" style="cursor:pointer">
-          <div class="vn-bg" style="${bgStyle}">
-            <div class="vn-bg-overlay"></div>
-          </div>
+          <div class="vn-bg" style="${bgStyle}"><div class="vn-bg-overlay"></div></div>
           ${portraitHtml}
           <div class="vn-panel">
+            ${speakerHtml}
             <div class="vn-text">${f.text || ''}</div>
-            <div class="vn-tap">▶ KLIKNI PRO POKRAČOVÁNÍ</div>
+            <div class="vn-tap">▶</div>
           </div>
         </div>`;
-      this._addStyles();
-      const advance = () => { clearTimeout(timer); show(); };
-      const timer = f.pause ? setTimeout(advance, f.pause) : null;
-      this._container.querySelector('.vn-screen')
-        ?.addEventListener('click', advance, { once: true });
+
+      // pause = minimální čekání před klikem, poté uživatel sám pokračuje
+      const MIN_DWELL = f.pause ?? 400;
+      let ready = false;
+      const bindAdvance = () => {
+        this._container.querySelector('.vn-screen')?.addEventListener('click', () => {
+          if(ready) show();
+        }, { once: true });
+      };
+      bindAdvance();
+      setTimeout(() => {
+        ready = true;
+        // Rebind v případě že klik přišel dřív než dwell
+        bindAdvance();
+      }, MIN_DWELL);
     };
     show();
   },
@@ -947,9 +959,14 @@ const StoryEngine = {
 
   // ── STYLY ─────────────────────────────────────────────────────────────────
   _addStyles() {
-    if(document.getElementById('story-styles')) return;
-    const style = document.createElement('style');
-    style.id = 'story-styles';
+    let style = document.getElementById('story-styles');
+    if(!style) {
+      style = document.createElement('style');
+      style.id = 'story-styles';
+      document.head.appendChild(style);
+    }
+    if(style.dataset.v === '31') return; // version tag — bump when CSS changes
+    style.dataset.v = '31';
     style.textContent = `
       /* ═══ CONFLUX STORY ENGINE v2030 — VN LAYOUT ═══ */
       :root {
@@ -1052,22 +1069,72 @@ const StoryEngine = {
         width: 100%;
         height: var(--vn-panel-h);
         min-height: unset;
-        background: rgba(4,6,8,0.94);
-        border-top: 1px solid #1a2230;
-        padding: 16px 28px 20px;
-        display: flex; flex-direction: column; gap: 10px;
-        animation: vnSlideUp 0.3s ease;
+        background:
+          repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 3px,
+            rgba(255,255,255,0.012) 3px,
+            rgba(255,255,255,0.012) 4px
+          ),
+          rgba(2,5,8,0.97);
+        border-top: 1px solid #1e2c3a;
+        box-shadow: inset 0 1px 0 rgba(79,163,224,0.08), 0 -8px 32px rgba(0,0,0,0.6);
+        padding: 14px 36px 14px 20px;
+        display: flex; flex-direction: column; gap: 8px;
+        animation: vnSlideUp 0.25s ease;
         box-sizing: border-box;
         overflow: hidden;
+      }
+      /* Thin faction-accent left border */
+      .vn-panel::before {
+        content: '';
+        position: absolute;
+        left: 0; top: 0; bottom: 0;
+        width: 3px;
+        background: linear-gradient(to bottom, #4fa3e0 0%, rgba(79,163,224,0.15) 100%);
+      }
+      /* Corner bracket top-right */
+      .vn-panel::after {
+        content: '';
+        position: absolute;
+        top: 0; right: 0;
+        width: 20px; height: 20px;
+        border-top: 1px solid #1e2c3a;
+        border-right: 1px solid #1e2c3a;
+        pointer-events: none;
+      }
+
+      /* ── NAMEPLATE (speaker name above text) ── */
+      .vn-nameplate {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: var(--font-px);
+        font-size: 6px;
+        color: #4fa3e0;
+        letter-spacing: 2px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid rgba(79,163,224,0.15);
+        margin-bottom: 2px;
+      }
+      .vn-nameplate-dot {
+        display: inline-block;
+        width: 5px; height: 5px;
+        background: #4fa3e0;
+        border-radius: 50%;
+        box-shadow: 0 0 6px #4fa3e0;
+        flex-shrink: 0;
       }
 
       /* ── TEXT IN PANEL ── */
       .vn-text {
         font-family: var(--font-vt);
-        font-size: 20px;
+        font-size: 22px;
         color: var(--text);
-        line-height: 1.65;
-        max-width: 760px;
+        line-height: 1.6;
+        max-width: 800px;
+        flex: 1;
       }
       .vn-speaker {
         display: block;
@@ -1077,7 +1144,7 @@ const StoryEngine = {
         letter-spacing: 2px;
         margin-bottom: 4px;
       }
-      .vn-dialog-line { display: flex; flex-direction: column; gap: 2px; }
+      .vn-dialog-line { display: flex; flex-direction: column; gap: 4px; }
       .vn-dialog-line + .vn-dialog-line { margin-top: 8px; }
 
       /* ── CHOICES ── */
@@ -1122,12 +1189,14 @@ const StoryEngine = {
 
       /* ── TAP HINT ── */
       .vn-tap {
+        position: absolute;
+        bottom: 12px; right: 14px;
         font-family: var(--font-px);
-        font-size: 6px;
-        color: var(--dim);
-        letter-spacing: 2px;
-        align-self: flex-end;
-        animation: blink 1.4s ease infinite;
+        font-size: 7px;
+        color: rgba(79,163,224,0.5);
+        letter-spacing: 1px;
+        animation: blink 1.2s ease-in-out infinite;
+        pointer-events: none;
       }
 
       /* ── SETUP TEXT (before choices in choice nodes) ── */
@@ -1312,7 +1381,6 @@ const StoryEngine = {
         opacity: 0.8;
       }
 `;
-    document.head.appendChild(style);
   },
 
   // ── DESTROY ───────────────────────────────────────────────────────────────
@@ -1532,10 +1600,11 @@ const StoryEngine = {
       const panel = this._container.querySelector('.vn-panel');
       if(panel) {
         panel.innerHTML = `
+          ${speaker ? `<div class="vn-nameplate"><span class="vn-nameplate-dot"></span>${speaker.toUpperCase()}</div>` : ''}
           <div class="vn-dialog-line vn-line-active">
-            ${speaker ? `<span class="vn-speaker">${speaker.toUpperCase()}</span>` : ''}
             <span class="vn-text typewriter-text" data-full="${text.replace(/"/g,'&quot;')}"></span>
-          </div>`;
+          </div>
+          <div class="vn-tap">▶</div>`;
         // Update portréty ve scéně podle aktuálního speakera
         updatePortraits(speaker);
         // Spusť typewriter pro tento řádek
