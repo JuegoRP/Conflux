@@ -145,10 +145,21 @@ async function boot() {
 
 // ── EventBus listener — bitva skončila ────────────────────────────────────────
 EventBus.on('battle:ended', ({ won, nodeId }) => {
-  // StoryEngine zpracuje výsledek přes svůj vlastní listener
-  // Tady jen trackujeme globální statistiky
-  GameState.campaign.battlesTotal++;
-  if(won) GameState.campaign.battlesWon++;
+  GameState.campaign.battlesTotal = (GameState.campaign.battlesTotal || 0) + 1;
+  if(won) GameState.campaign.battlesWon = (GameState.campaign.battlesWon || 0) + 1;
+});
+
+// Autosave po každém přechodu bitva → příběh (zachová playstyle, flags, alignment)
+EventBus.on('router:change', ({ to, from }) => {
+  if(to === 'story' && from === 'battle') {
+    // Dáme StoryEngine čas aktualizovat currentNode, pak uložíme
+    setTimeout(() => {
+      if(GameState.campaign?.currentNode) {
+        const slot = GameState._lastSaveSlot ?? 0;
+        try { SaveManager.save(slot); } catch(e) {}
+      }
+    }, 700);
+  }
 });
 
 // ── EventBus listener — přepni hudbu při vstupu do aktu ──────────────────────

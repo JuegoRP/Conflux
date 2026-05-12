@@ -711,3 +711,23 @@ input:focus, textarea:focus {
   0%, 100% { transform: scale(1) rotate(0deg);     opacity: 0.6; }
   50%       { transform: scale(1.05) rotate(0.5deg); opacity: 0.9; }
 }
+
+/* ── LOADING OVERLAY ──────────────────────────────────────────────── */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 6, 8, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal);
+  pointer-events: none;
+}
+
+.loading-text {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: #3d4a5c;
+  letter-spacing: 4px;
+  animation: blink 1.1s step-end infinite;
+}

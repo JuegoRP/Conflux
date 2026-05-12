@@ -290,6 +290,10 @@ const StoryEngine = {
     console.log('[StoryEngine] _goToNode:', nodeId, '| type:', node.type);
     GameState.campaign.currentNode = nodeId;
     GameState.markVisited(nodeId);
+
+    // Preload backgrounds for current + next node (non-blocking)
+    this._preloadNodeAssets(node);
+    if(node.next && this._nodes[node.next]) this._preloadNodeAssets(this._nodes[node.next]);
     this._currentNode = node;
     // Ulož endingId pro letter system
     if(node.endingId) {
@@ -1302,31 +1306,38 @@ const StoryEngine = {
 
   // ── END NODE ──────────────────────────────────────────────────────────────
   _renderEnd(node) {
-    const id = (GameState.buildIdentityProfile && GameState.buildIdentityProfile()) || {};
-    const endingType = id.endingType || 'fragmentation';
-    const endColor = { architect:'#4fa3e0', roots:'#50e0b8', assimilation:'#c8a84b',
-      flood:'#e04f6a', fragmentation:'#607080' }[endingType] || '#c8d6e5';
+    const endingId = node.endingId || GameState.identity?.endingType || 'fragmentation';
+    if(!GameState.identity) GameState.identity = {};
+    GameState.identity.endingType = endingId;
 
-    const rawText = node.text || 'the dance continues';
-    const lines   = rawText.split('\n');
-    const title   = lines[0] || '';
-    const body    = lines.slice(1).join('\n').trim();
+    const endColor = {
+      architect:'#4fa3e0', roots:'#50e0b8', assimilation:'#c8a84b',
+      flood:'#e04f6a', fragmentation:'#607080',
+      protokol:'#4fa3e0', koreny:'#50e0b8', most:'#c8a84b', za_ramem:'#9b59b6',
+    }[endingId] || '#c8d6e5';
 
-    this._container.innerHTML = '<div class="story-screen fade-in" style="align-items:center;justify-content:center;background:#080a0c">'
-      + '<div style="max-width:680px;width:100%;padding:40px;text-align:center">'
-      + '<div style="font-family:\'Press Start 2P\',monospace;font-size:14px;color:' + endColor + ';letter-spacing:6px;'
-      + 'text-shadow:0 0 30px ' + endColor + ';margin-bottom:2rem">' + title + '</div>'
-      + '<div style="font-family:\'VT323\',monospace;font-size:18px;line-height:1.8;color:#607080;margin-bottom:2.5rem;white-space:pre-line">' + body + '</div>'
-      + '<div style="font-family:\'VT323\',monospace;font-size:16px;line-height:1.9;color:#3d4a5c;font-style:italic;margin-bottom:2.5rem">' + (id.profileText || '') + '</div>'
-      + '<button id="btn-end-menu" style="font-family:\'Press Start 2P\',monospace;font-size:8px;padding:12px 28px;background:transparent;border:2px solid ' + endColor + ';color:' + endColor + ';cursor:pointer;margin-top:1rem"> ← NOVÝ CYKLUS</button>'
-      + '</div></div>';
+    const rawText = node.text || '';
+    const title   = rawText.split('\n')[0] || 'CYKLUS KONČÍ';
 
-    this._addStyles && this._addStyles();
-    this._container.querySelector('#btn-end-menu')
-      ?.addEventListener('click', () => {
-        GameState.clearCheckpoint && GameState.clearCheckpoint();
-        Router.goto('menu');
-      });
+    this._container.innerHTML = `
+      <div class="story-screen fade-in" style="align-items:center;justify-content:center;background:#040507;cursor:pointer" id="end-screen">
+        <div style="text-align:center">
+          <div style="font-family:'Press Start 2P',monospace;font-size:clamp(10px,2vw,16px);color:${endColor};
+            letter-spacing:6px;text-shadow:0 0 30px ${endColor}40;animation:fadeIn 2s ease forwards">${title}</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#2a3545;letter-spacing:3px;
+            margin-top:3rem;animation:blink 1.5s ease-in-out infinite">POKRAČOVAT →</div>
+        </div>
+      </div>`;
+
+    this._addStyles();
+
+    const goToLetter = () => {
+      Router.goto('letter', { endingId });
+    };
+
+    const timer = setTimeout(goToLetter, 3000);
+    this._container.querySelector('#end-screen')
+      ?.addEventListener('click', () => { clearTimeout(timer); goToLetter(); }, { once: true });
   },
 
   // ── DIALOG (portrait + lines + optional text input) ──────────────────────
@@ -1727,6 +1738,21 @@ const StoryEngine = {
     this._addStyles();
     this._container.querySelector('#reward-next')
       ?.addEventListener('click', () => { if(node.next) this._goToNode(node.next, true); });
+  },
+
+  // ── ASSET PRELOAD ─────────────────────────────────────────────────────────
+  _preloadNodeAssets(node) {
+    if(!node) return;
+    const urls = [];
+    if(node.background) urls.push(this._bgUrl(node.background));
+    if(node.image)      urls.push(node.image);
+    // Portrait(s) from dialog lines
+    const portraits = [node.portrait, ...(node.lines||[]).map(l => l.speaker)].filter(Boolean);
+    portraits.forEach(p => {
+      const info = this._resolveSpeaker(p);
+      if(info?.portrait) urls.push(`assets/images/portraits/${info.portrait}.png`);
+    });
+    urls.filter(Boolean).forEach(url => { new Image().src = url; });
   },
 
   destroy() {

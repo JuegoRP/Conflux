@@ -184,6 +184,10 @@ const LetterEngine = {
   // KONEC HRY
   // ═══════════════════════════════════════════════════════════════
 
+  destroy() {
+    // No persistent timers to clean up — typewriter uses plain setTimeout
+  },
+
   _handleEnd() {
     Router.goto('credits');
   },

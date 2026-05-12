@@ -2,6 +2,7 @@ import GameState        from '../engine/GameState.js';
 import EventBus         from '../engine/EventBus.js';
 import AudioSystem      from './AudioSystem.js';
 import CorruptionVisuals from './CorruptionVisuals.js';
+import Router            from '../engine/Router.js';
 
 /**
  * Cutscene — CONFLUX
@@ -28,6 +29,30 @@ const Cutscene = {
   // ═══════════════════════════════════════════════════════════════
   // HLAVNÍ VSTUP
   // ═══════════════════════════════════════════════════════════════
+
+  // Vstupní bod pro Router.goto('cutscene', params)
+  init(container, params = {}) {
+    this._container = container;
+    this._skipAll   = false;
+    const node = {
+      frames:     params.frames || (params.text ? [{ text: params.text }] : [{ text: '' }]),
+      background: params.background,
+      music:      params.music,
+    };
+    this.play(node, container).then(() => {
+      if(params.nextModule) {
+        Router.goto(params.nextModule, params.nextParams || {});
+      } else if(params.next) {
+        Router.goto('story', { nodeId: params.next });
+      }
+    });
+  },
+
+  destroy() {
+    this._skipAll = true;
+    clearTimeout(this._typeTimer);
+    try { this._cleanup?.(); } catch(e) {}
+  },
 
   /**
    * Přehraj cutscénu z node objektu (campaign.json).
