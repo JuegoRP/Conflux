@@ -105,7 +105,7 @@ const BattleSystem = {
     this['_tut_first_attack_done'] = false;
     this['_tut_tutorial_end'] = false;
 
-    container.innerHTML = `<div class="b-loading"><span>A cycle begins...</span></div>`;
+    container.innerHTML = `<div class="b-loading"><span>Cyklus pokračuje.</span></div>`;
     injectCardStyles();
     this._injectStyles();
     AudioSystem.playBattleMusic(!!params.freeBattle);
@@ -118,7 +118,7 @@ const BattleSystem = {
     let enemy = null;
     if(params.selfBattle) {
       enemy = {
-        name: 'Pozorovatel — druhá strana', faction:'hybrid', emoji:'🪞',
+        name: 'Pozorovatel — druhá strana', faction:'hybrid',
         lp: GameState.player.lp || 10000,
         deck: [...(GameState.player.collection || [])],
         desc: 'Naučil se od tebe věci které ty sám nevíš. Teď přichází vrátit to co se naučil — přímo do obličeje.',
@@ -140,31 +140,123 @@ const BattleSystem = {
     } catch(err) {
       console.error('[BattleSystem] _initState selhalo:', err);
       container.innerHTML = `<div style="color:#e04f6a;font-family:monospace;padding:40px;font-size:13px;">
-        <div style="font-size:18px;margin-bottom:16px">⚠ Chyba inicializace boje</div>
+        <div style="font-size:18px;margin-bottom:16px">Chyba inicializace boje</div>
         <pre>${err.message}</pre>
         <button onclick="Router.goto('menu')" style="margin-top:20px;padding:8px 16px;cursor:pointer">← Zpět do menu</button>
       </div>`;
       return;
     }
 
-    setTimeout(() => {
-      // Coinflip oznámení
-      const who = this._state.coinflipResult;
-      const msg = who === 'player' ? 'Začínáš ty.' : 'Začíná protivník.';
-      container.innerHTML = `<div class="b-loading"><span>${msg}</span></div>`;
-      setTimeout(() => {
-        this._render();
-        this._bindEvents();
-        // Tutorial: Monyra mluví na začátku boje
-        this._checkTutorial('battle_start', () => {
-          this._startTurn();
-        });
-      }, 1000);
-    }, 1200);
+    // Vykresli pole, pak zobraz coinflip overlay nad ním
+    this._render();
+    this._bindEvents();
+    this._showCoinflip(container, () => {
+      this._checkTutorial('battle_start', () => {
+        this._startTurn();
+      });
+    });
   },
 
   _defaultEnemy() {
     return { id:"default_enemy", name:"Entita Systému", faction:"synth", lp:10000, deck:[] };
+  },
+
+  // ── COINFLIP OVERLAY ────────────────────────────────────────────────────────
+  _showCoinflip(container, onDone) {
+    const who = this._state.coinflipResult;
+    const resultText = who === 'player' ? 'Začínáš ty.' : 'Začíná protivník.';
+
+    const overlay = document.createElement('div');
+    overlay.className = 'cf-overlay';
+    overlay.innerHTML = `
+      <div class="cf-inner">
+        <div class="cf-coin" id="cf-coin">
+          <div class="cf-face cf-face-front">CONFLUX</div>
+          <div class="cf-face cf-face-back">CONFLUX</div>
+        </div>
+        <div class="cf-hint" id="cf-hint">klikni</div>
+        <div class="cf-result" id="cf-result"></div>
+      </div>`;
+
+    const style = document.createElement('style');
+    style.textContent = `
+      .cf-overlay {
+        position: absolute; inset: 0; z-index: 90;
+        background: rgba(4, 6, 8, 0.72);
+        display: flex; align-items: center; justify-content: center;
+        backdrop-filter: blur(3px);
+        animation: cf-fadein 0.4s ease;
+      }
+      @keyframes cf-fadein { from{opacity:0} to{opacity:1} }
+      @keyframes cf-fadeout { from{opacity:1} to{opacity:0} }
+      .cf-inner {
+        display: flex; flex-direction: column;
+        align-items: center; gap: 20px;
+      }
+      .cf-coin {
+        width: 88px; height: 88px;
+        position: relative;
+        transform-style: preserve-3d;
+        perspective: 600px;
+        cursor: pointer;
+      }
+      .cf-face {
+        position: absolute; inset: 0;
+        border-radius: 50%;
+        border: 1px solid rgba(100, 180, 240, 0.35);
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'Press Start 2P', monospace;
+        font-size: 6px; letter-spacing: 2px;
+        color: rgba(100, 180, 240, 0.6);
+        backface-visibility: hidden;
+        background: rgba(4, 8, 16, 0.6);
+        transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .cf-face-back { transform: rotateY(180deg); }
+      .cf-coin.spinning .cf-face-front { transform: rotateY(720deg); }
+      .cf-coin.spinning .cf-face-back  { transform: rotateY(900deg); }
+      .cf-hint {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 10px; color: rgba(96, 128, 160, 0.5);
+        letter-spacing: 3px;
+        transition: opacity 0.3s;
+      }
+      .cf-result {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 13px; letter-spacing: 2px;
+        color: rgba(200, 215, 230, 0.9);
+        opacity: 0; min-height: 1.4em;
+        transition: opacity 0.4s ease;
+      }
+    `;
+    document.head.appendChild(style);
+    container.style.position = 'relative';
+    container.appendChild(overlay);
+
+    const coin    = overlay.querySelector('#cf-coin');
+    const hint    = overlay.querySelector('#cf-hint');
+    const result  = overlay.querySelector('#cf-result');
+    let flipped   = false;
+
+    coin.addEventListener('click', () => {
+      if(flipped) return;
+      flipped = true;
+      hint.style.opacity = '0';
+      coin.classList.add('spinning');
+
+      setTimeout(() => {
+        result.textContent = resultText;
+        result.style.opacity = '1';
+
+        setTimeout(() => {
+          overlay.style.animation = 'cf-fadeout 0.5s ease forwards';
+          setTimeout(() => {
+            overlay.remove();
+            if(onDone) onDone();
+          }, 500);
+        }, 1400);
+      }, 820);
+    });
   },
 
   // Cache pro enemies.json — načteme jednou, uchováme
