@@ -198,8 +198,8 @@ export function renderCardEl(card, size = 'md', opts = {}) {
   const statsHtml = isMonster
     ? `<div class="cx-lg-stats">
          <div class="cx-lg-stat cx-lg-atk-block">
-           <span class="cx-lg-stat-label">ATK</span>
            <span class="cx-lg-stat-val">${card.atk || 0}</span>
+           <span class="cx-lg-stat-label">ATK</span>
          </div>
          <div class="cx-lg-stat cx-lg-def-block">
            <span class="cx-lg-stat-label">DEF</span>
@@ -340,7 +340,7 @@ export function injectCardStyles() {
       object-fit:cover;
       object-position:center 30%;
       z-index:1;pointer-events:none;
-      clip-path:inset(17% 9% 23% 9%);
+      clip-path:inset(15% 7% 21% 7%);
     }
     .cx-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:2;pointer-events:none;}
     .cx-content{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;pointer-events:none;}
@@ -424,10 +424,10 @@ export function injectCardStyles() {
     }
     .cx-lg .cx-zone-stats{
       height:9%;display:flex;align-items:center;justify-content:space-around;
-      padding:0 13%;
+      padding:0 13% 2%;
     }
-    /* ATK / DEF — horizontal: [label] [value]   [label] [value] */
-    .cx-lg-stats{display:flex;gap:20px;width:100%;justify-content:center;align-items:baseline;}
+    /* ATK / DEF — [value ATK]   [DEF value] */
+    .cx-lg-stats{display:flex;gap:24px;width:100%;justify-content:center;align-items:baseline;}
     .cx-lg-stat{
       display:flex;flex-direction:row;align-items:baseline;gap:5px;
     }
