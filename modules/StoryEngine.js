@@ -564,7 +564,7 @@ const StoryEngine = {
             clearInterval(this._typewriterTimer);
             this._typewriterTimer = null;
             const el = this._container.querySelector('.typewriter-text');
-            if(el) el.textContent = el.dataset.full || '';
+            if(el) this._skipTypewriter(el);
           } else {
             // Text dočten — pokračuj
             screen.removeEventListener('click', handler);
@@ -854,17 +854,80 @@ const StoryEngine = {
     if(!el) return;
 
     clearInterval(this._typewriterTimer);
-    const full = el.dataset.full || '';
-    let i = 0;
-    el.textContent = '';
+    this._stopLiveGlitch();
 
+    const full = el.dataset.full || '';
+    const corrLevel = GameState.corruption?.level ?? 0;
+
+    // Build one <span> per character — needed for live glitch targeting
+    el.innerHTML = '';
+    const spans = Array.from(full).map(ch => {
+      const s = document.createElement('span');
+      s.dataset.char = ch;
+      s.textContent = ' '; // placeholder while not yet typed
+      el.appendChild(s);
+      return s;
+    });
+
+    let i = 0;
     this._typewriterTimer = setInterval(() => {
-      el.textContent += full[i++] ?? '';
-      if(i >= full.length) {
+      if(i < spans.length) {
+        spans[i].textContent = spans[i].dataset.char;
+        i++;
+      } else {
         clearInterval(this._typewriterTimer);
         this._typewriterTimer = null;
+        if(corrLevel > 0) this._startLiveGlitch(spans, corrLevel);
       }
     }, 42);
+  },
+
+  _glitchTimer:  null,
+  _glitchChars: '!@#%░▒▓<>[]{}|¿×÷±~^*§',
+
+  _startLiveGlitch(spans, corrLevel) {
+    clearInterval(this._glitchTimer);
+    // 1 simultaneous glitch at level 1, up to 3 at level 5+
+    const maxActive = Math.min(Math.ceil(corrLevel * 0.6), 3);
+    // Interval: 160ms at level 1, 70ms at level 5
+    const ms = Math.max(70, 180 - corrLevel * 22);
+    const candidates = spans.filter(s => s.dataset.char.trim());
+    if(!candidates.length) return;
+
+    this._glitchTimer = setInterval(() => {
+      for(let g = 0; g < maxActive; g++) {
+        const span = candidates[Math.floor(Math.random() * candidates.length)];
+        if(!span || span._glitching) continue;
+        span._glitching = true;
+        span.textContent = this._glitchChars[Math.floor(Math.random() * this._glitchChars.length)];
+        span.style.color = '#9b59b6';
+        span.style.opacity = '0.75';
+        setTimeout(() => {
+          span.textContent = span.dataset.char;
+          span.style.color = '';
+          span.style.opacity = '';
+          span._glitching = false;
+        }, 70 + Math.random() * 80);
+      }
+    }, ms);
+  },
+
+  _stopLiveGlitch() {
+    clearInterval(this._glitchTimer);
+    this._glitchTimer = null;
+  },
+
+  _skipTypewriter(el) {
+    // Reveal all spans instantly, then start glitch if corruption active
+    this._stopLiveGlitch();
+    const spans = el.querySelectorAll('span[data-char]');
+    if(spans.length) {
+      spans.forEach(s => { s.textContent = s.dataset.char; s.style.color = ''; s.style.opacity = ''; s._glitching = false; });
+      const corrLevel = GameState.corruption?.level ?? 0;
+      if(corrLevel > 0) this._startLiveGlitch(Array.from(spans), corrLevel);
+    } else {
+      el.textContent = el.dataset.full || '';
+    }
   },
 
   // ── HELPERS ───────────────────────────────────────────────────────────────
@@ -1493,7 +1556,7 @@ const StoryEngine = {
         clearInterval(this._typewriterTimer);
         this._typewriterTimer = null;
         const el = this._container.querySelector('.typewriter-text');
-        if(el) el.textContent = el.dataset.full || '';
+        if(el) this._skipTypewriter(el);
         return;
       }
       if(idx < effective.length - 1) {
@@ -1769,6 +1832,7 @@ const StoryEngine = {
   destroy() {
     clearInterval(this._typewriterTimer);
     this._typewriterTimer = null;
+    this._stopLiveGlitch();
     this._unsubscribers.forEach(fn => fn());
     this._unsubscribers = [];
   }
