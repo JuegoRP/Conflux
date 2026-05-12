@@ -176,9 +176,10 @@ const BattleSystem = {
         opacity: 1; transition: opacity 0.5s ease;
       }
       .cf-transition-text {
-        font-family: 'Share Tech Mono', monospace;
-        font-size: 15px; letter-spacing: 7px;
-        color: rgba(200,215,230,0.6);
+        font-family: 'Press Start 2P', monospace;
+        font-size: clamp(12px, 2vw, 20px); letter-spacing: 4px;
+        color: rgba(200,215,230,0.7);
+        text-shadow: 3px 3px 0 rgba(79,163,224,0.15), -1px -1px 0 rgba(0,0,0,0.8);
       }
       .cf-overlay {
         position: fixed; inset: 0; z-index: 190;
