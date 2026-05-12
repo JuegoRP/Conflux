@@ -50,25 +50,21 @@ const AudioSystem = {
 
   playMusic(key, { loop = true, fadeIn = 1000 } = {}) {
     const url = GameState.getMusic(key);
-    if(!url) {
-      // Soubor zatím neexistuje — ticho je ok
+
+    // Always fade out whatever is playing before we switch
+    if(this._current?.audio && this._current.key !== key) {
+      this._fadeOut(this._current.audio, Math.min(fadeIn, 1200));
       this._current = null;
-      return;
     }
 
-    const audio = AssetManager.getAudio(key) || new Audio(url);
+    if(!url) return;
+
+    const audio = new Audio(url);
     audio.loop   = loop;
     audio.volume = 0;
 
-    // Zastav předchozí
-    if(this._current?.audio) {
-      this._fadeOut(this._current.audio, fadeIn);
-    }
-
     this._current = { key, audio };
     audio.play().catch(() => {});
-
-    // Fade in
     this._fadeTo(audio, this._musicVolume, fadeIn);
   },
 

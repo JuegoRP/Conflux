@@ -164,15 +164,16 @@ export function renderCardEl(card, size = 'md', opts = {}) {
     ].join('');
 
     const artHtml = artPath
-      ? `<img class="cx-art" src="${artPath}" onerror="this.style.display='none';var f=this.parentElement.querySelector('.cx-emoji-fallback');if(f)f.style.display='';" />`
+      ? `<img class="cx-art" src="${artPath}" onerror="this.style.display='none';var f=this.closest('.cx-card').querySelector('.cx-emoji-fallback');if(f)f.style.display='';" />`
       : '';
     const emojiHtml = `<span class="cx-emoji${artPath ? ' cx-emoji-fallback' : ''}" data-sprite-id="${card.id}">${card.emoji || '?'}</span>`;
 
     return `<div class="${cls}" style="--fc:${fc};--fbg:${fbg}" data-card-id="${card.id}">
+      ${artHtml}
       <img class="cx-frame" src="${frame}" onerror="this.style.display='none'" />
       <div class="cx-content cx-content-sm">
         <div class="cx-sm-emoji-wrap">
-          ${artHtml}${emojiHtml}
+          ${emojiHtml}
         </div>
         ${statsBottom}
       </div>
@@ -211,7 +212,12 @@ export function renderCardEl(card, size = 'md', opts = {}) {
     opts.used ? '<div class="cx-used-overlay"></div>' : '',
   ].join('');
 
+  const artHtmlLg = artPath
+    ? `<img class="cx-art" src="${artPath}" onerror="this.style.display='none';var f=this.closest('.cx-card').querySelector('.cx-emoji-fallback');if(f)f.style.display='';" />`
+    : '';
+
   return `<div class="${cls}" style="--fc:${fc};--fbg:${fbg}" data-card-id="${card.id}">
+    ${artHtmlLg}
     <img class="cx-frame" src="${frame}" onerror="this.style.display='none'" />
     <div class="cx-content">
       <div class="cx-zone-top">
@@ -219,7 +225,6 @@ export function renderCardEl(card, size = 'md', opts = {}) {
         <span class="cx-topid">#${String(card.id).padStart(3,'0')}</span>
       </div>
       <div class="cx-zone-art">
-        ${artPath ? `<img class="cx-art" src="${artPath}" onerror="this.style.display='none';var f=this.parentElement.querySelector('.cx-emoji-fallback');if(f)f.style.display='';" />` : ''}
         <span class="cx-emoji${artPath ? ' cx-emoji-fallback' : ''}" data-sprite-id="${card.id}">${card.emoji || '?'}</span>
         ${subHtml}
       </div>
@@ -309,29 +314,26 @@ export function injectCardStyles() {
       cursor:default;user-select:none;
     }
 
-    .cx-sm{width:80px;height:112px;}
-    .cx-md{width:100px;height:140px;}
-    .cx-lg{width:360px;height:504px;}
+    /* Card sizes — 2:3 ratio matching the frame PNGs (778×1168) */
+    .cx-sm{width:80px;height:120px;}
+    .cx-md{width:100px;height:150px;}
+    .cx-lg{width:336px;height:504px;}
 
-    .cx-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:1;pointer-events:none;}
-    .cx-content{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;pointer-events:none;}
+    /* Artwork sits below frame, frame sits below text content */
+    .cx-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;pointer-events:none;}
+    .cx-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:2;pointer-events:none;}
+    .cx-content{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;pointer-events:none;}
+
+    /* Hide emoji when artwork is present; onerror in JS restores it */
+    .cx-emoji-fallback{display:none;}
 
     /* SMALL CONTENT */
-    .cx-content-sm{padding:8% 10% 10%;}
+    .cx-content-sm{padding:20% 14% 8%;}
     .cx-sm-emoji-wrap{
       flex:1;display:flex;align-items:center;justify-content:center;
-      position:relative;overflow:hidden;
-      background:rgba(0,0,0,0.25);
-      border:1px solid rgba(255,255,255,0.08);
-      border-radius:3px;
     }
-    .cx-art{
-      position:absolute;inset:0;width:100%;height:100%;
-      object-fit:cover;z-index:0;border-radius:2px;
-    }
-    .cx-emoji-fallback{display:none;}
-    .cx-sm .cx-emoji{font-size:32px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.8));position:relative;z-index:1;}
-    .cx-md .cx-emoji{font-size:44px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.8));position:relative;z-index:1;}
+    .cx-sm .cx-emoji{font-size:28px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.8));}
+    .cx-md .cx-emoji{font-size:38px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.8));}
 
     .cx-sm-stats{
       display:flex;align-items:center;justify-content:center;gap:4px;
@@ -360,55 +362,58 @@ export function injectCardStyles() {
     .cx-sm .cx-sm-kind{font-size:6px;}
     .cx-md .cx-sm-kind{font-size:7px;}
 
-    /* LG CONTENT */
+    /* LG CONTENT — zones calibrated to actual frame pixel layout (778×1168):
+       top bar: y=60-220 (5-19%), art hole: y=220-880 (19-75%),
+       stats: y=880-960 (75-82%), desc: y=980-1160 (84-99%) */
     .cx-lg .cx-zone-top{
-      height:12%;
+      height:19%;
       display:flex;justify-content:space-between;align-items:center;
-      padding:3.5% 5% 0 18%;gap:8px;
+      padding:7% 8% 0 14%;gap:6px;
     }
     .cx-lg .cx-topname{
-      font-family:var(--mono);font-size:15px;font-weight:bold;
-      color:var(--text);text-shadow:0 1px 2px #000;
+      font-family:var(--mono);font-size:13px;font-weight:bold;
+      color:var(--text);text-shadow:0 1px 3px #000;
       max-width:75%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
     }
     .cx-lg .cx-topid{
-      font-family:var(--mono);font-size:10px;color:var(--dim);
+      font-family:var(--mono);font-size:9px;color:var(--dim);
+      text-shadow:0 1px 2px #000;
     }
     .cx-lg .cx-zone-art{
-      height:45%;position:relative;
+      height:56%;position:relative;
       display:flex;flex-direction:column;align-items:center;justify-content:center;
     }
-    .cx-lg .cx-emoji{font-size:120px;line-height:1;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.8));position:relative;z-index:1;}
+    .cx-lg .cx-emoji{font-size:100px;line-height:1;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.8));}
     .cx-lg .cx-subcat{
-      position:absolute;bottom:8px;right:16px;
-      font-family:var(--px);font-size:8px;letter-spacing:1.5px;
-      text-shadow:0 1px 2px #000;opacity:0.85;
+      position:absolute;bottom:6px;right:14px;
+      font-family:var(--px);font-size:7px;letter-spacing:1.5px;
+      text-shadow:0 1px 2px #000;opacity:0.8;
     }
     .cx-lg .cx-zone-stats{
-      height:12%;display:flex;align-items:center;justify-content:space-around;
-      padding:0 12%;
+      height:9%;display:flex;align-items:center;justify-content:space-around;
+      padding:0 14%;
     }
-    .cx-lg-stats{display:flex;gap:16px;width:100%;justify-content:space-around;}
+    .cx-lg-stats{display:flex;gap:12px;width:100%;justify-content:space-around;}
     .cx-lg-stat{
-      display:flex;flex-direction:column;align-items:center;gap:2px;
-      background:rgba(0,0,0,0.55);border-radius:3px;padding:4px 14px;min-width:70px;
+      display:flex;flex-direction:row;align-items:center;gap:6px;
+      background:rgba(0,0,0,0.5);border-radius:2px;padding:3px 12px;min-width:60px;
     }
-    .cx-lg-stat-label{font-family:var(--px);font-size:7px;letter-spacing:1.5px;color:#a0b0c0;}
-    .cx-lg-stat-val{font-family:var(--mono);font-size:22px;font-weight:bold;}
+    .cx-lg-stat-label{font-family:var(--px);font-size:7px;letter-spacing:1px;color:#a0b0c0;}
+    .cx-lg-stat-val{font-family:var(--mono);font-size:18px;font-weight:bold;}
     .cx-lg-atk-block .cx-lg-stat-val{color:var(--atk-color);text-shadow:0 1px 3px #000;}
     .cx-lg-def-block .cx-lg-stat-val{color:var(--def-color);text-shadow:0 1px 3px #000;}
     .cx-lg-kind-block{
       display:flex;align-items:center;justify-content:center;
-      background:rgba(0,0,0,0.55);border-radius:3px;padding:8px 24px;
+      background:rgba(0,0,0,0.5);border-radius:2px;padding:4px 20px;
     }
-    .cx-lg-kind-text{font-family:var(--px);font-size:12px;letter-spacing:2px;color:#e8dfc2;text-shadow:0 1px 2px #000;}
+    .cx-lg-kind-text{font-family:var(--px);font-size:10px;letter-spacing:2px;color:#e8dfc2;text-shadow:0 1px 2px #000;}
     .cx-lg .cx-zone-info{
-      height:28%;padding:8px 14% 10%;
+      height:16%;padding:4px 14% 6%;
       display:flex;align-items:flex-start;
     }
     .cx-lg .cx-desc{
-      font-family:var(--mono);font-size:12px;line-height:1.4;color:#c0d0e0;
-      text-shadow:0 1px 2px rgba(0,0,0,0.8);
+      font-family:var(--mono);font-size:11px;line-height:1.35;color:#c0d0e0;
+      text-shadow:0 1px 2px rgba(0,0,0,0.9);
     }
 
     /* States */
@@ -509,10 +514,10 @@ export function injectCardStyles() {
     .cx-f-corruption:not(.cx-scarred):hover{box-shadow:0 0 12px rgba(181,112,224,0.3);}
 
     /* Per-faction frame tuning */
-    .cx-lg.cx-f-synth .cx-zone-top{padding-top:3%;}
-    .cx-lg.cx-f-organic .cx-zone-top{padding-left:20%;}
-    .cx-lg.cx-f-corruption .cx-zone-top{padding-top:4%;}
-    .cx-lg.cx-k-spell .cx-zone-top,.cx-lg.cx-k-trap .cx-zone-top,.cx-lg.cx-k-arena .cx-zone-top{padding-left:16%;padding-top:3.5%;}
+    .cx-lg.cx-f-synth .cx-zone-top{padding-left:13%;}
+    .cx-lg.cx-f-organic .cx-zone-top{padding-left:15%;}
+    .cx-lg.cx-f-corruption .cx-zone-top{padding-left:14%;}
+    .cx-lg.cx-k-spell .cx-zone-top,.cx-lg.cx-k-trap .cx-zone-top,.cx-lg.cx-k-arena .cx-zone-top{padding-left:14%;}
 
     /* ═══ PREVIEW ═══ */
     .cp-layout{display:flex;gap:28px;align-items:flex-start;}

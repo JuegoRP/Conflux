@@ -676,16 +676,16 @@ const GameState = {
     act10_exploration:'assets/audio/bgm/story_dramatic.mp3',
 
     // ── SFX ──
-    sfx_card_play:    'assets/audio/sfx/card_play.mp3',
-    sfx_fusion:       'assets/audio/sfx/fusion.mp3',
-    sfx_clash:        'assets/audio/sfx/clash.mp3',
-    sfx_damage:       'assets/audio/sfx/damage.mp3',
-    sfx_direct_attack:'assets/audio/sfx/direct_attack.mp3',
-    sfx_spell:        'assets/audio/sfx/spell.mp3',
-    sfx_trap:         'assets/audio/sfx/trap.mp3',
-    sfx_arena:        'assets/audio/sfx/arena.mp3',
-    sfx_victory:      'assets/audio/sfx/victory.mp3',
-    sfx_defeat:       'assets/audio/sfx/defeat.mp3',
+    sfx_card_play:    'assets/audio/sfx/card_play.ogg',
+    sfx_fusion:       'assets/audio/sfx/fusion.ogg',
+    sfx_clash:        'assets/audio/sfx/clash.ogg',
+    sfx_damage:       'assets/audio/sfx/damage.ogg',
+    sfx_direct_attack:'assets/audio/sfx/direct_attack.ogg',
+    sfx_spell:        'assets/audio/sfx/spell.ogg',
+    sfx_trap:         'assets/audio/sfx/trap.ogg',
+    sfx_arena:        'assets/audio/sfx/arena.ogg',
+    sfx_victory:      'assets/audio/sfx/victory.ogg',
+    sfx_defeat:       'assets/audio/sfx/defeat.ogg',
   },
   getMusic(key) {
     return this._musicMap[key] || null;
