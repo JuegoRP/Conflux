@@ -229,7 +229,7 @@ const BattleSystem = {
         font-family: 'Share Tech Mono', monospace;
         font-size: 14px; letter-spacing: 2px;
         color: rgba(200, 215, 230, 0.95);
-        opacity: 0; min-height: 2.8em; text-align: center; line-height: 2;
+        opacity: 0; min-height: 1.4em; text-align: center;
         transition: opacity 0.4s ease;
       }
       .cf-cycle-screen {
