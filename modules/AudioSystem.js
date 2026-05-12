@@ -17,7 +17,7 @@ import AssetManager from '../engine/AssetManager.js';
 const AudioSystem = {
 
   _current:    null,    // aktuálně přehrávaná hudba { key, audio }
-  _sfxVolume:  0.8,
+  _sfxVolume:  1.0,
   _musicVolume:0.7,
   _muted:      false,
   _ctx:        null,    // AudioContext pro efekty
@@ -131,12 +131,13 @@ const AudioSystem = {
   // ZVUKOVÉ EFEKTY
   // ══════════════════════════════════════════════════════════════
 
-  playEffect(effectKey) {
-    const url = GameState.getMusic(effectKey);  // efekty mohou být v music mapě
-    if(!url || this._muted) return;
+  playEffect(effectKey, volume = null) {
+    if(GameState.settings?.sfx === false) return;
+    const url = GameState.getMusic(effectKey);
+    if(!url) return;
     try {
       const audio = new Audio(url);
-      audio.volume = this._sfxVolume;
+      audio.volume = Math.min(1, Math.max(0, volume ?? this._sfxVolume));
       audio.play().catch(() => {});
     } catch(e) {}
   },

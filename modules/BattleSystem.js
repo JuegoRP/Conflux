@@ -743,6 +743,7 @@ const BattleSystem = {
 
     const idx = s.fuseSelection.indexOf(handIdx);
     if(idx>=0) s.fuseSelection.splice(idx,1); else s.fuseSelection.push(handIdx);
+    EventBus.emit('sfx:play', 'card_select');
 
     // Pokud je selection prázdný → opusť fuse mód
     if(s.fuseSelection.length === 0) {
@@ -2691,9 +2692,16 @@ const BattleSystem = {
     if(!screen) return;
     const flash = document.createElement('div');
     flash.className = 'fuse-flash';
-    flash.innerHTML = '<div class="fuse-ring"></div><div class="fuse-text">✦ FÚZE</div>';
+    flash.innerHTML = `
+      <div class="fuse-glow"></div>
+      <div class="fuse-ring fuse-ring-1"></div>
+      <div class="fuse-ring fuse-ring-2"></div>
+      <div class="fuse-ring fuse-ring-3"></div>
+      <div class="fuse-text">✦ FÚZE ✦</div>
+    `;
     screen.appendChild(flash);
-    setTimeout(() => flash.remove(), 1200);
+    screen.classList.add('fuse-shake');
+    setTimeout(() => { flash.remove(); screen.classList.remove('fuse-shake'); }, 1800);
   },
 
   // ═══════════════════════════════════════════════════════════════════════
@@ -4608,12 +4616,19 @@ const BattleSystem = {
       @keyframes dmg-up{0%{opacity:1;transform:translate(-50%,-50%) scale(0.5)}20%{opacity:1;transform:translate(-50%,-80%) scale(1.2)}100%{opacity:0;transform:translate(-50%,-150%) scale(0.8)}}
 
       /* ═══ Fusion flash ═══ */
-      .fuse-flash{position:absolute;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;pointer-events:none;animation:fuse-fade 1.2s ease-out forwards;}
-      .fuse-ring{position:absolute;width:60px;height:60px;border-radius:50%;border:3px solid #b570e0;animation:fuse-expand 0.8s ease-out forwards;box-shadow:0 0 30px #b570e0,inset 0 0 20px rgba(181,112,224,0.3);}
-      .fuse-text{font-family:'Press Start 2P',monospace;font-size:14px;color:#e0d0f0;letter-spacing:6px;text-shadow:0 0 20px #b570e0;z-index:1;animation:fuse-text-in 0.6s ease-out;}
-      @keyframes fuse-expand{0%{width:60px;height:60px;opacity:1}100%{width:300px;height:300px;opacity:0}}
-      @keyframes fuse-fade{0%{background:rgba(181,112,224,0.3)}30%{background:rgba(181,112,224,0.1)}100%{background:transparent;opacity:0}}
-      @keyframes fuse-text-in{0%{transform:scale(0.3);opacity:0}40%{transform:scale(1.3);opacity:1}100%{transform:scale(1);opacity:1}}
+      .fuse-flash{position:absolute;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;pointer-events:none;animation:fuse-fade 1.8s ease-out forwards;}
+      .fuse-glow{position:absolute;inset:0;background:radial-gradient(circle,rgba(181,112,224,0.55) 0%,rgba(155,89,182,0.25) 40%,transparent 70%);animation:fuse-glow-in 0.3s ease-out;}
+      .fuse-ring{position:absolute;border-radius:50%;border:2px solid #b570e0;box-shadow:0 0 20px #b570e0,0 0 40px rgba(181,112,224,0.4);}
+      .fuse-ring-1{width:80px;height:80px;animation:fuse-expand 1.4s cubic-bezier(0.2,0.8,0.4,1) forwards;}
+      .fuse-ring-2{width:80px;height:80px;border-color:#d0a0f8;animation:fuse-expand 1.4s cubic-bezier(0.2,0.8,0.4,1) 0.12s forwards;opacity:0.8;}
+      .fuse-ring-3{width:80px;height:80px;border-color:#9060c0;animation:fuse-expand 1.4s cubic-bezier(0.2,0.8,0.4,1) 0.25s forwards;opacity:0.5;}
+      .fuse-text{font-family:'Press Start 2P',monospace;font-size:15px;color:#f0e8ff;letter-spacing:8px;text-shadow:0 0 20px #b570e0,0 0 50px rgba(181,112,224,0.8),0 0 80px rgba(155,89,182,0.5);z-index:1;animation:fuse-text-in 0.9s cubic-bezier(0.2,0.8,0.4,1);}
+      @keyframes fuse-expand{0%{width:80px;height:80px;opacity:1}100%{width:600px;height:600px;opacity:0}}
+      @keyframes fuse-fade{0%{background:rgba(181,112,224,0.45)}25%{background:rgba(181,112,224,0.2)}100%{background:transparent;opacity:0}}
+      @keyframes fuse-glow-in{0%{opacity:0}30%{opacity:1}100%{opacity:0}}
+      @keyframes fuse-text-in{0%{transform:scale(0.1) translateY(30px);opacity:0}25%{transform:scale(1.2);opacity:1}60%{transform:scale(1);opacity:1}100%{transform:scale(1.05);opacity:0.6}}
+      @keyframes fuse-shake{0%,100%{transform:none}10%,30%,50%,70%{transform:translateX(-5px) rotate(-0.4deg)}20%,40%,60%,80%{transform:translateX(5px) rotate(0.4deg)}}
+      .fuse-shake{animation:fuse-shake 0.45s ease-out;}
 
       /* ═══ Attack particles ═══ */
       .atk-particle{position:absolute;width:6px;height:6px;border-radius:50%;background:#ff9a55;box-shadow:0 0 8px #ff9a55;z-index:50;pointer-events:none;animation:atk-fly 0.5s ease-out forwards;}

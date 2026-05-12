@@ -69,6 +69,8 @@ async function boot() {
   EventBus.on('sfx:play', (type) => {
     const sfxMap = {
       card_play:     'sfx_card_play',
+      card_select:   'sfx_card_play',
+      click:         'sfx_card_play',
       fusion:        'sfx_fusion',
       clash:         'sfx_clash',
       damage:        'sfx_damage',
@@ -79,7 +81,10 @@ async function boot() {
       victory:       'sfx_victory',
       defeat:        'sfx_defeat',
     };
-    AudioSystem.playEffect(sfxMap[type] || ('sfx_' + type));
+    const key = sfxMap[type] || ('sfx_' + type);
+    // Speciální zvuky hrají vždy naplno
+    const loud = type === 'fusion' || type === 'victory' || type === 'defeat';
+    AudioSystem.playEffect(key, loud ? 1.0 : null);
   });
 
   // 4. Asset manager + SpriteSheet
@@ -115,9 +120,11 @@ async function boot() {
   document.addEventListener('click',   resumeAudio);
   document.addEventListener('keydown', resumeAudio);
 
-  // Emit ui:click pro audio feedback
+  // ui:click → lehký klik zvuk pro UI interakce
+  EventBus.on('ui:click', () => AudioSystem.playEffect('sfx_card_play', 0.35));
+
   document.addEventListener('click', e => {
-    if(e.target.closest('button, [data-hand], .m-btn, .db-card-item')) {
+    if(e.target.closest('button, [data-hand], .m-btn, .db-card-item, .vn-screen, .cx-card')) {
       EventBus.emit('ui:click');
     }
   });
