@@ -772,7 +772,6 @@ const BattleSystem = {
     const allIds = [...s.fuseSelection.map(i=>s.pHand[i].id), fieldCard.card.id];
     const result = findFusion(allIds);
     if(result) this._showFusePreview(result, s.fuseSelection, fieldSlot);
-    else this._log('Tato kombinace netvoří fúzi.','warn');
   },
 
   _showFusePreview(result, handIdxs, fieldSlot, isExperimental=false) {
@@ -3184,8 +3183,13 @@ const BattleSystem = {
     }
 
     if(s.fuseSelection.length > 0) {
-      const names = s.fuseSelection.map(i => s.pHand[i]?.name || '?').join(' + ');
-      return `⚗ ${names}`;
+      const ids = s.fuseSelection.map(i => s.pHand[i]?.id).filter(Boolean);
+      const result = ids.length >= 2 ? findFusion(ids) : null;
+      if(result) {
+        const names = s.fuseSelection.map(i => s.pHand[i]?.name || '?').join(' + ');
+        return `⚗ ${names}`;
+      }
+      return 'RUKA · vyber karty';
     }
 
     if(s.selectedHandIdx !== null) {
@@ -3471,12 +3475,16 @@ const BattleSystem = {
       return `<button class="btn btn-cancel" id="btn-cancel-atk">ZRUSIT</button>
               <button class="btn btn-main" id="btn-end-turn">KONEC TAHU</button>`;
     }
-    // Fúze mód — jen pokud je validní kombinace, jinak pouze ZRUSIT
+    // Fúze mód — zobraz tlačítka jen pokud je platná kombinace
     if(s.fuseSelection.length > 0) {
       const ids = s.fuseSelection.map(i => s.pHand[i]?.id).filter(Boolean);
-      const result = findFusion(ids);
-      return `${result ? `<button class="btn btn-main" id="btn-fuse-go">FUZOVAT</button>` : ''}
-        <button class="btn btn-cancel" id="btn-clear-fuse">ZRUSIT</button>`;
+      const result = ids.length >= 2 ? findFusion(ids) : null;
+      if(result) {
+        return `<button class="btn btn-main" id="btn-fuse-go">FUZOVAT</button>
+          <button class="btn btn-cancel" id="btn-clear-fuse">ZRUSIT</button>`;
+      }
+      // Neplatná kombinace — žádná tlačítka, jen stav výběru
+      return `<button class="btn btn-main" disabled>KONEC TAHU</button>`;
     }
     // Phase: hand → nabídni FUZE, KONEC TAHU disabled (musíš zahrát kartu)
     if(!s.cardPlayedThisTurn) {
