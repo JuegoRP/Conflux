@@ -54,6 +54,9 @@
 - [x] Zadní strana karty pro nevlastněné (bez interakce) (2026-05-12)
 - [x] ID range labely nad každou skupinou 10 karet (2026-05-12)
 - [x] Širší okraje (padding 28px) (2026-05-12)
+- [x] Grid vycentrován (justify-content:center) (2026-05-12)
+- [x] Range labely čitelné — barva #607080 (2026-05-12)
+- [x] Fonty přes var(--px) / var(--mono) (2026-05-12)
 
 ### DeckBuilder
 - [x] Card preview opraveny (injectCardStyles voláno) (2026-05-12)
@@ -77,6 +80,7 @@
 
 ### Obecné UI
 - [ ] Všechny texty zkontrolovat na překlepy a konzistenci
+- [ ] **Fonty** — global.css sjednocen (2026-05-12), ale MainMenu / StoryEngine / BattleSystem stále definují lokální CSS proměnné. Ideálně sjednotit do globálního systému, moduly ať používají var(--px), var(--mono), var(--vt)
 
 ---
 
@@ -104,6 +108,16 @@
 ---
 
 ## BATTLE SYSTEM
+
+### Přechod do bitvy
+- [x] Coinflip: "Cyklus pokračuje." — černá přechodová obrazovka před coinflipem (2026-05-12)
+- [x] Coinflip: logo 200px, rychlý spin 0.75s, font Press Start 2P (2026-05-12)
+- [x] Coinflip: po spinu zobrazí kdo začíná, pak fade-out (2026-05-12)
+- [x] Posun obrazovky po bitvě opraven — Router.goto() čistí inline styly containeru (2026-05-12)
+- [x] Hudba z bitvy se zastaví při odchodu — BattleSystem.destroy() volá AudioSystem.stopMusic(600) (2026-05-12)
+- [x] Coinflip animace — klik na CONFLUX logo → rotace → výsledek → overlay nad polem (2026-05-12)
+- [x] "Cyklus pokračuje." místo "A cycle begins..." (2026-05-12)
+- [x] Emoji odstraněny z coinflip zprávy (2026-05-12)
 
 ### Karty na poli — líc dolů
 - [ ] **Trapy** — při zahraní na pole zobrazit lícem dolů (face-down), odhalit až při triggeru
@@ -135,11 +149,6 @@
 - [ ] AI má správně vyhodnocovat kdy použít trap/arénu
 - [ ] Obecně: AI se má řídit jasnou strategií, ne náhodně útočit
 
-### Coinflip animace
-- [x] Klik na CONFLUX logo → rotace → výsledek → overlay nad polem (2026-05-12)
-- [x] "Cyklus pokračuje." místo "A cycle begins..." (2026-05-12)
-- [x] Emoji odstraněny z coinflip zprávy (2026-05-12)
-
 ### Konec hry / defeat
 - [x] POKRAČOVAT po prohře jen u Eliho (forcedLoss) (2026-05-12)
 - [x] Ostatní porážky: 3s countdown → auto-redirect do menu (2026-05-12)
@@ -162,6 +171,11 @@
 ### Hudba
 - [x] Music overlap opraven při odchodu z FreeBattle, DeckBuilder, Collection (2026-05-12)
 - [x] destroy() volá AudioSystem.stopMusic(600) ve všech modulech (2026-05-12)
+- [x] BattleSystem.destroy() zastavuje hudbu — overlap s menu opraven (2026-05-12)
+
+### Fonty
+- [x] global.css: --px → 'Press Start 2P', --vt → 'VT323' přidán (2026-05-12)
+- [ ] Moduly (MainMenu, StoryEngine, BattleSystem) stále definují lokální font proměnné — sjednotit
 
 ### Výkon
 - [ ] Preload backgroundů pro aktuální + příští node funguje — zkontrolovat výkon na mobilech
