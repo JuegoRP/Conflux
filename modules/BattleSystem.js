@@ -1586,12 +1586,26 @@ const BattleSystem = {
       }
     }
 
+    // ── ARENA ─────────────────────────────────────────────────────────────────
+    if(!played && emptyS.length) {
+      const arenas = s.eHand.filter(c => c.kind === 'arena');
+      if(arenas.length) {
+        const arena = arenas[0];
+        s.eHand.splice(s.eHand.indexOf(arena), 1);
+        s.eSpells[emptyS[0]] = {card:{...arena}, faceDown:false, used:false};
+        this._activateSpell(arena, 'e');
+        this._log(`◀ Nepřítel vyložil arénu [${arena.name}]!`, 'warn');
+        played = true;
+      }
+    }
+
     // ── SPELL ─────────────────────────────────────────────────────────────────
     if(!played && spells.length) {
       const useSpell = this._aiWantsSpell(style, spells, monsters, emptyM, lpPct);
       if(useSpell) {
         const sp = useSpell;
         s.eHand.splice(s.eHand.indexOf(sp), 1);
+        s.eGY.push({...sp});
         this._activateSpell(sp, 'e');
         this._log(`◀ Nepřítel použil [${sp.name}]!`, 'warn');
         played = true;
@@ -1624,7 +1638,15 @@ const BattleSystem = {
         const card = s.eHand[0];
         if(card && (card.kind === 'spell' || card.kind === 'trap' || card.kind === 'arena')) {
           s.eHand.splice(0, 1);
-          s.eSpells[emptyS[0]] = {card:{...card}, faceDown:true, used:false};
+          if(card.kind === 'arena') {
+            s.eSpells[emptyS[0]] = {card:{...card}, faceDown:false, used:false};
+            this._activateSpell(card, 'e');
+          } else if(card.kind === 'spell') {
+            s.eGY.push({...card});
+            this._activateSpell(card, 'e');
+          } else {
+            s.eSpells[emptyS[0]] = {card:{...card}, faceDown:true, used:false};
+          }
           played = true;
         }
       }
@@ -1867,10 +1889,20 @@ const BattleSystem = {
       return null;
     }
 
-    // Aggressive — buff spelly okamžitě, heal nikdy
+    // Aggressive — buff/destroy/dmg okamžitě, heal nikdy
     if(style === 'aggressive') {
-      const buffSpell = spells.find(sp => sp.effect?.includes('buff') || sp.effect?.includes('dmg'));
-      return buffSpell || null;
+      const s = this._state;
+      const pHasSynth = s.pMonsters.some(m => m?.card?.faction === 'synth');
+      const pCount = s.pMonsters.filter(Boolean).length;
+      if(pHasSynth) {
+        const destroySynth = spells.find(sp => sp.effect === 'destroy_synth');
+        if(destroySynth) return destroySynth;
+      }
+      if(pCount >= 2) {
+        const areaDmg = spells.find(sp => sp.effect === 'area_dmg');
+        if(areaDmg) return areaDmg;
+      }
+      return spells.find(sp => sp.effect?.includes('buff') || sp.effect?.includes('dmg')) || null;
     }
 
     // Corruption — corruption spelly vždy
@@ -1889,12 +1921,16 @@ const BattleSystem = {
     if(!attackers.length){onDone();return;}
     const difficulty=(this._params?.difficulty??0);
     const mistakeChance=[0.5,0.25,0.05][difficulty]??0.35;
+    // Lethal detection: if player field is empty and total AI ATK kills player, skip mistakes
+    const pFieldEmpty = !s.pMonsters.some(Boolean);
+    const totalAiAtk = attackers.reduce((sum,{m}) => sum+(m.card.atk||0), 0);
+    const lethal = pFieldEmpty && totalAiAtk >= s.pLP;
     let idx=0;
     const next=()=>{
       if(idx>=attackers.length||s.over){onDone();return;}
       const {m:attacker,i:atkSlot}=attackers[idx++];
       if(!s.eMonsters[atkSlot]){next();return;}
-      if(Math.random()<mistakeChance){this._log('◀ Nepřítel váhá...','hint');setTimeout(next,400);return;}
+      if(!lethal && Math.random()<mistakeChance){this._log('◀ Nepřítel váhá...','hint');setTimeout(next,400);return;}
       attacker.hasAttacked=true;
       const trapSlot=s.pSpells.findIndex(sp=>sp&&sp.faceDown);
       if(trapSlot>=0){const r=this._activateTrap(trapSlot,atkSlot,'p');if(r==='negate'||r==='destroyed'){this._render();setTimeout(next,500);return;}if(!s.eMonsters[atkSlot]){this._render();setTimeout(next,500);return;}}
@@ -1906,7 +1942,7 @@ const BattleSystem = {
         this._animateLP('p',attacker.card.atk);this._checkGameOver();this._render();setTimeout(next,500);return;
       }
       const AVG=1200;
-      const targets=s.pMonsters.map((m,i)=>({m,i})).filter(x=>x.m).map(t=>t.m.revealed?t:{m:{...t.m,card:{...t.m.card,atk:AVG,def:AVG}},i:t.i});
+      const targets=s.pMonsters.map((m,i)=>({m,i})).filter(x=>x.m).map(t=>(!t.m.faceDown)?t:{m:{...t.m,card:{...t.m.card,atk:AVG,def:AVG}},i:t.i});
       const eAtk=attacker.card.atk;
       const winnable=targets.filter(t=>eAtk>(t.m.mode==='atk'?t.m.card.atk:t.m.card.def));
       const even=targets.filter(t=>eAtk===(t.m.mode==='atk'?t.m.card.atk:t.m.card.def));
