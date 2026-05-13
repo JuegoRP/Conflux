@@ -49,8 +49,8 @@ const LetterEngine = {
       style.id = 'letter-styles';
       document.head.appendChild(style);
     }
-    if(style.dataset.v === '2') return;
-    style.dataset.v = '2';
+    if(style.dataset.v === '3') return;
+    style.dataset.v = '3';
     style.textContent = this.getStyles();
   },
 
@@ -60,15 +60,14 @@ const LetterEngine = {
 
     el.innerHTML = `
       <div class="letter-scene">
-        <div class="letter-paper">
-          <div class="letter-content" id="letter-content"></div>
-          <div class="letter-controls" id="letter-controls" style="display:none">
-            <button class="letter-btn letter-btn--replay" id="letter-replay">
-              Přečíst znovu
-            </button>
-            <button class="letter-btn letter-btn--end" id="letter-end">
-              Konec
-            </button>
+        <div class="letter-device">
+          <img src="assets/images/letter_paper.png" class="letter-device-img" alt="">
+          <div class="letter-screen">
+            <div class="letter-content" id="letter-content"></div>
+            <div class="letter-controls" id="letter-controls" style="display:none">
+              <button class="letter-btn letter-btn--replay" id="letter-replay">▶ Přečíst znovu</button>
+              <button class="letter-btn letter-btn--end" id="letter-end">✕ Konec</button>
+            </div>
           </div>
         </div>
       </div>`;
@@ -221,136 +220,137 @@ const LetterEngine = {
 
   getStyles() {
     return `
-      /* ── Letter Scene ── */
+      /* ── Letter Scene — holografický terminál ── */
       .letter-scene {
         position: fixed;
         inset: 0;
-        background: #0a0a0f url('assets/images/letter_paper.png') center/contain no-repeat;
+        background: #04080e;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 2rem;
       }
 
-      .letter-paper {
-        background: #f5eed8;
-        background-image:
-          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23f5eed8'/%3E%3Crect x='0' y='0' width='1' height='1' fill='%23e8ddc4' opacity='0.4'/%3E%3C/svg%3E");
-        color: #1a1a1a;
-        max-width: 640px;
+      /* Wrapper kolem device image — určuje rozměry */
+      .letter-device {
+        position: relative;
+        width: min(82vw, 780px);
+        flex-shrink: 0;
+      }
+
+      .letter-device-img {
         width: 100%;
-        max-height: 80vh;
-        border-radius: 2px;
-        padding: 3rem 3.5rem;
-        box-shadow:
-          0 4px 32px rgba(0,0,0,0.6),
-          inset 0 0 60px rgba(0,0,0,0.04);
+        display: block;
+        filter: drop-shadow(0 0 32px rgba(79, 200, 240, 0.25));
+      }
+
+      /* Overlay přesně na oblast displeje uvnitř hologramu */
+      /* Hodnoty: top/bottom/left/right jsou % výšky/šířky .letter-device */
+      .letter-screen {
+        position: absolute;
+        top: 13%;      /* pod horním rámečkem displeje */
+        bottom: 31%;   /* nad základnou device */
+        left: 13%;     /* za levým okrajem displeje */
+        right: 13%;    /* za pravým okrajem displeje */
         display: flex;
         flex-direction: column;
-        position: relative;
         overflow: hidden;
-      }
-
-      /* Okraje papíru */
-      .letter-paper::before {
-        content: '';
-        position: absolute;
-        left: 3.5rem;
-        top: 0;
-        bottom: 0;
-        width: 1px;
-        background: rgba(200, 80, 80, 0.15);
-        pointer-events: none;
+        /* průhledné — text se zobrazí na jasné ploše hologramu */
+        background: rgba(8, 20, 40, 0.18);
+        padding: 0.8rem 1.2rem 0.5rem;
       }
 
       .letter-content {
         flex: 1;
         overflow-y: auto;
         scrollbar-width: none;
-        padding-right: 0.5rem;
+        padding-right: 0.2rem;
       }
       .letter-content::-webkit-scrollbar { display: none; }
 
-      /* ── Řádky ── */
+      /* ── Text — sci-fi terminál, tmavé písmo na jasném hologramu ── */
       .letter-line {
-        font-family: 'Georgia', 'Times New Roman', serif;
-        line-height: 1.8;
-        margin: 0 0 0.1em 0;
-        min-height: 1.8em;
+        font-family: 'Share Tech Mono', 'Courier New', monospace;
+        font-size: clamp(12px, 1.4vw, 16px);
+        line-height: 1.75;
+        color: #0a2035;
+        margin: 0 0 0.15em 0;
+        min-height: 1.75em;
       }
 
       .letter-line--greeting {
-        font-size: 1.1rem;
-        margin-bottom: 0.8em;
+        font-size: clamp(13px, 1.6vw, 18px);
+        color: #062040;
+        margin-bottom: 0.6em;
+        letter-spacing: 0.08em;
       }
 
       .letter-line--body {
-        font-size: 0.95rem;
-        color: #2a2a2a;
+        color: #0a2035;
       }
 
       .letter-line--closing {
-        font-size: 0.95rem;
-        color: #1a1a1a;
-        font-style: italic;
-        margin-top: 0.6em;
+        color: #0d2a42;
+        margin-top: 0.5em;
+        letter-spacing: 0.02em;
       }
 
       .letter-line--signature {
-        font-size: 0.9rem;
-        color: #3a3a3a;
-        margin-top: 1.2em;
+        font-size: clamp(11px, 1.3vw, 15px);
+        color: #1a4060;
+        margin-top: 0.8em;
         text-align: right;
+        letter-spacing: 0.1em;
       }
 
-      /* Za rámem ending — podpis je trochu jiný */
+      /* Za rámem ending — podpis je červený/varovný */
       .letter-line--observer {
-        color: #8a0000;
-        font-style: italic;
+        color: #6a0010;
       }
 
       .letter-spacer {
-        height: 1em;
+        height: 0.6em;
       }
 
       /* ── Tlačítka ── */
       .letter-controls {
         display: flex;
-        gap: 1rem;
+        gap: 0.7rem;
         justify-content: flex-end;
-        margin-top: 1.5rem;
-        padding-top: 1rem;
-        border-top: 1px solid rgba(0,0,0,0.1);
+        padding-top: 0.5rem;
+        margin-top: 0.3rem;
+        border-top: 1px solid rgba(79, 163, 224, 0.2);
+        flex-shrink: 0;
       }
 
       .letter-btn {
-        background: transparent;
-        border: 1px solid #3a3a3a;
-        color: #1a1a1a;
-        padding: 0.5rem 1.2rem;
-        font-family: inherit;
-        font-size: 0.85rem;
+        background: rgba(4, 20, 40, 0.6);
+        border: 1px solid rgba(79, 163, 224, 0.4);
+        color: #4fa3e0;
+        padding: 0.3rem 0.9rem;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: clamp(9px, 1.1vw, 12px);
         cursor: pointer;
-        letter-spacing: 0.05em;
-        transition: background 0.15s;
+        letter-spacing: 0.06em;
+        transition: background 0.15s, border-color 0.15s;
       }
       .letter-btn:hover {
-        background: rgba(0,0,0,0.06);
+        background: rgba(79, 163, 224, 0.12);
+        border-color: rgba(79, 163, 224, 0.7);
       }
       .letter-btn--end {
-        background: #1a1a1a;
-        color: #f5eed8;
-        border-color: #1a1a1a;
+        border-color: rgba(224, 79, 106, 0.5);
+        color: #e04f6a;
       }
       .letter-btn--end:hover {
-        background: #333;
+        background: rgba(224, 79, 106, 0.1);
+        border-color: rgba(224, 79, 106, 0.8);
       }
 
       /* ── Konec hry ── */
       .game-end-wrap {
         position: fixed;
         inset: 0;
-        background: #0a0a0f;
+        background: #04080e;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -363,15 +363,16 @@ const LetterEngine = {
         font-size: 3rem;
         font-weight: 300;
         letter-spacing: 0.4em;
-        color: #e0d0b0;
-        font-family: 'Georgia', serif;
+        color: #4fa3e0;
+        font-family: 'Share Tech Mono', monospace;
       }
 
       .game-end-subtitle {
         font-size: 1rem;
-        color: #666;
+        color: #3a5060;
         letter-spacing: 0.1em;
         min-height: 1.5em;
+        font-family: 'Share Tech Mono', monospace;
       }
 
       .game-end-actions {
@@ -382,17 +383,18 @@ const LetterEngine = {
 
       .game-end-btn {
         background: transparent;
-        border: 1px solid #444;
-        color: #ccc;
+        border: 1px solid rgba(79,163,224,0.3);
+        color: #4fa3e0;
         padding: 0.7rem 2rem;
         font-size: 0.9rem;
         letter-spacing: 0.08em;
         cursor: pointer;
+        font-family: 'Share Tech Mono', monospace;
         transition: border-color 0.2s, color 0.2s;
       }
       .game-end-btn:hover {
-        border-color: #e0d0b0;
-        color: #e0d0b0;
+        border-color: #4fa3e0;
+        color: #80c8f0;
       }
       .game-end-btn--secondary {
         opacity: 0.6;
