@@ -2861,7 +2861,16 @@ const BattleSystem = {
       }
       const l = lines[idx];
       const speaker = l.speaker || '';
-      const speakerMap = {monyra:'monyra',player:'kuryr',eli:'eli',voit:'voit',rozara:'rozara',lens:'lens'};
+      const speakerMap = {
+        monyra:'monyra', player:'kuryr', kuryr:'kuryr',
+        eli:'eli', voit:'voit', rozara:'rozara', romen:'romen',
+        lens:'lens', marta:'marta', sigma:'sigma',
+        pramati:'pramati', 'pramáti':'pramati',
+        paradox:'paradox', rekalibrator:'rekalibrator', reka:'rekalibrator',
+        pozorovatel:'pozorovatel', spravce:'spravce', 'správce':'spravce',
+        veritel:'veritel', 'věřitel':'veritel', agent:'agent',
+        vykonavatel:'voit',
+      };
       const portraitFile = speakerMap[speaker.toLowerCase()] || '';
       const portraitHtml = portraitFile
         ? `<div class="bd-portrait" style="background-image:url('assets/images/portraits/${portraitFile}.png')"></div>`
@@ -3386,10 +3395,15 @@ const BattleSystem = {
 
     // Portrait — enemy gets portrait image, player gets kuryr
     const portraitMap = {
-      'monyra_tutorial':'monyra','act1_boss':'voit',
-      'act2_04':'marta','act4_marta':'marta',
-      'act5_eli':'eli','act8_veritel':'romen',
-      'act10_paradox':'lens',
+      'monyra_tutorial':'monyra', 'act1_boss':'voit',
+      'act2_04':'marta',          'act4_marta':'marta',
+      'act5_eli':'eli',           'act8_veritel':'romen',
+      'act10_paradox':'lens',     'act10_lens':'lens',
+      'act10_sigma':'sigma',      'act10_pramati':'pramati',
+      'act9_pozorovatel':'pozorovatel',
+      'act4_veritel':'veritel',
+      'act7_boss':'spravce',
+      'act7_01':'rekalibrator',
     };
     let portrait = '';
     if(who === 'e' && this._enemy?.id) {

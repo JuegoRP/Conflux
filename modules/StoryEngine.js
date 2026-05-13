@@ -52,13 +52,16 @@ const StoryEngine = {
     'spravce':      { portrait: 'spravce',      side: 'right' },
     'správce':      { portrait: 'spravce',      side: 'right' },
     'veritel':      { portrait: 'veritel',      side: 'right' },
+    'věřitel':      { portrait: 'veritel',      side: 'right' },
     'agent':        { portrait: 'agent',        side: 'right' },
     'sigma':        { portrait: 'sigma',        side: 'right' },
     'pramati':      { portrait: 'pramati',      side: 'left'  },
+    'pramáti':      { portrait: 'pramati',      side: 'left'  },
     'pozorovatel':  { portrait: 'pozorovatel',  side: 'right' },
     'rekalibrator': { portrait: 'rekalibrator', side: 'right' },
     'reka':         { portrait: 'rekalibrator', side: 'right' },
     'paradox':      { portrait: 'paradox',      side: 'right' },
+    'vykonavatel':  { portrait: 'voit',         side: 'right' },
   },
   _resolveSpeaker(speakerKey) {
     if (!speakerKey) return null;
@@ -800,7 +803,7 @@ const StoryEngine = {
       const portraitKey = f.portrait || f.speaker;
       const portraitInfo = this._resolveSpeaker(portraitKey);
       const portraitSide = portraitInfo?.side || 'left';
-      const portraitFile = portraitInfo?.portrait || portraitKey;
+      const portraitFile = portraitInfo?.portrait || (f.portrait ? portraitKey : null);
       const portraitHtml = (portraitKey && portraitFile)
         ? `<div class="vn-portrait vn-portrait--${portraitSide} vn-portrait--active"
              style="background-image:url('assets/images/portraits/${portraitFile}.png')"></div>`
