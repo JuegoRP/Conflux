@@ -438,16 +438,7 @@ const BattleSystem = {
       canAttack:false, cardPlayedThisTurn:false,
       fuseSelection:[], selectedHandIdx:null,
       attackerSlot:null, phase:'draw', busy:false, over:false, log:[], forcedLoss:!!(this._params?.forcedLoss),
-      pendingDrop: null, // drop čeká na zobrazení
-      // ── Nová akční pravidla v2039 ──
-      // monsterPlayed: max 1 monster za tah (fúze se nepočítá)
-      // spells: neomezené (ale stojí LP — TODO)
-      // traps: max 1 za tah
-      // fúze: neomezené
-      // stance change: neomezené
-      monsterPlayedThisTurn: false,
-      trapSetThisTurn: false,
-      cardPlayedThisTurn: false, // zpětná kompatibilita — true pokud monster NEBO trap
+      pendingDrop: null,
       aiStalemateTurns: 0, // počet tahů kdy AI nepodnikla útok
       coinflipResult: null, // 'player' | 'enemy' — kdo vyhrál coinflip
     };
@@ -485,7 +476,7 @@ const BattleSystem = {
   // ── FÁZE ──────────────────────────────────────────────────────────────────
   _startTurn() {
     const s = this._state;
-    s.cardPlayedThisTurn=false; s.monsterPlayedThisTurn=false; s.trapSetThisTurn=false;
+    s.cardPlayedThisTurn=false;
     s.fuseSelection=[]; s.selectedHandIdx=null; s.attackerSlot=null; s.afterFusion=false;
 
     this._applyArenaTurnEffects();
@@ -634,7 +625,7 @@ const BattleSystem = {
 
     // ── MONSTER ──────────────────────────────────────────────────────────────
     if(card.kind==='monster') {
-      if(s.monsterPlayedThisTurn) { this._log('Už jsi zahral monstrum v tomto tahu.','warn'); return; }
+      if(s.cardPlayedThisTurn) { this._log('Už jsi zahral kartu v tomto tahu.','warn'); return; }
       const slot = targetSlot!==undefined ? targetSlot : s.pMonsters.findIndex(m=>m===null);
       if(slot>=0 && s.pMonsters[slot]!==null) {
         this._showSwapConfirm(handIdx, slot, 'monster', mode);
@@ -666,30 +657,31 @@ const BattleSystem = {
         GameState.adjustAlignment?.(-card.corruptionValue * 5);
 
       }
-      s.monsterPlayedThisTurn=true;
       s.cardPlayedThisTurn=true;
       s.fuseSelection=[]; s.selectedHandIdx=null; s.stats.cardsPlayed++;
 
     // ── TRAP ─────────────────────────────────────────────────────────────────
     } else if(card.kind==='trap') {
-      if(s.trapSetThisTurn) { this._log('Už jsi nastražil past v tomto tahu.','warn'); return; }
+      if(s.cardPlayedThisTurn) { this._log('Už jsi zahral kartu v tomto tahu.','warn'); return; }
       const slot = targetSlot!==undefined ? targetSlot : s.pSpells.findIndex(m=>m===null);
       if(slot>=0 && s.pSpells[slot]!==null) { this._showSwapConfirm(handIdx, slot, 'spell', mode); return; }
       if(slot<0) { this._log('Žádný volný slot!','warn'); return; }
       s.pHand.splice(handIdx,1);
       s.pSpells[slot] = {card:{...card}, faceDown:true, used:false};
       this._log(`🪤 [${card.name}] nastaven face-down.`,'warn');
-      s.trapSetThisTurn=true;
+      s.cardPlayedThisTurn=true;
       s.selectedHandIdx=null;
 
     // ── SPELL / ARENA ────────────────────────────────────────────────────────
     } else {
+      if(s.cardPlayedThisTurn) { this._log('Už jsi zahral kartu v tomto tahu.','warn'); return; }
       const slot = targetSlot!==undefined ? targetSlot : s.pSpells.findIndex(m=>m===null);
       if(slot>=0 && s.pSpells[slot]!==null) { this._showSwapConfirm(handIdx, slot, 'spell', mode); return; }
       if(slot<0) { this._log('Žádný volný slot!','warn'); return; }
       s.pHand.splice(handIdx,1);
       s.pSpells[slot] = {card:{...card}, faceDown:false, used:false};
       this._log(`✨ [${card.name}] vyložen — klikni pro aktivaci.`,'sys');
+      s.cardPlayedThisTurn=true;
       s.selectedHandIdx=null;
     }
     // Po zahrání karty → přepni na pole (ruka se schová)
@@ -843,12 +835,7 @@ const BattleSystem = {
         s.pSpells[slot] = { card:{...newCard}, faceDown: newCard.kind==='trap', used:false };
         this._log(`⇄ [${oldCard.name}] zahozen, [${newCard.name}] nastaven.`,'sys');
       }
-      if(zone === 'monster') {
-        s.monsterPlayedThisTurn=true;
-        s.cardPlayedThisTurn=true;
-      } else if(newCard.kind === 'trap') {
-        s.trapSetThisTurn=true;
-      }
+      s.cardPlayedThisTurn=true;
       s.fuseSelection=[]; s.selectedHandIdx=null;
       this._render();
     });
@@ -1229,17 +1216,29 @@ const BattleSystem = {
         }, 400);
 
       } else if(diff < 0) {
-        this._animateCard(who, atkSlot, 'destroy');
-        setTimeout(() => {
-          atkGY.push(attacker.card);
-          atkField[atkSlot] = null;
-          const lpDmg = Math.abs(diff);
-          if(who==='p') { s.pLP=clamp(s.pLP-lpDmg,0,s.pMaxLP); s.stats.damageTaken+=lpDmg; this._animateLP('p', lpDmg); this._flashScreen('#4fa3e0'); }
-          else          { s.eLP=clamp(s.eLP-lpDmg,0,s.eMaxLP); s.stats.damageDealt+=lpDmg; this._animateLP('e', lpDmg); this._flashScreen('#4fa3e0'); }
-          this._log(`🛡 [${defCard.name}] odráží [${atkCard.name}]! +${lpDmg} LP dmg.`,'dmg');
-          s.busy = false;
-          this._checkGameOver(); this._render();
-        }, 400);
+        const lpDmg = Math.abs(diff);
+        if(defender.mode === 'def') {
+          // ATK vs DEF — útočník odražen (zůstává na poli), pouze LP damage (FM pravidla)
+          setTimeout(() => {
+            if(who==='p') { s.pLP=clamp(s.pLP-lpDmg,0,s.pMaxLP); s.stats.damageTaken+=lpDmg; this._animateLP('p', lpDmg); this._flashScreen('#4fa3e0'); }
+            else          { s.eLP=clamp(s.eLP-lpDmg,0,s.eMaxLP); s.stats.damageDealt+=lpDmg; this._animateLP('e', lpDmg); this._flashScreen('#4fa3e0'); }
+            this._log(`🛡 [${defCard.name}] odráží [${atkCard.name}]! Odraz -${lpDmg} LP.`,'dmg');
+            s.busy = false;
+            this._checkGameOver(); this._render();
+          }, 400);
+        } else {
+          // ATK vs ATK — útočník zničen + LP damage
+          this._animateCard(who, atkSlot, 'destroy');
+          setTimeout(() => {
+            atkGY.push(attacker.card);
+            atkField[atkSlot] = null;
+            if(who==='p') { s.pLP=clamp(s.pLP-lpDmg,0,s.pMaxLP); s.stats.damageTaken+=lpDmg; this._animateLP('p', lpDmg); this._flashScreen('#4fa3e0'); }
+            else          { s.eLP=clamp(s.eLP-lpDmg,0,s.eMaxLP); s.stats.damageDealt+=lpDmg; this._animateLP('e', lpDmg); this._flashScreen('#4fa3e0'); }
+            this._log(`🛡 [${defCard.name}] odráží [${atkCard.name}]! +${lpDmg} LP dmg.`,'dmg');
+            s.busy = false;
+            this._checkGameOver(); this._render();
+          }, 400);
+        }
 
       } else {
         // Remíza — ATK vs ATK: oba zničeni. ATK vs DEF: nic se nestane.
@@ -2554,11 +2553,12 @@ const BattleSystem = {
 
     // Trap — vždy rovnou na slot lícem dolů, bez pickeru
     if(isTrap) {
+      if(s.cardPlayedThisTurn) { this._log('Už jsi zahral kartu v tomto tahu.','warn'); s.selectedHandIdx=null; this._render(); return; }
       const slot = s.pSpells.findIndex(m => m === null);
       if(slot < 0) { this._log('Žádný volný slot pro past!', 'warn'); s.selectedHandIdx = null; this._render(); return; }
       s.pHand.splice(handIdx, 1);
       s.pSpells[slot] = { card: {...card}, faceDown: true, used: false };
-      s.trapSetThisTurn = true; s.selectedHandIdx = null;
+      s.cardPlayedThisTurn = true; s.selectedHandIdx = null;
       this._log(`🪤 [${card.name}] nastavena lícem dolů.`, 'warn');
       this._render();
       return;
@@ -2566,11 +2566,12 @@ const BattleSystem = {
 
     // Arena — vždy rovnou na slot + okamžitá aktivace efektu
     if(isArena) {
+      if(s.cardPlayedThisTurn) { this._log('Už jsi zahral kartu v tomto tahu.','warn'); s.selectedHandIdx=null; this._render(); return; }
       const slot = s.pSpells.findIndex(m => m === null);
       if(slot < 0) { this._log('Žádný volný slot pro arenu!', 'warn'); s.selectedHandIdx = null; this._render(); return; }
       s.pHand.splice(handIdx, 1);
       s.pSpells[slot] = { card: {...card}, faceDown: false, used: false };
-      s.selectedHandIdx = null;
+      s.cardPlayedThisTurn = true; s.selectedHandIdx = null;
       this._activateSpell(card, 'p'); // nastaví s.activeArena + aplikuje efekt
       return;
     }
@@ -3332,12 +3333,14 @@ const BattleSystem = {
       const inFuseMode = s.fuseSelection.length > 0;
       const scarData = GameState.getScarData?.(card.id);
 
+      const canDiscard = s.isPlayerTurn && !s.busy && !s.over && card.kind !== 'letter';
       return `<div class="h-sl ${isSelected ? 'sel' : ''} ${inFuseSel ? 'multi-sel' : ''} ${inFuseMode && !inFuseSel ? 'fuse-dim' : ''}" data-hand="${i}">
         ${_rcEl(card, 'md', {
           selected: isSelected,
           inFuse: inFuseSel,
           scarCount: scarData?.scars || 0,
         })}
+        ${canDiscard ? `<button class="hand-discard-btn" data-discard="${i}" title="Zahodit">✕</button>` : ''}
       </div>`;
     }).join('') || '<div class="hand-empty">--</div>';
   },
@@ -3536,7 +3539,7 @@ const BattleSystem = {
       if(!slot) {
         const selCard = s.selectedHandIdx !== null ? s.pHand[s.selectedHandIdx] : null;
         const isOpen = isPlayer && s.isPlayerTurn && !s.busy
-          && !s.monsterPlayedThisTurn
+          && !s.cardPlayedThisTurn
           && selCard?.kind === 'monster';
         return `<div class="sl ${isOpen ? 'open' : ''}" data-who="${who}" data-slot="${i}">
           <div class="sl-e">·</div>
@@ -3608,8 +3611,7 @@ const BattleSystem = {
       if(!slot) {
         const sel = s.pHand[s.selectedHandIdx];
         const isOpen = isPlayer && s.isPlayerTurn && !s.busy
-          && s.selectedHandIdx !== null
-          && (sel?.kind === 'trap' ? !s.trapSetThisTurn : true)
+          && s.selectedHandIdx !== null && !s.cardPlayedThisTurn
           && (sel?.kind === 'trap' || sel?.kind === 'spell' || sel?.kind === 'arena');
         return `<div class="sl ${isOpen ? 'open' : ''}" data-who="${who}" data-spell-slot="${i}">
           <div class="sl-e">·</div>
@@ -3714,7 +3716,7 @@ const BattleSystem = {
       if(context.isHand) {
         const idx = context.handIdx;
         if(card.kind === 'monster') {
-          if(!s.monsterPlayedThisTurn) {
+          if(!s.cardPlayedThisTurn) {
             const hasSlot  = s.pMonsters.some(m => m === null);
             const hasField = s.pMonsters.some(m => m !== null);
             if(hasSlot) actions += `<button class="cp-btn cp-play" data-cp-action="play-facedown" data-cp-idx="${idx}">▶ Nasadit na pole</button>`;
@@ -3723,14 +3725,18 @@ const BattleSystem = {
           // Fúze vždy dostupná
           actions += `<button class="cp-btn cp-fuse" data-cp-action="fuse-select" data-cp-idx="${idx}">⚗ Přidat do fúze</button>`;
         } else if(card.kind === 'spell') {
-          actions += `<button class="cp-btn cp-play" data-cp-action="spell-now" data-cp-idx="${idx}">✨ Zahrát hned</button>`;
-          actions += `<button class="cp-btn cp-save" data-cp-action="spell-use" data-cp-idx="${idx}">◈ Uložit na pole</button>`;
+          if(!s.cardPlayedThisTurn) {
+            actions += `<button class="cp-btn cp-play" data-cp-action="spell-now" data-cp-idx="${idx}">✨ Zahrát hned</button>`;
+            actions += `<button class="cp-btn cp-save" data-cp-action="spell-use" data-cp-idx="${idx}">◈ Uložit na pole</button>`;
+          }
         } else if(card.kind === 'trap') {
-          if(!s.trapSetThisTurn) {
+          if(!s.cardPlayedThisTurn) {
             actions += `<button class="cp-btn cp-face" data-cp-action="trap-set" data-cp-idx="${idx}">🪤 Nastavit</button>`;
           }
         } else if(card.kind === 'arena') {
-          actions += `<button class="cp-btn cp-play" data-cp-action="arena-now" data-cp-idx="${idx}">🏟 Aktivovat</button>`;
+          if(!s.cardPlayedThisTurn) {
+            actions += `<button class="cp-btn cp-play" data-cp-action="arena-now" data-cp-idx="${idx}">🏟 Aktivovat</button>`;
+          }
         }
       } else if(context.isField && context.who === 'p') {
         const slot   = context.fieldSlot;
@@ -3843,21 +3849,23 @@ const BattleSystem = {
           }
 
           case 'trap-set': { removePopup();
+            if(s.cardPlayedThisTurn){this._log('Již jsi zahral kartu v tomto tahu.','warn');break;}
             const freeSlot = s.pSpells.findIndex(m=>m===null);
             if(freeSlot<0){this._log('Žádný volný slot!','warn');return;}
             s.pHand.splice(idx,1);
             s.pSpells[freeSlot] = {card:{...card}, faceDown:true, used:false};
-            s.trapSetThisTurn=true; s.selectedHandIdx=null;
+            s.cardPlayedThisTurn=true; s.selectedHandIdx=null;
             this._log(`🪤 [${card.name}] nastaven lícem dolů.`,'warn');
             break;
           }
           case 'arena-now': { removePopup();
+            if(s.cardPlayedThisTurn){this._log('Již jsi zahral kartu v tomto tahu.','warn');break;}
             const freeSlot = s.pSpells.findIndex(m=>m===null);
             if(freeSlot < 0) { this._log('Žádný volný slot pro arenu!','warn'); break; }
             const aCard = {...(s.pHand[Number(idx)] || card)};
             s.pHand.splice(Number(idx), 1);
             s.pSpells[freeSlot] = { card: aCard, faceDown: false, used: false };
-            s.selectedHandIdx = null;
+            s.cardPlayedThisTurn = true; s.selectedHandIdx = null;
             this._activateSpell(aCard, 'p');
             this._log(`🏟 [${aCard.name}] umístěna jako aktivní aréna!`, 'sys');
             this._render(); break;
@@ -4105,6 +4113,23 @@ const BattleSystem = {
         return;
       }
 
+      // ── ZAHODIT z ruky ────────────────────────────────────────────────────
+      const discardBtn = closest(e, '[data-discard]');
+      if(discardBtn) {
+        if(!s.isPlayerTurn || s.busy || s.over) return;
+        const di = parseInt(discardBtn.dataset.discard);
+        const dc = s.pHand[di];
+        if(dc && dc.kind !== 'letter') {
+          s.pGY.push(s.pHand.splice(di, 1)[0]);
+          if(s.selectedHandIdx === di) s.selectedHandIdx = null;
+          else if(s.selectedHandIdx > di) s.selectedHandIdx--;
+          s.fuseSelection = s.fuseSelection.filter(x => x !== di).map(x => x > di ? x-1 : x);
+          this._log(`🗑 [${dc.name}] zahozena.`, 'hint');
+          this._render();
+        }
+        return;
+      }
+
       // Stance buttons (always clickable even during busy — it's a field toggle)
       const stanceBtn = closest(e, '[data-stance]');
       if(stanceBtn) { this._toggleStance(parseInt(stanceBtn.dataset.stance)); return; }
@@ -4124,6 +4149,32 @@ const BattleSystem = {
         if(s.fuseSelection.length > 0 && card.kind === 'monster') {
           this._toggleFuseSelect(idx);
           return;
+        }
+
+        // Jiná karta z ruky vybrána + obě jsou monstra → zkus přímou fúzi
+        if(s.selectedHandIdx !== null && s.selectedHandIdx !== idx
+           && card.kind === 'monster') {
+          const sel = s.pHand[s.selectedHandIdx];
+          if(sel?.kind === 'monster' && !s.cardPlayedThisTurn) {
+            const fusionResult = findFusion([sel.id, card.id]);
+            if(fusionResult) {
+              const slot = s.pMonsters.findIndex(m => m === null);
+              if(slot < 0) { this._log('Žádný volný slot!', 'warn'); return; }
+              const [hi, lo] = s.selectedHandIdx > idx ? [s.selectedHandIdx, idx] : [idx, s.selectedHandIdx];
+              const c1 = s.pHand.splice(hi, 1)[0];
+              const c2 = s.pHand.splice(lo, 1)[0];
+              s.pGY.push(c1); s.pGY.push(c2);
+              s.pMonsters[slot] = { card:{...fusionResult, kind:'monster'}, mode:'atk', hasAttacked:false, faceDown:false };
+              s.cardPlayedThisTurn=true; s.afterFusion=true;
+              s.fuseSelection=[]; s.selectedHandIdx=null; s.stats.fusionsUsed++;
+              this._flashScreen('#b570e0'); this._fuseFlash();
+              EventBus.emit('sfx:play', 'fusion');
+              this._log(`✦ FÚZE! [${c1.name}] + [${c2.name}] → [${fusionResult.name}] ATK:${fusionResult.atk}`, 'fuse');
+              s.afterFusion = true;
+              this._setPhase('field'); this._render();
+              return;
+            }
+          }
         }
 
         // Toggle výběr — klik na stejnou kartu = zrušit
@@ -4149,11 +4200,42 @@ const BattleSystem = {
           return;
         }
 
+        // Vybraná karta z ruky + slot OBSAZENÝ → fúze nebo přímá výměna (1 klik)
+        if(s.selectedHandIdx !== null && fm) {
+          const hCard = s.pHand[s.selectedHandIdx];
+          if(hCard?.kind === 'monster') {
+            if(s.cardPlayedThisTurn) { this._log('Již jsi zahral kartu tento tah.', 'warn'); s.selectedHandIdx=null; this._render(); return; }
+            const fusionResult = findFusion([hCard.id, fm.card.id]);
+            if(fusionResult) {
+              const hi = s.selectedHandIdx;
+              s.pGY.push(s.pHand.splice(hi, 1)[0]);
+              s.pGY.push(fm.card);
+              s.pMonsters[slot] = { card:{...fusionResult, kind:'monster'}, mode:fm.mode, hasAttacked:false, faceDown:false };
+              s.cardPlayedThisTurn=true; s.afterFusion=true;
+              s.fuseSelection=[]; s.selectedHandIdx=null; s.stats.fusionsUsed++;
+              this._flashScreen('#b570e0'); this._fuseFlash();
+              EventBus.emit('sfx:play', 'fusion');
+              this._log(`✦ FÚZE! [${hCard.name}] + [${fm.card.name}] → [${fusionResult.name}] ATK:${fusionResult.atk}`, 'fuse');
+            } else {
+              const hi = s.selectedHandIdx;
+              const newCard = s.pHand.splice(hi, 1)[0];
+              s.pGY.push(fm.card);
+              s.pMonsters[slot] = { card:{...newCard}, mode:'atk', hasAttacked:false, faceDown:false };
+              s.cardPlayedThisTurn=true;
+              s.fuseSelection=[]; s.selectedHandIdx=null;
+              EventBus.emit('sfx:play', 'card_play');
+              this._log(`⇄ [${fm.card.name}] zahozen, [${newCard.name}] nasazen.`, 'sys');
+            }
+            this._setPhase('field'); this._render();
+            return;
+          }
+        }
+
         // Vybraná karta z ruky → POLOŽ PŘÍMO (monster vždy face-down DEF)
         if(s.selectedHandIdx !== null && !fm) {
           const card = s.pHand[s.selectedHandIdx];
           if(card?.kind === 'monster') {
-            if(s.monsterPlayedThisTurn) { this._log('Již jsi zahál monstrum tento tah.', 'warn'); return; }
+            if(s.cardPlayedThisTurn) { this._log('Již jsi zahral kartu tento tah.', 'warn'); return; }
             this._playerPlayCard(s.selectedHandIdx, slot, { stance: 'def', faceDown: true });
             return;
           }
@@ -4186,8 +4268,25 @@ const BattleSystem = {
         if(s.selectedHandIdx !== null && !sp) {
           const card = s.pHand[s.selectedHandIdx];
           if(card?.kind === 'spell' || card?.kind === 'arena' || card?.kind === 'trap') {
-            if(card.kind === 'trap' && s.trapSetThisTurn) { this._log('Již jsi nastražil past tento tah.', 'warn'); return; }
+            if(s.cardPlayedThisTurn) { this._log('Již jsi zahral kartu tento tah.', 'warn'); return; }
             this._playerPlayCard(s.selectedHandIdx, slot, null);
+            return;
+          }
+        }
+
+        // Vybraná karta z ruky + slot OBSAZENÝ → přímá výměna (1 klik)
+        if(s.selectedHandIdx !== null && sp) {
+          const hCard = s.pHand[s.selectedHandIdx];
+          if((hCard?.kind === 'spell' || hCard?.kind === 'arena' || hCard?.kind === 'trap') && !s.cardPlayedThisTurn) {
+            const hi = s.selectedHandIdx;
+            s.pGY.push(sp.card);
+            s.pSpells[slot] = { card:{...hCard}, faceDown: hCard.kind==='trap', used:false };
+            s.pHand.splice(hi, 1);
+            s.cardPlayedThisTurn=true; s.selectedHandIdx=null;
+            if(hCard.kind==='arena') this._activateSpell(hCard, 'p');
+            EventBus.emit('sfx:play', 'card_play');
+            this._log(`⇄ [${sp.card.name}] zahozen, [${hCard.name}] nasazen.`, 'sys');
+            this._render();
             return;
           }
         }
@@ -4500,6 +4599,9 @@ const BattleSystem = {
       .h-sl.multi-sel .cx-card{box-shadow:0 0 0 2px var(--gold),0 0 14px rgba(212,168,67,0.3);}
       .h-sl.fuse-dim{opacity:.4;filter:grayscale(.5);}
       .hand-enemy-turn{font-family:var(--px);font-size:clamp(5px,.55vw,7px);color:var(--dim);letter-spacing:3px;text-align:center;padding:8px;}
+      .hand-discard-btn{position:absolute;top:2px;right:2px;z-index:60;width:18px;height:18px;padding:0;border:none;border-radius:50%;background:rgba(30,20,40,0.82);color:#e04f6a;font-size:10px;line-height:18px;text-align:center;cursor:pointer;opacity:0;transition:opacity .15s;pointer-events:auto;}
+      .h-sl:hover .hand-discard-btn{opacity:1;}
+      .h-sl.sel .hand-discard-btn{opacity:0.7;}
 
 
       /* Arena badge — vždy viditelný, zvýrazněný */

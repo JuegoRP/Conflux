@@ -89,6 +89,7 @@
 ### Přechody a backgroundy
 - [x] Začátek příběhu ukazuje město, ne bránu (2026-05-12)
 - [x] Brána použita až v boss sekci aktu 1 (2026-05-12)
+- [x] Ken Burns efekt — pozadí se pomalu pohybuje uhlopříčně a zastaví se v hlavním bodě zobrazení (2026-05-13)
 - [ ] Plynulejší přechody backgroundů — cross-fade při změně scény (momentálně okamžité)
 
 ### Korupce — vizuální efekty
@@ -118,6 +119,16 @@
 - [x] Coinflip animace — klik na CONFLUX logo → rotace → výsledek → overlay nad polem (2026-05-12)
 - [x] "Cyklus pokračuje." místo "A cycle begins..." (2026-05-12)
 - [x] Emoji odstraněny z coinflip zprávy (2026-05-12)
+- [x] Coinflip: klik na přechodovou obrazovku přeskočí rovnou na coinflip logo (2026-05-13)
+- [x] Příběhové dialogy (pre-battle context) se zobrazují — opravena chyba ukládání na nesprávný node (2026-05-13)
+
+### Herní pravidla — opravy (2026-05-13)
+- [x] ATK vs DEF — útočník odražen (zůstává na poli), pouze LP damage; FM pravidla (2026-05-13)
+- [x] Limit 1 karta za tah (all types: monster/spell/trap/arena), sjednoceno do cardPlayedThisTurn (2026-05-13)
+- [x] Zahazování karet z ruky — tlačítko ✕ na každé kartě, nepočítá se jako play (2026-05-13)
+- [x] Fúze hand+hand přímá (1 klik na druhou kartu) — bez preview popupu (2026-05-13)
+- [x] Fúze hand+pole přímá (1 klik na obsazený slot) — pokud kombinace existuje; jinak přímá výměna (2026-05-13)
+- [x] Výměna spell slotu z ruky — 1 klik na obsazený slot (2026-05-13)
 
 ### Karty na poli — líc dolů
 - [ ] **Trapy** — při zahraní na pole zobrazit lícem dolů (face-down), odhalit až při triggeru
@@ -141,9 +152,14 @@
 - [ ] Každý trap: spouští se správně? Dělá co říká text?
 
 ### AI — přepracovat
-- [ ] AI musí znát a dodržovat všechna herní pravidla
+- [x] AI: face-down karty hráče — viditelnost opravena (faceDown místo revealed) (2026-05-13)
+- [x] AI: arény — umí zahrát na pole (2026-05-13)
+- [x] AI: spelly — GY tracking po použití (2026-05-13)
+- [x] AI: lethal detection — útok na prázdné pole pokud součet ATK ≥ pLP (2026-05-13)
+- [x] AI: fúze — prohledává hand+hand a hand+pole kombinace (2026-05-13)
+- [x] AI: aggressive styl — cílené spelly (destroy_synth, area_dmg, buff) (2026-05-13)
+- [ ] AI musí znát a dodržovat všechna herní pravidla (DEF bounce apod.)
 - [ ] AI má útočit vždy když vidí jasnou příležitost k vítězství
-- [ ] AI musí umět **fúzovat** karty
 - [ ] AI musí umět **hrát skilly** cíleně
 - [ ] AI musí respektovat face-down karty (neví co pod nimi je)
 - [ ] AI má správně vyhodnocovat kdy použít trap/arénu
@@ -195,5 +211,5 @@
 
 ---
 
-*Poslední aktualizace: 2026-05-12*
+*Poslední aktualizace: 2026-05-13*
 *Soubor udržuj aktuální — při každé změně uprav datum a stav úkolu.*

@@ -1005,12 +1005,17 @@ const StoryEngine = {
       .fade-in { animation: fadeIn 0.4s ease; }
 
       /* ── BACKGROUND ── */
+      @keyframes vn-kenburns {
+        from { transform: scale(1.07) translate(2.2%, -1.6%); }
+        to   { transform: scale(1.0)  translate(0%,    0%  ); }
+      }
       .vn-bg {
         position: absolute; inset: 0;
         background-size: cover;
         background-position: center top;
         background-color: #06080a;
         transition: background-image 0.6s ease;
+        animation: vn-kenburns 10s ease-out forwards;
       }
       .vn-bg-overlay {
         position: absolute; inset: 0;
