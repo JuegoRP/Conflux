@@ -515,6 +515,20 @@ const BattleSystem = {
       s.canAttack = (s.coinflipResult === 'player') ? s.playerTurnCount > 1 : true;
       s.phase = 'hand';
       this._setPhase('hand');
+
+      // forcedLoss: auto-trigger porážky na začátku 2. tahu hráče
+      // (nevyžaduje klik End Turn ani zahranou kartu — trigger je automatický)
+      if(s.forcedLoss && s.playerTurnCount >= 2) {
+        this._log('Systém přebírá kontrolu...', 'hint');
+        this._render();
+        this._forcedLossTimer = setTimeout(() => {
+          if(s.over) return;
+          s.pLP = 0;
+          this._checkGameOver();
+        }, 1200);
+        return;
+      }
+
       // Tutorial: první útočná fáze
       if(s.canAttack && s.pMonsters.some(m=>m)) {
         this._checkTutorial('first_attack_phase', () => {});
@@ -583,7 +597,6 @@ const BattleSystem = {
       this._log('Musíš zahrát kartu!', 'warn');
       return;
     }
-    if(s.isPlayerTurn && this._checkForcedLoss()) return;
     s.busy = true;
     s.turnNumber++;
     if(s.isPlayerTurn) s.stats.turns++;
@@ -1477,20 +1490,9 @@ const BattleSystem = {
   },
 
   // ── AI ────────────────────────────────────────────────────────────────────
-  _checkForcedLoss() {
-    const s = this._state;
-    if(!s.forcedLoss) return false;
-    // forcedLoss: hráč prohraje po prvním tahu nepřítele
-    if(s.turnNumber >= 2 || !s.isPlayerTurn) {
-      this._log('Systém přebírá kontrolu...','hint');
-      setTimeout(() => {
-        s.pLP = 0;
-        s.over = false; // reset aby checkGameOver mohl reagovat
-        this._checkGameOver();
-      }, 800);
-      return true;
-    }
-    return false;
+  destroy() {
+    if(this._forcedLossTimer) clearTimeout(this._forcedLossTimer);
+    AudioSystem.stopMusic(600);
   },
 
   _aiTurn() {

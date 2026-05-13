@@ -168,6 +168,9 @@
 ### Konec hry / defeat
 - [x] POKRAČOVAT po prohře jen u Eliho (forcedLoss) (2026-05-12)
 - [x] Ostatní porážky: 3s countdown → auto-redirect do menu (2026-05-12)
+- [x] forcedLoss redesign: auto-trigger na začátku 2. tahu hráče (ne na End Turn) (2026-05-13)
+- [x] _showDefeatCutscene po fade-out volá _showResult → navigace funguje (2026-05-13)
+- [x] BattleSystem.destroy() přidán — canceluje forcedLoss timer, stopuje hudbu (2026-05-13)
 
 ---
 
@@ -188,6 +191,12 @@
 - [x] Music overlap opraven při odchodu z FreeBattle, DeckBuilder, Collection (2026-05-12)
 - [x] destroy() volá AudioSystem.stopMusic(600) ve všech modulech (2026-05-12)
 - [x] BattleSystem.destroy() zastavuje hudbu — overlap s menu opraven (2026-05-12)
+
+### LetterEngine (dopis na konci hry)
+- [x] _addStyles() přidán — CSS se injektuje do head, dopis se zobrazí správně (2026-05-13)
+- [x] background-size: contain (místo cover) — holografický device se nezkreslí (2026-05-13)
+- [ ] LetterEngine.destroy() neruší typewriter setTimeout chain — po navigaci away timery pokračují
+- [ ] Vizuál: letter-paper (#f5eed8 žlutá) nezapadá do sci-fi holografického pozadí — přehodnotit barvy
 
 ### Fonty
 - [x] global.css: --px → 'Press Start 2P', --vt → 'VT323' přidán (2026-05-12)
@@ -211,5 +220,5 @@
 
 ---
 
-*Poslední aktualizace: 2026-05-13*
+*Poslední aktualizace: 2026-05-13 (2)*
 *Soubor udržuj aktuální — při každé změně uprav datum a stav úkolu.*
