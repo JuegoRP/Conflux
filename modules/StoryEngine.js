@@ -779,9 +779,74 @@ const StoryEngine = {
   },
 
   // Cutscene jako textové snímky — klik pro pokračování, pause = min. čekání
+  // DOM se staví jednou; při každém framu se aktualizují jen text/portrét/nameplate/bg.
+  // Ken Burns animace se restartuje pouze při změně backgroundu.
   _playFrames(frames, nextNodeId, nodeBackground) {
+    this._addStyles();
+
+    // Počáteční background z prvního framu (nebo node backgroundu)
+    const firstBg = frames[0]?.image
+      ? `background-image:url('${frames[0].image}')`
+      : (frames[0]?.background ? this._bgStyle(frames[0].background)
+        : (nodeBackground ? this._bgStyle(nodeBackground) : ''));
+
+    this._container.innerHTML = `
+      <div class="vn-screen" style="cursor:pointer">
+        <div class="vn-bg" style="${firstBg}"><div class="vn-bg-overlay"></div></div>
+        <div class="vn-portrait-slot"></div>
+        <div class="vn-panel">
+          <div class="vn-nameplate-slot"></div>
+          <div class="vn-text"></div>
+          <div class="vn-tap">▶</div>
+        </div>
+      </div>`;
+
+    const screen       = this._container.querySelector('.vn-screen');
+    const bgEl         = screen.querySelector('.vn-bg');
+    const portraitSlot = screen.querySelector('.vn-portrait-slot');
+    const nameplateSlot= screen.querySelector('.vn-nameplate-slot');
+    const textEl       = screen.querySelector('.vn-text');
+
+    // Sleduje aktivní background klíč aby věděl kdy restartovat animaci
+    let activeBgKey = frames[0]?.image || frames[0]?.background || nodeBackground || '';
     let idx = 0;
-    const nodeBgStyle = nodeBackground ? this._bgStyle(nodeBackground) : '';
+    let ready = false;
+
+    const applyFrame = (f) => {
+      // ── Background — aktualizuj jen při změně, restart Ken Burns ──────────
+      const newBgKey = f.image || f.background || nodeBackground || '';
+      if(newBgKey !== activeBgKey) {
+        activeBgKey = newBgKey;
+        const newBgStyle = f.image
+          ? `background-image:url('${f.image}')`
+          : (f.background ? this._bgStyle(f.background)
+            : (nodeBackground ? this._bgStyle(nodeBackground) : ''));
+        bgEl.style.cssText = newBgStyle;
+        // Restart Ken Burns animace
+        bgEl.style.animation = 'none';
+        void bgEl.offsetWidth;
+        bgEl.style.animation = '';
+      }
+
+      // ── Portrét ────────────────────────────────────────────────────────────
+      const portraitKey  = f.portrait || f.speaker;
+      const portraitInfo = this._resolveSpeaker(portraitKey);
+      const portraitFile = portraitInfo?.portrait || (f.portrait ? portraitKey : null);
+      if(portraitKey && portraitFile) {
+        const side = portraitInfo?.side || 'left';
+        portraitSlot.innerHTML = `<div class="vn-portrait vn-portrait--${side} vn-portrait--active"
+          style="background-image:url('assets/images/portraits/${portraitFile}.png')"></div>`;
+      } else {
+        portraitSlot.innerHTML = '';
+      }
+
+      // ── Nameplate + text ───────────────────────────────────────────────────
+      nameplateSlot.innerHTML = (f.speaker || f.portrait)
+        ? `<div class="vn-nameplate"><span class="vn-nameplate-dot"></span>${(f.speaker||f.portrait).toUpperCase()}</div>`
+        : '';
+      textEl.textContent = f.text || '';
+    };
+
     const show = () => {
       if(idx >= frames.length) {
         if(this._params?._returnToMenu) { Router.goto('menu'); return; }
@@ -796,49 +861,20 @@ const StoryEngine = {
         return;
       }
       const f = frames[idx++];
-      const bgStyle = f.image
-        ? `background-image:url('${f.image}')`
-        : (f.background ? this._bgStyle(f.background) : nodeBgStyle);
+      ready = false;
+      applyFrame(f);
 
-      const portraitKey = f.portrait || f.speaker;
-      const portraitInfo = this._resolveSpeaker(portraitKey);
-      const portraitSide = portraitInfo?.side || 'left';
-      const portraitFile = portraitInfo?.portrait || (f.portrait ? portraitKey : null);
-      const portraitHtml = (portraitKey && portraitFile)
-        ? `<div class="vn-portrait vn-portrait--${portraitSide} vn-portrait--active"
-             style="background-image:url('assets/images/portraits/${portraitFile}.png')"></div>`
-        : '';
-      const speakerHtml = (f.speaker || f.portrait)
-        ? `<div class="vn-nameplate"><span class="vn-nameplate-dot"></span>${(f.speaker||f.portrait).toUpperCase()}</div>`
-        : '';
-
-      this._addStyles();
-      this._container.innerHTML = `
-        <div class="vn-screen fade-in" style="cursor:pointer">
-          <div class="vn-bg" style="${bgStyle}"><div class="vn-bg-overlay"></div></div>
-          ${portraitHtml}
-          <div class="vn-panel">
-            ${speakerHtml}
-            <div class="vn-text">${f.text || ''}</div>
-            <div class="vn-tap">▶</div>
-          </div>
-        </div>`;
-
-      // pause = minimální čekání před klikem, poté uživatel sám pokračuje
       const MIN_DWELL = f.pause ?? 400;
-      let ready = false;
-      const bindAdvance = () => {
-        this._container.querySelector('.vn-screen')?.addEventListener('click', () => {
-          if(ready) show();
-        }, { once: true });
-      };
-      bindAdvance();
+      const advance = () => { if(ready) show(); };
+      screen.addEventListener('click', advance, { once: true });
       setTimeout(() => {
         ready = true;
-        // Rebind v případě že klik přišel dřív než dwell
-        bindAdvance();
+        // Pokud hráč kliknul dřív než dwell vypršel, rebind
+        screen.addEventListener('click', advance, { once: true });
       }, MIN_DWELL);
     };
+
+    // První frame se zobrazí hned, animace Ken Burns začíná
     show();
   },
 
@@ -1007,7 +1043,7 @@ const StoryEngine = {
       /* ── BACKGROUND ── */
       @keyframes vn-kenburns {
         from { transform: scale(1.07) translate(2.2%, -1.6%); }
-        to   { transform: scale(1.0)  translate(0%,    0%  ); }
+        to   { transform: scale(1.02) translate(0%,    0%  ); }
       }
       .vn-bg {
         position: absolute; inset: 0;
