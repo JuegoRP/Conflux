@@ -2043,12 +2043,8 @@ const BattleSystem = {
           scene.classList.add('ds-fade-out');
           setTimeout(() => {
             scene.remove();
+            this._showResult('defeat');
             EventBus.emit('battle:ended', { won:false, nodeId: this._params?.nodeId });
-            EventBus.emit('battle:end', {
-              result: 'defeat',
-              nodeId: this._params.storyNodeId,
-              onDefeat: this._params.onDefeat
-            });
           }, 800);
         }, 600);
         return;
@@ -2088,6 +2084,10 @@ const BattleSystem = {
           try { const k='conflux_fb_'+this._params.enemyId; const r=JSON.parse(localStorage.getItem(k)||'{"w":0,"l":0}'); r.l++; localStorage.setItem(k,JSON.stringify(r)); } catch {}
         }
         this._showResult('defeat');  EventBus.emit('battle:ended', { won:false, nodeId: this._params?.nodeId });
+      } else if(s.forcedLoss) {
+        // forcedLoss — přeskočit cutscénu, rovnou výsledek s POKRAČOVAT tlačítkem
+        this._showResult('defeat');
+        EventBus.emit('battle:ended', { won:false, nodeId: this._params?.nodeId });
       } else {
         this._showDefeatCutscene();
       }

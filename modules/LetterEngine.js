@@ -42,7 +42,20 @@ const LetterEngine = {
   // RENDER
   // ═══════════════════════════════════════════════════════════════
 
+  _addStyles() {
+    let style = document.getElementById('letter-styles');
+    if(!style) {
+      style = document.createElement('style');
+      style.id = 'letter-styles';
+      document.head.appendChild(style);
+    }
+    if(style.dataset.v === '2') return;
+    style.dataset.v = '2';
+    style.textContent = this.getStyles();
+  },
+
   _render() {
+    this._addStyles();
     const el = this._container;
 
     el.innerHTML = `
@@ -212,7 +225,7 @@ const LetterEngine = {
       .letter-scene {
         position: fixed;
         inset: 0;
-        background: #0a0a0f url('assets/images/letter_paper.png') center/cover no-repeat;
+        background: #0a0a0f url('assets/images/letter_paper.png') center/contain no-repeat;
         display: flex;
         align-items: center;
         justify-content: center;
