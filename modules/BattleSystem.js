@@ -253,11 +253,17 @@ const BattleSystem = {
       </div>`;
     document.body.appendChild(overlay);
 
-    setTimeout(() => {
+    let overlayShown = false;
+    const showOverlay = () => {
+      if(overlayShown) return;
+      overlayShown = true;
       transition.style.opacity = '0';
       overlay.style.opacity = '1';
       setTimeout(() => transition.remove(), 500);
-    }, 1500);
+    };
+    // Klik na přechodovou obrazovku = přeskoč čekání
+    transition.addEventListener('click', showOverlay, { once: true });
+    setTimeout(showOverlay, 1500);
 
     const logoWrap = overlay.querySelector('#cf-logo-wrap');
     const logo     = overlay.querySelector('#cf-logo');
@@ -2120,6 +2126,9 @@ const BattleSystem = {
       s._finalGrade = this._calcGrade(s, true);
       // Autosave po vítězství (jen kampaň, ne volný souboj)
       if(this._params.mode !== 'free') {
+        // Ulož na onWin node aby se při načtení přeskočil boj, ne na battle node
+        const _winNode = this._params.onWin || this._params.onVictory;
+        if(_winNode) GameState.campaign.currentNode = _winNode;
         SaveManager.save(0);
         this._tryGrantLetterFragment(s._finalGrade.grade);
       }
