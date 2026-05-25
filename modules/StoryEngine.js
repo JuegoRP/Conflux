@@ -86,17 +86,17 @@ const StoryEngine = {
     'act1_synth_zone':'act1_synth_checkpoint',
     // ═══ ACT 2 ═══ — act2_border, act2_forest_deep, act2_forest_hidden existují
     'act2_synth_border':'act1_synth_checkpoint',
-    'act2_crossroads':'act2_border',
-    'act2_synth_deep':'act1_admin',
+    'act2_crossroads':'act1_crossroads_real',
+    'act2_synth_deep':'act2_demarcation_real',
     'act2_ruins':'act2_ruins',          // soubor existuje
-    'act2_before_boss':'act2_border',
+    'act2_before_boss':'act2_demarcation_real',
     'act2_gate':'act1_gate_inner',
     'act2_beyond':'act1_beyond_gate',
     // ═══ ACT 3 ═══ (máme act3_nexus)
     'act3_nexus':'act3_nexus', 'act3_nexus_deep':'act3_nexus',
     'act3_nexus_edge':'act3_nexus', 'act3_fusion_zone':'act3_nexus',
     'act3_before_boss':'act3_nexus', 'act3_duel_arena':'act3_nexus',
-    'act3_beyond':'act2_border', 'act3_horizon':'act3_nexus',
+    'act3_beyond':'act3_hybrid_city_real', 'act3_horizon':'act3_nexus',
     // ═══ ACT 4 ═══ (máme act4_syndikat; act1_admin použijeme pro office)
     'act4_border_dusk':'act4_syndikat', 'act4_city_corridor':'act1_city_streets',
     'act4_red_zone':'act4_syndikat', 'act4_syndicate_hall':'act4_syndikat',
@@ -104,11 +104,11 @@ const StoryEngine = {
     'act4_veritel_office':'act1_admin',
     // ═══ ACT 5 ═══ (máme act5_stanice; act5_duel_memory → korupce)
     'act5_outer_ring':'act5_stanice', 'act5_transit_station':'act5_stanice',
-    'act5_duel_memory':'act7_distorted_road', 'act5_road_evening':'act5_stanice',
+    'act5_duel_memory':'act8_corruption_real', 'act5_road_evening':'act5_stanice',
     'act5_road_dusk':'act5_stanice',
     // ═══ ACT 6 ═══ (máme act6_ruiny; les pro forest; korupce pro void)
     'act6_crossing':'act6_ruiny', 'act6_crossing_fight':'act6_ruiny',
-    'act6_ruins':'act2_ruins', 'act6_open_road':'act2_border',
+    'act6_ruins':'act2_ruins', 'act6_open_road':'act6_ruins_real',
     'act6_horizon':'act6_ruiny', 'act6_city':'act1_city_streets',
     'act6_synth_hq':'act1_admin',
     // ═══ ACT 7 ═══ (máme act7_centrum; distorted/void → korupce)
@@ -120,14 +120,14 @@ const StoryEngine = {
     'act7_horizon_glitch':'act7_distorted_road',
     // ═══ ACT 8 ═══ (máme act8_mesto; act8_void existuje)
     'act8_border_town':'act8_mesto', 'act8_battle_town':'act8_mesto',
-    'act8_road_after':'act2_border', 'act8_horizon_clear':'act8_mesto',
+    'act8_road_after':'act8_corruption_real', 'act8_horizon_clear':'act8_mesto',
     // act8_void existuje (korupce)
     // ═══ ACT 9 ═══ (máme act9_zrcadlo)
     'act9_convergence_plain':'act9_zrcadlo', 'act9_memory_space':'act9_zrcadlo',
     'act9_mirror_space':'act9_zrcadlo', 'act9_threshold':'act9_zrcadlo',
     'act9_threshold_open':'act9_zrcadlo', 'act9_transition_fight':'act9_zrcadlo',
     'act9_synth_gate':'act1_gate_inner', 'act9_organic_gate':'act1_beyond_gate',
-    'act9_center_gate':'act7_distorted_road', 'act9_fourth_gate':'act7_distorted_road',
+    'act9_center_gate':'act1_gate_real', 'act9_fourth_gate':'act7_distorted_road',
     // ═══ ACT 10 ═══ (máme act10_konvergence)
     'act10_convergence':'act10_konvergence', 'act10_synth_core':'act10_konvergence',
     'act10_synth_battle':'act10_konvergence', 'act10_synth_horizon':'act10_konvergence',

@@ -149,7 +149,177 @@ const GameState = {
     return this._computeFusion(a, b);
   },
 
+  /**
+   * Systémový výpočet fúze ze dvou ID karet.
+   * Vrací výslednou kartu (archetyp 1001-1084) nebo null pokud fúze není možná.
+   *
+   * Priorita pravidel:
+   *  0) fusionIndex override (kompletnost — getFusionResult ho řeší taky)
+   *  1) corruption + corruption  → corruption void (vyšší tier)
+   *  2) corruption + synth       → corruption memory (systém přepsán)
+   *  3) corruption + organic     → corruption void
+   *  4) synth + organic          → hybrid bridge/balanced (+1 tier)
+   *  5) synth + hybrid           → hybrid striker/balanced
+   *  6) organic + hybrid         → hybrid nature/healer
+   *  7) same faction             → silnější verze té frakce (+1 tier)
+   *  8) subcategory kombinace    → faction-agnostic výsledek
+   * Cíl se hledá přes _findArchetype(faction, subcat, tier).
+   */
   _computeFusion(idA, idB) {
+    const a = parseInt(idA), b = parseInt(idB);
+    const cardA = this._cardIndex?.get(a) || this.getCard(a);
+    const cardB = this._cardIndex?.get(b) || this.getCard(b);
+    if(!cardA || !cardB) return null;
+
+    // 0) Override (pro úplnost — voláno i z getFusionResult)
+    const ov = this.fusionIndex[`${a}+${b}`] ?? this.fusionIndex[`${b}+${a}`] ?? null;
+    if(ov !== null) {
+      const c = this._cardIndex?.get(ov);
+      if(c) return c;
+    }
+
+    const fa = cardA.faction, fb = cardB.faction;
+    const sa = cardA.subcategory, sb = cardB.subcategory;
+    const atkA = cardA.atk || 0, atkB = cardB.atk || 0;
+
+    // Tier ze ATK (regulérní karty nemají pole tier)
+    const tierA = cardA.tier || this._fusionTier(atkA, atkA, false);
+    const tierB = cardB.tier || this._fusionTier(atkB, atkB, false);
+    const baseTier = Math.max(tierA, tierB);
+    const bump = (t) => Math.min(3, t + 1);
+
+    const has = (f) => fa === f || fb === f;
+    const both = (f) => fa === f && fb === f;
+    const other = (f) => (fa === f ? fb : fa);
+    const otherSub = (f) => (fa === f ? sb : sa);
+
+    let targetFaction = null, targetSubcat = null, targetTier = baseTier;
+
+    // ── FACTION PRAVIDLA (priorita) ──────────────────────────────────────────
+    if(both('corruption')) {
+      // 1) dvojitá corruption → hlubší void
+      targetFaction = 'corruption';
+      targetSubcat  = 'void';
+      targetTier    = bump(baseTier);
+    } else if(has('corruption') && has('synth')) {
+      // 2) corruption přepíše systém → corruption memory (pohlcené vzpomínky systému)
+      targetFaction = 'corruption';
+      targetSubcat  = 'memory';
+      targetTier    = baseTier;
+    } else if(has('corruption') && has('organic')) {
+      // 3) corruption pohltí organické → void
+      targetFaction = 'corruption';
+      targetSubcat  = 'void';
+      targetTier    = baseTier;
+    } else if(has('corruption')) {
+      // corruption + hybrid/neutral → corruption, subcat dle protistrany
+      targetFaction = 'corruption';
+      targetSubcat  = this._corruptionSubcat(otherSub('corruption'));
+      targetTier    = baseTier;
+    } else if(has('synth') && has('organic')) {
+      // 4) most mezi protiklady → hybrid, +1 tier
+      targetFaction = 'hybrid';
+      targetSubcat  = this._bridgeSubcat(sa, sb);
+      targetTier    = bump(baseTier);
+    } else if(has('synth') && has('hybrid')) {
+      // 5) synth tlačí hybrid k akci → striker, jinak balanced
+      targetFaction = 'hybrid';
+      targetSubcat  = this._isOffensive(otherSub('hybrid')) || this._isOffensive(sa) || this._isOffensive(sb)
+                        ? 'striker' : 'balanced';
+      targetTier    = baseTier;
+    } else if(has('organic') && has('hybrid')) {
+      // 6) organické táhne hybrid k přírodě/léčení
+      targetFaction = 'hybrid';
+      targetSubcat  = this._isSupport(otherSub('hybrid')) || this._isSupport(sa) || this._isSupport(sb)
+                        ? 'healer' : 'nature';
+      targetTier    = baseTier;
+    } else if(fa === fb) {
+      // 7) stejná frakce → silnější verze, subcat z matice, +1 tier
+      targetFaction = fa;
+      targetSubcat  = this._fusionSubcat(sa, sb);
+      targetTier    = bump(baseTier);
+    } else if(has('neutral')) {
+      // neutral ustoupí druhé straně
+      targetFaction = other('neutral');
+      targetSubcat  = this._fusionSubcat(sa, sb);
+      targetTier    = baseTier;
+    } else {
+      // fallback faction přes matici
+      targetFaction = this._fusionFaction(fa, fb);
+      targetSubcat  = this._fusionSubcat(sa, sb);
+      targetTier    = baseTier;
+    }
+
+    // ── SUBCATEGORY PŘEPIS (faction-agnostic kombinace) ──────────────────────
+    // Pokud subcat kombinace dává silnější/specifičtější signál, použij ho.
+    const subResult = this._subcatFusion(sa, sb);
+    if(subResult) {
+      // void tendence z memory+memory přetlačí k corruption
+      if(subResult.subcat === 'void' && targetFaction !== 'corruption' && subResult.corruptionTendency) {
+        targetFaction = 'corruption';
+      }
+      // Subcat dosazujeme jen pokud cílová frakce daný subcat zná (jinak necháme původní).
+      if(this._factionHasSubcat(targetFaction, subResult.subcat)) {
+        targetSubcat = subResult.subcat;
+        if(subResult.bump) targetTier = bump(targetTier);
+      }
+    }
+
+    if(targetTier > 3) targetTier = 3;
+    if(targetTier < 1) targetTier = 1;
+
+    const result = this._findArchetype(targetFaction, targetSubcat, targetTier);
+    return result || null;
+  },
+
+  // Mapuje protistranu corruption fúze na rozumný corruption subcat (jen memory/void existují)
+  _corruptionSubcat(otherSub) {
+    if(otherSub === 'memory' || otherSub === 'system' || otherSub === 'scout') return 'memory';
+    return 'void';
+  },
+
+  // synth+organic → bridge (most) pokud má smysl, jinak balanced
+  _bridgeSubcat(sa, sb) {
+    // Most vzniká když se spojí struktura (system/scout) s přírodou/pamětí
+    const structural = (s) => s === 'system' || s === 'scout' || s === 'guardian';
+    const living     = (s) => s === 'nature' || s === 'memory' || s === 'healer';
+    if((structural(sa) && living(sb)) || (structural(sb) && living(sa))) return 'bridge';
+    return 'balanced';
+  },
+
+  _isOffensive(s) { return s === 'striker' || s === 'scout'; },
+  _isSupport(s)   { return s === 'healer' || s === 'memory' || s === 'guardian'; },
+
+  // Zná daná frakce tento subcat v archetypech?
+  _factionHasSubcat(faction, subcat) {
+    if(!this._archetypeIndex) return false;
+    for(let t = 1; t <= 5; t++) {
+      if(this._archetypeIndex.has(`${faction}|${subcat}|${t}`)) return true;
+    }
+    return false;
+  },
+
+  // Faction-agnostic subcategory kombinace. Vrací {subcat, bump, corruptionTendency} nebo null.
+  _subcatFusion(sa, sb) {
+    if(!sa || !sb) return null;
+    const pair = [sa, sb].sort().join('+');
+    // explicitní kombinace
+    const table = {
+      'scout+scout':       { subcat: 'striker', bump: false },
+      'guardian+guardian': { subcat: 'guardian', bump: true  },
+      'memory+memory':     { subcat: 'void', bump: false, corruptionTendency: true },
+      'guardian+striker':  { subcat: 'balanced', bump: false },
+      'nature+system':     { subcat: 'bridge', bump: false },
+      'healer+striker':    { subcat: 'balanced', bump: false },
+      'memory+void':       { subcat: 'void', bump: false, corruptionTendency: true },
+      'memory+scout':      { subcat: 'memory', bump: false },
+    };
+    if(table[pair]) return table[pair];
+    // bridge + cokoli → balanced (most stabilizuje), bridge zůstává jen bridge+bridge
+    if(sa === 'bridge' || sb === 'bridge') {
+      if(sa === sb) return { subcat: 'bridge', bump: false };
+      return { subcat: 'balanced', bump: false };
+    }
     return null;
   },
 
@@ -320,7 +490,9 @@ const GameState = {
     level = Math.min(5, level + storyBonus);
     if(level > 0 && !side) side = 'chaos';
     const clampedLevel = Math.min(level, 3);
-    this.corruption = { level, side, visualClass: level > 0 ? `corruption-${side}-${clampedLevel}` : '', glitchIntensity: level / 5 };
+    // glitchIntensity musí odpovídat visualClass — obě cappovat na stejné maximum (3).
+    // Tím je glitchIntensity v rozsahu 0-1, maximum při corruption 3+.
+    this.corruption = { level, side, visualClass: level > 0 ? `corruption-${side}-${clampedLevel}` : '', glitchIntensity: clampedLevel / 3 };
     this.player.faction = level >= 3 ? (side === 'order' ? 'synth' : 'organic') : 'hybrid';
   },
 

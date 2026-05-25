@@ -137,7 +137,8 @@ async function boot() {
   _showBootScreen('');
 
   if(GameState.hasCheckpoint()) {
-    Router.goto('menu');  // MainMenu nabídne "Pokračovat"
+    // Existuje uložený checkpoint → rovnou pokračuj v příběhu od uloženého uzlu
+    Router.goto('story', { nodeId: GameState.checkpoint.nodeId });
   } else {
     Router.goto('menu');
   }
