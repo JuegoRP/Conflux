@@ -59,7 +59,7 @@ const StoryEngine = {
     'pramáti':      { portrait: 'pramati',      side: 'left'  },
     'pozorovatel':  { portrait: 'pozorovatel',  side: 'right' },
     'rekalibrator': { portrait: 'rekalibrator', side: 'right' },
-    'reka':         { portrait: 'rekalibrator', side: 'right' },
+    'reka':         { portrait: 'voit',         side: 'right' },
     'paradox':      { portrait: 'paradox',      side: 'right' },
     'vykonavatel':  { portrait: 'voit',         side: 'right' },
   },
@@ -309,6 +309,7 @@ const StoryEngine = {
     this._preloadNodeAssets(node);
     if(node.next && this._nodes[node.next]) this._preloadNodeAssets(this._nodes[node.next]);
     this._currentNode = node;
+    if(node._actId !== undefined) GameState.currentAct = node._actId;
     // Ulož endingId pro letter system
     if(node.endingId) {
       if(!GameState.identity) GameState.identity = {};
@@ -331,6 +332,7 @@ const StoryEngine = {
       const nextActNum = (GameState.campaign.actNumber || 1) + 1;
       try { AudioSystem?.playStoryMusic?.(nextActNum); } catch(e) {}
       GameState.campaign.actNumber = nextActNum;
+      EventBus.emit('story:actStart', { act: GameState.campaign.actNumber });
       if(node.next) setTimeout(() => this._goToNode(node.next, true), 400);
       else Router.goto('menu');
       return;
@@ -1497,6 +1499,13 @@ const StoryEngine = {
     GameState.identity.endingType = endingId;
 
     const endColor = {
+      synth:      '#4af',
+      organic:    '#4a4',
+      observer:   '#aaa',
+      monyra:     '#fa4',
+      hybrid:     '#a4f',
+      corruption: '#f44',
+      // legacy aliasy
       architect:'#4fa3e0', roots:'#50e0b8', assimilation:'#c8a84b',
       flood:'#e04f6a', fragmentation:'#607080',
       protokol:'#4fa3e0', koreny:'#50e0b8', most:'#c8a84b', za_ramem:'#9b59b6',

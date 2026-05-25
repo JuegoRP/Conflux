@@ -38,6 +38,7 @@ const GameState = {
     worldNumber:  1,
     nodeNumber:   0,
     lostCards:    [],
+    actNumber:    1,
   },
 
   currentAct: null,
@@ -562,6 +563,9 @@ const GameState = {
     // Compute identity first so all scores are fresh
     const id = this.buildIdentityProfile();
 
+    // Kanonický typ konce — preferuj explicitní endingType / endingId z příběhu
+    const endingType = this.identity?.endingType || this.campaign?.endingId || 'observer';
+
     const lines = [];
     const totalBattles   = (ps.attackedFirst||0) + (ps.builtDefenseFirst||0);
     const totalChoices   = (ps.choseSynth||0) + (ps.choseOrganic||0) + (ps.choseNeutral||0);
@@ -658,26 +662,40 @@ const GameState = {
 
     // ── Ending reflection ────────────────────────────────────────────────────
     const endingReflections = {
+      synth:        'Protokol tě přijal. Odcházíš jako čistý kód — bez šumu, bez váhání.',
+      organic:      'Zakotvil jsi. Kořeny jsou pomalé ale jdou hluboko. Paměť přežila.',
+      observer:     'Nezasáhl jsi na žádnou stranu. Jen jsi sledoval. To je taky volba.',
+      monyra:       'Signál byl přijat. Monyra tě slyšela — a ty jsi slyšel ji.',
+      hybrid:       'Postavil jsi most. Dva světy, jeden průchod. Žádný z nich nezvítězil, ani neprohrál.',
+      corruption:   'Přepis se dokončil. Nepřepisuješ ty systém — systém přepsal tebe.',
+      // legacy aliasy
       assimilation: 'Systém tě vstřebal. Nebo ses vstřebal do systému. Hranice je v tomhle nejasná.',
       flood:        'Přišel jsi jako přílivová vlna. Systém bude potřebovat čas aby tě zpracoval.',
       fragmentation:'Rozpadl ses na kousky — a každý kousek šel jinam. Možná je to svoboda. Možná jen chaos.',
       architect:    'Přišel jsi jako stavitel. Odcházíš s výkresem který si systém uloží.',
       roots:        'Zakotvil jsi. Kořeny jsou pomalé ale jdou hluboko.',
     };
-    const reflection = endingReflections[id.endingType];
+    const reflection = endingReflections[endingType];
     if(reflection) lines.push({ type: 'closing', text: reflection });
 
     lines.push({ type: 'space' });
 
     // ── Signature ────────────────────────────────────────────────────────────
     const signatures = {
+      synth:      'Kurýr — přepsán protokolem',
+      organic:    'Kurýr — ten, kdo pamatuje',
+      observer:   'Kurýr — bez strany',
+      monyra:     'Kurýr — signál Monyry',
+      hybrid:     'Kurýr — most mezi světy',
+      corruption: '— data poškozena —',
+      // legacy aliasy
       assimilation: '— Systém',
       flood:        '— Pramáti',
       fragmentation:'— Zrcadlo',
       architect:    '— Lens',
       roots:        '— Pramáti',
     };
-    lines.push({ type: 'signature', text: signatures[id.endingType] || '— Pozorovatel' });
+    lines.push({ type: 'signature', text: signatures[endingType] || '— Pozorovatel' });
 
     return lines;
   },
@@ -690,7 +708,7 @@ const GameState = {
     this.player = { name: playerName, lp: 10000, maxLp: 10000, alignment: 0, faction: null, credits: 0,
       deck: starterIds.length >= 10 ? starterIds : fallbackDeck,
       collection: starterCol.length >= 10 ? starterCol : [...fallbackDeck, ...fallbackDeck] };
-    this.campaign = { currentNode: null, visitedNodes: [], flags: {}, chapter: 0, worldNumber: 1, nodeNumber: 0, lostCards: [] };
+    this.campaign = { currentNode: null, visitedNodes: [], flags: {}, chapter: 0, worldNumber: 1, nodeNumber: 0, lostCards: [], actNumber: 1 };
     this.cardScars  = {};
     this.currentAct = null;
     this.currentEnemy = null;

@@ -220,22 +220,23 @@ EventBus.on('loading:end', () => {
 
 // ── Ending screen ─────────────────────────────────────────────────────────────
 function _showEnding(container, params) {
-  const endingId = params?.endingId || 'most';
-  const backgrounds = {
-    protokol: 'assets/images/backgrounds/ending_protokol.jpg',
-    koreny:   'assets/images/backgrounds/ending_koreny.jpg',
-    most:     'assets/images/backgrounds/ending_most.jpg',
-    za_ramem: 'assets/images/backgrounds/ending_zaramem.jpg',
+  const endingId = params?.endingId || 'observer';
+  // Kanonická taxonomie konců — mapuj na existující pozadí (ending_*.jpg neexistují)
+  const bgMap = {
+    synth:      'act1_synth.jpg',      organic:    'act2_forest_deep.jpg',
+    observer:   'act9_zrcadlo.jpg',    monyra:     'act10_konvergence.jpg',
+    hybrid:     'act1_hybrid.jpg',     corruption: 'act8_void.jpg',
   };
-  const bg = backgrounds[endingId];
+  const bgFile = bgMap[endingId] || 'act10_konvergence.jpg';
+  const bg = `assets/images/backgrounds/${bgFile}`;
 
   container.innerHTML = `
-    <div class="ending-wrap" style="${bg ? `background-image:url('${bg}')` : ''}">
+    <div class="ending-wrap" style="background-image:url('${bg}')">
       <div class="ending-overlay"></div>
       <button class="ending-to-letter">Číst dopis →</button>
     </div>`;
 
-  AudioSystem.playMusic(`ending_${endingId}`, { loop: false, fadeIn: 2000 });
+  AudioSystem.playMusic('story_dramatic', { loop: false, fadeIn: 2000 });
 
   container.querySelector('.ending-to-letter').addEventListener('click', () => {
     Router.goto('letter', { endingId });

@@ -1189,7 +1189,7 @@ const BattleSystem = {
     clashEl.addEventListener('click', () => { clashEl.dataset.skip='1'; }, { once: true });
 
     // Výsledková animace po 400ms — show result + damage
-    const resultTimer = setTimeout(() => {
+    this._resultTimer = setTimeout(() => {
       const resultCls = diff > 0 ? 'clash-atk-wins' : diff < 0 ? 'clash-def-wins' : 'clash-draw';
       clashEl.querySelector('.clash-zoom-inner')?.classList.add(resultCls);
       // Show LP damage amount if overflow
@@ -1206,8 +1206,9 @@ const BattleSystem = {
     // Funkce která zavře overlay a pokračuje
     let clashDone = false;
     const finishClash = () => {
+      if(!this._state) return;
       if(clashDone) return; clashDone = true;
-      clearTimeout(resultTimer);
+      clearTimeout(this._resultTimer);
       clashEl.remove();
       this._animateCard(who, atkSlot, 'attack');
 
@@ -1278,10 +1279,10 @@ const BattleSystem = {
     };
 
     // Po 2200ms nebo po kliku (skip)
-    const clashTimer = setTimeout(finishClash, 1200);
-    const skipCheck = setInterval(() => {
+    this._clashTimer = setTimeout(finishClash, 1200);
+    this._skipCheck = setInterval(() => {
       if(clashEl.dataset.skip === '1') {
-        clearTimeout(clashTimer); clearInterval(skipCheck);
+        clearTimeout(this._clashTimer); clearInterval(this._skipCheck);
         finishClash();
       }
     }, 50);
@@ -1490,11 +1491,6 @@ const BattleSystem = {
   },
 
   // ── AI ────────────────────────────────────────────────────────────────────
-  destroy() {
-    if(this._forcedLossTimer) clearTimeout(this._forcedLossTimer);
-    AudioSystem.stopMusic(600);
-  },
-
   _aiTurn() {
     const s = this._state;
     if(s.over) return;
@@ -5032,6 +5028,10 @@ if(typeof window !== 'undefined') {
 
 // Destroy pro Router
 BattleSystem.destroy = function() {
+  if (this._forcedLossTimer) { clearTimeout(this._forcedLossTimer); this._forcedLossTimer = null; }
+  if (this._resultTimer) { clearTimeout(this._resultTimer); this._resultTimer = null; }
+  if (this._clashTimer) { clearTimeout(this._clashTimer); this._clashTimer = null; }
+  if (this._skipCheck) { clearInterval(this._skipCheck); this._skipCheck = null; }
   // Abort všechny event listenery navěšené přes _bindEvents
   if(this._evtController) {
     this._evtController.abort();

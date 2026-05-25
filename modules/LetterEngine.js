@@ -28,6 +28,7 @@ const LetterEngine = {
   // ═══════════════════════════════════════════════════════════════
 
   init(container, params = {}) {
+    this._destroyed = false;
     this._container = container;
     this._endingId  = params.endingId || GameState.endingPath || 'most';
 
@@ -112,6 +113,7 @@ const LetterEngine = {
 
   async _writeLines(container, lines, onDone) {
     for(const line of lines) {
+      if(this._destroyed) return;
       if(line.type === 'space') {
         const br = document.createElement('div');
         br.className = 'letter-spacer';
@@ -163,6 +165,7 @@ const LetterEngine = {
       this._skipCurrentLine = false;
 
       const tick = () => {
+        if(this._destroyed) return;
         // Přeskočení aktuálního řádku
         if(this._skipCurrentLine) {
           el.textContent = text;
@@ -197,7 +200,11 @@ const LetterEngine = {
   // ═══════════════════════════════════════════════════════════════
 
   destroy() {
-    // No persistent timers to clean up — typewriter uses plain setTimeout
+    this._destroyed = true;
+    if (this._container) {
+      this._container.innerHTML = '';
+      this._container = null;
+    }
   },
 
   _handleEnd() {
@@ -206,6 +213,13 @@ const LetterEngine = {
 
   _endSubtitle() {
     const subtitles = {
+      synth:      'Protokol přijat. Přepis dokončen.',
+      organic:    'Kořeny drží. Paměť přežila.',
+      observer:   'Pozorovatel nezasahuje. Jen sleduje.',
+      monyra:     'Signál byl přijat.',
+      hybrid:     'Most postaven. Dva světy, jeden průchod.',
+      corruption: 'Přepis se dokončil. Ty jsi nový kód.',
+      // legacy aliasy
       protokol: 'Systém funguje.',
       koreny:   'Les roste.',
       most:     'Most drží.',
