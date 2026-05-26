@@ -28,6 +28,7 @@ const GameState = {
     collection:[],
     credits:   0,
     faction:   null,
+    discoveredFusions: [],
   },
 
   campaign: {
@@ -233,6 +234,26 @@ const GameState = {
       targetSubcat  = this._isSupport(otherSub('hybrid')) || this._isSupport(sa) || this._isSupport(sb)
                         ? 'healer' : 'nature';
       targetTier    = baseTier;
+    } else if(both('neutral')) {
+      // neutral + neutral → most mezi nezařazenými, hybrid bridge (bez bump)
+      targetFaction = 'hybrid';
+      targetSubcat  = 'bridge';
+      targetTier    = 1;
+    } else if(has('neutral') && has('synth')) {
+      // neutral + synth → systém vtáhne neutral mezi své zvědy (+1 tier)
+      targetFaction = 'synth';
+      targetSubcat  = 'scout';
+      targetTier    = bump(baseTier);
+    } else if(has('neutral') && has('organic')) {
+      // neutral + organic → živé probudí v neutral paměť (+1 tier)
+      targetFaction = 'organic';
+      targetSubcat  = 'memory';
+      targetTier    = bump(baseTier);
+    } else if(has('neutral') && has('hybrid')) {
+      // neutral + hybrid → most se posílí (+1 tier)
+      targetFaction = 'hybrid';
+      targetSubcat  = 'bridge';
+      targetTier    = bump(baseTier);
     } else if(fa === fb) {
       // 7) stejná frakce → silnější verze, subcat z matice, +1 tier
       targetFaction = fa;
@@ -407,6 +428,16 @@ const GameState = {
     // Absolute fallback: první archetyp
     for(const card of this._archetypeIndex?.values() || []) return card;
     return null;
+  },
+
+  // Zaznamenej že hráč objevil výslednou kartu fúze (pro Collection discovery)
+  addDiscoveredFusion(cardId) {
+    const id = Number(cardId);
+    if(!id) return;
+    if(!this.player.discoveredFusions) this.player.discoveredFusions = [];
+    if(!this.player.discoveredFusions.includes(id)) {
+      this.player.discoveredFusions.push(id);
+    }
   },
 
   // Helper: je karta fúze? (pro Collection/DeckBuilder ikonu)
@@ -699,7 +730,7 @@ const GameState = {
   toSave() {
     return {
       version: 3,
-      player:    { ...this.player, deck: [...this.player.deck], collection: [...this.player.collection] },
+      player:    { ...this.player, deck: [...this.player.deck], collection: [...this.player.collection], discoveredFusions: [...(this.player.discoveredFusions||[])] },
       campaign:  { ...this.campaign, visitedNodes: [...this.campaign.visitedNodes], flags: { ...this.campaign.flags }, lostCards: [...(this.campaign.lostCards||[])] },
       cardScars:  { ...this.cardScars },
       playstyle:  { ...this.playstyle, storyChoiceSpeeds: [...(this.playstyle.storyChoiceSpeeds||[])] },
@@ -717,6 +748,7 @@ const GameState = {
     Object.assign(this.player, data.player || {});
     if(!savedCollection?.length) this.player.collection = this.player.collection || [];
     if(!savedDeck?.length) this.player.deck = this.player.deck || [];
+    if(!Array.isArray(this.player.discoveredFusions)) this.player.discoveredFusions = [];
     Object.assign(this.campaign, data.campaign || {});
     Object.assign(this.settings, data.settings || {});
     if(data.cardScars)  this.cardScars  = { ...data.cardScars };
@@ -878,6 +910,7 @@ const GameState = {
     const fallbackDeck = [1,1,2,3,4,5,6,7,8,9,10,11,21,21,22,23,24,25,26,27,28,29,30,35,51,55,57,81,82,201];
     if(!starterCol.includes(1)) starterCol.push(1, 1);
     this.player = { name: playerName, lp: 10000, maxLp: 10000, alignment: 0, faction: null, credits: 0,
+      discoveredFusions: [],
       deck: starterIds.length >= 10 ? starterIds : fallbackDeck,
       collection: starterCol.length >= 10 ? starterCol : [...fallbackDeck, ...fallbackDeck] };
     this.campaign = { currentNode: null, visitedNodes: [], flags: {}, chapter: 0, worldNumber: 1, nodeNumber: 0, lostCards: [], actNumber: 1 };

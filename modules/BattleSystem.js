@@ -929,6 +929,7 @@ const BattleSystem = {
     const pf = s._pendingFuse;
     if(!pf) return;
     const {result, handIdxs, fieldSlot, isExperimental} = pf;
+    if(result) GameState.addDiscoveredFusion(result.id);
     const sortedIdxs = [...handIdxs].sort((a,b)=>b-a);
     const removed = sortedIdxs.map(i=>s.pHand.splice(i,1)[0]);
     removed.forEach(c=>s.pGY.push(c));
@@ -4163,6 +4164,7 @@ const BattleSystem = {
               const c2 = s.pHand.splice(lo, 1)[0];
               s.pGY.push(c1); s.pGY.push(c2);
               s.pMonsters[slot] = { card:{...fusionResult, kind:'monster'}, mode:'atk', hasAttacked:false, faceDown:false };
+              if(fusionResult) GameState.addDiscoveredFusion(fusionResult.id);
               s.cardPlayedThisTurn=true; s.afterFusion=true;
               s.fuseSelection=[]; s.selectedHandIdx=null; s.stats.fusionsUsed++;
               this._flashScreen('#b570e0'); this._fuseFlash();
@@ -4209,6 +4211,7 @@ const BattleSystem = {
               s.pGY.push(s.pHand.splice(hi, 1)[0]);
               s.pGY.push(fm.card);
               s.pMonsters[slot] = { card:{...fusionResult, kind:'monster'}, mode:fm.mode, hasAttacked:false, faceDown:false };
+              if(fusionResult) GameState.addDiscoveredFusion(fusionResult.id);
               s.cardPlayedThisTurn=true; s.afterFusion=true;
               s.fuseSelection=[]; s.selectedHandIdx=null; s.stats.fusionsUsed++;
               this._flashScreen('#b570e0'); this._fuseFlash();

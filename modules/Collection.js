@@ -11,6 +11,7 @@ const Collection = {
   _allCards:     [],
   _collection:   [],
   _fusionIds:    new Set(),
+  _discoveredFusions: new Set(),
   _filteredCards: [],
   _renderedUntil: 0,
 
@@ -26,6 +27,7 @@ const Collection = {
     AudioSystem.playForScreen('collection', { fade: 1500 });
 
     this._fusionIds = new Set(Object.values(GameState.fusionIndex || {}));
+    this._discoveredFusions = new Set((GameState.player.discoveredFusions || []).map(Number));
     this._allCards  = GameState.cards.filter(c => !c.special && c.kind !== 'letter');
     this._collection = [...(GameState.player.collection || [])];
 
@@ -87,12 +89,19 @@ const Collection = {
   },
 
   _renderCardHtml(c, ownedSet) {
-    const owned   = ownedSet.has(c.id);
+    const owned      = ownedSet.has(c.id);
+    const discovered = !owned && this._discoveredFusions.has(c.id);
     const inDeck  = owned ? (GameState.player.deck||[]).filter(x => Number(x) === c.id).length : 0;
     const isFused = this._fusionIds.has(c.id);
     if(owned) {
       return `<div class="col-card-wrap owned" data-id="${c.id}">
         ${renderCardEl(c, 'sm', { inDeck: inDeck || null, inFuse: isFused })}
+      </div>`;
+    }
+    if(discovered) {
+      // Viděná přes fúzi, ale nevlastněná — zašedlá náhled bez interakce
+      return `<div class="col-card-wrap discovered" data-id="${c.id}">
+        ${renderCardEl(c, 'sm', { discovered: true })}
       </div>`;
     }
     return `<div class="col-card-wrap unowned" data-id="${c.id}">
@@ -241,6 +250,8 @@ const Collection = {
       .col-card-wrap.owned:hover{transform:translateY(-3px)}
       .col-card-wrap.owned:hover .cx-card{box-shadow:0 6px 20px rgba(0,0,0,0.7),0 0 0 1px var(--fc,#4fa3e0)}
       .col-card-wrap.unowned{cursor:default;filter:brightness(0.5) saturate(0.3)}
+      .col-card-wrap.discovered{position:relative;cursor:default;filter:brightness(0.4) saturate(0.2) sepia(0.3)}
+      .col-card-wrap.discovered::after{content:'✦';position:absolute;bottom:4px;right:4px;font-size:10px;color:#b570e0;opacity:0.7}
       .col-card-wrap .cx-sm{width:100%;height:auto;aspect-ratio:2/3}
       .col-card-wrap .cx-back-img{width:100%;height:100%;object-fit:cover;border-radius:4px}
       .col-empty{color:#4a6070;font-family:var(--mono);font-size:12px;padding:24px;grid-column:1/-1;text-align:center}
