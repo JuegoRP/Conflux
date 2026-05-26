@@ -195,6 +195,7 @@ const GameState = {
     const otherSub = (f) => (fa === f ? sb : sa);
 
     let targetFaction = null, targetSubcat = null, targetTier = baseTier;
+    let _bumped = false; // guard: prevent double-bump when subcatFusion also bumps
 
     // ── FACTION PRAVIDLA (priorita) ──────────────────────────────────────────
     if(both('corruption')) {
@@ -255,10 +256,12 @@ const GameState = {
       targetSubcat  = 'bridge';
       targetTier    = bump(baseTier);
     } else if(fa === fb) {
-      // 7) stejná frakce → silnější verze, subcat z matice, +1 tier
+      // 7) stejná frakce — subcat z matice
+      // Bump jen pro čistou fúzi (stejná subkategorie). Různé subcat = evoluce, ne eskalace.
       targetFaction = fa;
       targetSubcat  = this._fusionSubcat(sa, sb);
-      targetTier    = bump(baseTier);
+      if(sa === sb) { targetTier = bump(baseTier); _bumped = true; }
+      else { targetTier = baseTier; }
     } else if(has('neutral')) {
       // neutral ustoupí druhé straně
       targetFaction = other('neutral');
@@ -282,11 +285,13 @@ const GameState = {
       // Subcat dosazujeme jen pokud cílová frakce daný subcat zná (jinak necháme původní).
       if(this._factionHasSubcat(targetFaction, subResult.subcat)) {
         targetSubcat = subResult.subcat;
-        if(subResult.bump) targetTier = bump(targetTier);
+        // Nepřidávej bump pokud jsme ho už přidali (same-faction same-subcat)
+        if(subResult.bump && !_bumped) { targetTier = bump(targetTier); _bumped = true; }
       }
     }
 
-    if(targetTier > 3) targetTier = 3;
+    // Computed fúze max tier 4. Tier 5 jen přes fusionIndex chain recipes.
+    if(targetTier > 4) targetTier = 4;
     if(targetTier < 1) targetTier = 1;
 
     const result = this._findArchetype(targetFaction, targetSubcat, targetTier);
@@ -326,14 +331,39 @@ const GameState = {
     const pair = [sa, sb].sort().join('+');
     // explicitní kombinace
     const table = {
-      'scout+scout':       { subcat: 'striker', bump: false },
-      'guardian+guardian': { subcat: 'guardian', bump: true  },
-      'memory+memory':     { subcat: 'void', bump: false, corruptionTendency: true },
+      // Identické subcat páry — bump je řešen same-faction pravidlem, tady jen výsledná subcat
+      'scout+scout':       { subcat: 'striker',  bump: false },
+      'guardian+guardian': { subcat: 'guardian', bump: false }, // single bump via same-faction
+      'striker+striker':   { subcat: 'striker',  bump: false },
+      'memory+memory':     { subcat: 'void',     bump: false, corruptionTendency: true },
+      'nature+nature':     { subcat: 'nature',   bump: false },
+      'healer+healer':     { subcat: 'healer',   bump: false },
+      'system+system':     { subcat: 'system',   bump: false },
+      'balanced+balanced': { subcat: 'balanced', bump: false },
+      'void+void':         { subcat: 'void',     bump: false, corruptionTendency: true },
+      // Křížové subcat kombinace (cross-faction kontext — bump je smysluplný)
       'guardian+striker':  { subcat: 'balanced', bump: false },
-      'nature+system':     { subcat: 'bridge', bump: false },
+      'nature+system':     { subcat: 'bridge',   bump: false },
       'healer+striker':    { subcat: 'balanced', bump: false },
-      'memory+void':       { subcat: 'void', bump: false, corruptionTendency: true },
-      'memory+scout':      { subcat: 'memory', bump: false },
+      'memory+void':       { subcat: 'void',     bump: false, corruptionTendency: true },
+      'memory+scout':      { subcat: 'memory',   bump: false },
+      'scout+striker':     { subcat: 'striker',  bump: false },
+      'system+guardian':   { subcat: 'system',   bump: false },
+      'nature+healer':     { subcat: 'healer',   bump: false },
+      'guardian+memory':   { subcat: 'guardian', bump: false },
+      'system+scout':      { subcat: 'system',   bump: false },
+      'system+memory':     { subcat: 'void',     bump: false, corruptionTendency: true },
+      'guardian+healer':   { subcat: 'guardian', bump: false },
+      'nature+scout':      { subcat: 'nature',   bump: false },
+      'striker+memory':    { subcat: 'striker',  bump: false },
+      'guardian+nature':   { subcat: 'nature',   bump: false },
+      'system+striker':    { subcat: 'striker',  bump: false },
+      'healer+memory':     { subcat: 'healer',   bump: false },
+      'healer+nature':     { subcat: 'healer',   bump: false },
+      'scout+memory':      { subcat: 'scout',    bump: false },
+      'void+system':       { subcat: 'void',     bump: false, corruptionTendency: true },
+      'void+guardian':     { subcat: 'void',     bump: false, corruptionTendency: true },
+      'void+striker':      { subcat: 'void',     bump: false, corruptionTendency: true },
     };
     if(table[pair]) return table[pair];
     // bridge + cokoli → balanced (most stabilizuje), bridge zůstává jen bridge+bridge
