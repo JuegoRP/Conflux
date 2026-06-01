@@ -94,13 +94,11 @@
 
 ### Korupce — vizuální efekty
 - [x] Korupce text glitch — základ (2026-05-12 — předchozí sezení)
-- [ ] **PŘEPRACOVAT glitch efekt:** Aktuální implementace přepisuje text. Správné chování:
-  - Text zůstává čitelný celou dobu
-  - Jednotlivá slova nebo písmena **živě blikají** — střídají správný a špatný symbol
-  - Frekvence a intenzita závisí na úrovni korupce
-  - Efekt musí být kontinuální (ne jen při vypsání textu) — setInterval nebo requestAnimationFrame
-  - Hráč musí vždy být schopen přečíst text i při maximální korupci
-- [ ] Vizuální korupce v UI (fialový šum, aberace) — rozšířit dle úrovně korupce
+- [x] Glitch efekt přepracován: 30ms flicker + 120-220ms glow, max 2 zároveň, čitelnost zachována (2026-06-01)
+- [x] Vizuální korupce v UI: global.css má corruption efekty per level (0–5), CorruptionVisuals opraveny (2026-06-01)
+  - Opraveny thresholdy (31/61/81/96 → 2/3/4/5)
+  - Opraveny selektory (.dlg-speaker → .vn-speaker, .dlg-text → .vn-text)
+  - EventBus propagace opravena (corruptionValue + trap_void teď emitují corruption:change)
 
 ### Story uzly
 - [x] Překlepy opraveny: pramáti→pramati, věřitel→veritel, správce→spravce (2026-05-12)
@@ -131,10 +129,10 @@
 - [x] Výměna spell slotu z ruky — 1 klik na obsazený slot (2026-05-13)
 
 ### Karty na poli — líc dolů
-- [ ] **Trapy** — při zahraní na pole zobrazit lícem dolů (face-down), odhalit až při triggeru
-- [ ] **Arény** — při zahraní na pole zobrazit lícem dolů, odhalit až při aktivaci
+- [x] **Trapy** — při zahraní na pole zobrazit lícem dolů (face-down), odhalit až při triggeru (2026-06-01)
+- [x] **Arény** — při zahraní na pole zobrazit lícem dolů, odhalit až při aktivaci klikem (2026-06-01)
 - [ ] Skilly — stejné chování (face-down při zahraní, odhalit při použití)
-- [ ] AI musí respektovat face-down karty (nevidí co pod nimi je)
+- [x] AI respektuje face-down karty — neaktivuje arény hráče, triggery správné (2026-06-01)
 
 ### Skilly — opravit logiku
 - [ ] Skill lze použít kliknutím na skill v ruce → kliknout na cílové monstrum (bez mezikroku)
@@ -220,5 +218,5 @@
 
 ---
 
-*Poslední aktualizace: 2026-05-13 (2)*
+*Poslední aktualizace: 2026-06-01*
 *Soubor udržuj aktuální — při každé změně uprav datum a stav úkolu.*
