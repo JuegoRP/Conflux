@@ -666,9 +666,8 @@ const BattleSystem = {
       if(card.storyEffect) GameState.setFlag?.('used_story_card_' + card.id);
       GameState.adjustAlignment?.(card.faction==='synth'?3:card.faction==='organic'?-3:0);
       if(card.corruptionValue) {
-        GameState.corruption.level = (GameState.corruption?.level||0) + card.corruptionValue;
+        GameState.adjustCorruption?.(card.corruptionValue) || (GameState.corruption.level = (GameState.corruption?.level||0) + card.corruptionValue);
         GameState.adjustAlignment?.(-card.corruptionValue * 5);
-
       }
       s.cardPlayedThisTurn=true;
       s.fuseSelection=[]; s.selectedHandIdx=null; s.stats.cardsPlayed++;
@@ -1490,7 +1489,7 @@ const BattleSystem = {
       case 'trap_weaken': attacker.card.atk=Math.max(0,attacker.card.atk-card.value); this._log(`Útočník -${card.value} ATK.`,'sys'); return false;
       case 'trap_emp':    if(attacker.card.faction==='synth'){(who==='p'?s.eGY:s.pGY).push(attacker.card);atkField[attackerSlot]=null;this._log(`⚡ EMP zničil [${attacker.card.name}]!`,'dmg');return 'destroyed';} return false;
       case 'trap_bounce': { const dmg=attacker.card.atk;if(who==='p'){s.eLP=clamp(s.eLP-dmg,0,s.eMaxLP);this._animateLP('e',dmg);}else{s.pLP=clamp(s.pLP-dmg,0,s.pMaxLP);this._animateLP('p',dmg);}this._log(`🔄 Odraz ${dmg} dmg!`,'dmg');this._checkGameOver();return false; }
-      case 'trap_void':   { attacker.hasAttacked=false; GameState.corruption.level = (GameState.corruption?.level||0)+1; this._log('Void past! +1 corruption.','entropy'); return 'negate'; }
+      case 'trap_void':   { attacker.hasAttacked=false; GameState.adjustCorruption?.(1) || (GameState.corruption.level = (GameState.corruption?.level||0)+1); this._log('Void past! +1 corruption.','entropy'); return 'negate'; }
     }
     return false;
   },

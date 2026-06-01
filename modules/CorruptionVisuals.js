@@ -47,7 +47,7 @@ const CorruptionVisuals = {
       document.head.appendChild(style);
     }
     // Načti aktuální level
-    this._level = GameState.getCorruptionLevel ? GameState.getCorruptionLevel() : 0;
+    this._level = GameState.corruption?.level || 0;
     this._updateRoot(this._level);
     this._restartLoops(this._level);
   },
@@ -60,12 +60,12 @@ const CorruptionVisuals = {
     const app = document.getElementById('app');
     if(!app) return;
     app.dataset.corruption = level;
-    // Nastav fázi pro CSS
+    // corruption.level je v rozsahu 0–5
     let phase = 1;
-    if(level >= 96) phase = 5;
-    else if(level >= 81) phase = 4;
-    else if(level >= 61) phase = 3;
-    else if(level >= 31) phase = 2;
+    if(level >= 5) phase = 5;
+    else if(level >= 4) phase = 4;
+    else if(level >= 3) phase = 3;
+    else if(level >= 2) phase = 2;
     app.dataset.corruptionPhase = phase;
   },
 
@@ -114,7 +114,7 @@ const CorruptionVisuals = {
 
   // Záblesk na jméno mluvčího — nahradí písmeno na 300ms
   _glitchSpeakerNames() {
-    const speakers = document.querySelectorAll('.dlg-speaker, .cs-speaker');
+    const speakers = document.querySelectorAll('.vn-speaker');
     if(!speakers.length) return;
 
     const el = speakers[Math.floor(Math.random() * speakers.length)];
@@ -133,7 +133,7 @@ const CorruptionVisuals = {
 
   // Záblesk na náhodné slovo v textu dialogu
   _glitchDialogWord() {
-    const textEls = document.querySelectorAll('.dlg-text, .cs-text');
+    const textEls = document.querySelectorAll('.vn-text');
     if(!textEls.length) return;
 
     const el = textEls[Math.floor(Math.random() * textEls.length)];
@@ -159,7 +159,7 @@ const CorruptionVisuals = {
   // Záblesk barvy na náhodném UI elementu
   _glitchUIColor() {
     const targets = document.querySelectorAll(
-      '.dlg-speaker[data-side="npc"], .choice-btn, .anchor-symbol, .db-card-name'
+      '.vn-speaker, .vn-choice-btn, .choice-btn'
     );
     if(!targets.length) return;
 
