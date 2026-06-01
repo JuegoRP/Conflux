@@ -1595,15 +1595,18 @@ const BattleSystem = {
     }
 
     // ── ARENA ─────────────────────────────────────────────────────────────────
+    // AI strategicky vybere arénu podle situace a stylu
     if(!played && emptyS.length) {
       const arenas = s.eHand.filter(c => c.kind === 'arena');
       if(arenas.length) {
-        const arena = arenas[0];
-        s.eHand.splice(s.eHand.indexOf(arena), 1);
-        s.eSpells[emptyS[0]] = {card:{...arena}, faceDown:false, used:false};
-        this._activateSpell(arena, 'e');
-        this._log(`◀ Nepřítel vyložil arénu [${arena.name}]!`, 'warn');
-        played = true;
+        const arena = this._aiPickArena(arenas, style, lpPct);
+        if(arena) {
+          s.eHand.splice(s.eHand.indexOf(arena), 1);
+          s.eSpells[emptyS[0]] = {card:{...arena}, faceDown:false, used:false};
+          this._activateSpell(arena, 'e');
+          this._log(`◀ Nepřítel vyložil arénu [${arena.name}]!`, 'warn');
+          played = true;
+        }
       }
     }
 
@@ -1621,11 +1624,27 @@ const BattleSystem = {
     }
 
     // ── TRAP ──────────────────────────────────────────────────────────────────
+    // AI pokládá trap jen pokud má hráč monstrum (jinak na koho by reagoval?)
+    // Defensive style — pokládá hned, agresivní skoro nikdy
     if(!played && traps.length && emptyS.length) {
-      const wantTrap = style === 'strategic' || style === 'reactive' || style === 'perfect'
-        || style === 'rewrite' || style === 'defensive' || Math.random() < 0.5;
+      const pHasMonster = pActive.length > 0;
+      let wantTrap = false;
+      if(style === 'defensive') {
+        // Defensive: trap hned i bez monstra (připrava do předu)
+        wantTrap = true;
+      } else if(style === 'aggressive') {
+        // Agresivní: trap skoro nikdy
+        wantTrap = pHasMonster && Math.random() < 0.1;
+      } else if(style === 'strategic' || style === 'perfect' || style === 'rewrite' || style === 'reactive') {
+        // Strategické styly: trap vždy pokud má hráč monstrum
+        wantTrap = pHasMonster;
+      } else {
+        // Balanced / ostatní: jen pokud má hráč monstrum a šance 50%
+        wantTrap = pHasMonster && Math.random() < 0.5;
+      }
       if(wantTrap) {
-        const trap = traps[0];
+        // Vyber trap, který nejlépe pasuje na situaci
+        const trap = this._aiPickTrap(traps, pActive) || traps[0];
         s.eHand.splice(s.eHand.indexOf(trap), 1);
         s.eSpells[emptyS[0]] = {card:{...trap}, faceDown:true};
         played = true;
@@ -1878,17 +1897,142 @@ const BattleSystem = {
     return { card: best, mode };
   },
 
+  // ── AI: vyber nejvhodnější arénu podle situace a stylu ────────────────────
+  _aiPickArena(arenas, style, lpPct) {
+    const s = this._state;
+    const eMonsterCount = s.eMonsters.filter(Boolean).length;
+    const eHandCount = s.eHand.length;
+    const turn = s.turnNumber || 1;
+
+    // arena_heal — když má AI nízké LP
+    if(lpPct < 0.5) {
+      const heal = arenas.find(a => a.effect === 'arena_heal');
+      if(heal) return heal;
+    }
+
+    // arena_buff_atk — pokud má AI alespoň 1 monstrum
+    if(eMonsterCount >= 1) {
+      const buffAtk = arenas.find(a => a.effect === 'arena_buff_atk');
+      if(buffAtk) return buffAtk;
+    }
+
+    // arena_draw — v prvních 3 tazích pokud má AI prázdnou ruku (< 3 karty)
+    if(turn <= 3 && eHandCount < 3) {
+      const draw = arenas.find(a => a.effect === 'arena_draw');
+      if(draw) return draw;
+    }
+
+    // arena_corrupt — jen pro corruption styl
+    if(style === 'corruption') {
+      const corrupt = arenas.find(a => a.effect === 'arena_corrupt');
+      if(corrupt) return corrupt;
+    }
+
+    // Žádná aréna nepasuje na aktuální situaci — počkáme s pokládáním
+    // (jen pokud má AI tolik karet, že nehrozí přeplnění ruky)
+    if(eHandCount >= 4 || turn >= 5) {
+      // Force play — pokud má AI hodně karet nebo je pozdní hra, hraj cokoliv
+      return arenas[0];
+    }
+
+    return null;
+  },
+
+  // ── AI: vyber nejvhodnější trap podle hráčových monster ───────────────────
+  _aiPickTrap(traps, pActive) {
+    if(!traps.length) return null;
+    if(!pActive.length) return traps[0];
+
+    const pHasSynth = pActive.some(m => m?.card?.faction === 'synth');
+    const pMaxAtk = Math.max(0, ...pActive.map(m => m.card.atk || 0));
+    const pStrong = pMaxAtk >= 1800;
+
+    // EMP proti synth hráči
+    if(pHasSynth) {
+      const emp = traps.find(t => t.effect === 'trap_emp');
+      if(emp) return emp;
+    }
+
+    // Bounce proti silnému útočníkovi (vrátí mu dmg)
+    if(pStrong) {
+      const bounce = traps.find(t => t.effect === 'trap_bounce');
+      if(bounce) return bounce;
+    }
+
+    // Negate je univerzální — preferuj proti silným
+    if(pStrong) {
+      const negate = traps.find(t => t.effect === 'trap_negate' || t.effect === 'trap_void');
+      if(negate) return negate;
+    }
+
+    // Weaken obecně užitečný
+    const weaken = traps.find(t => t.effect === 'trap_weaken');
+    if(weaken) return weaken;
+
+    return traps[0];
+  },
+
   // ── AI: rozhodnutí o spellu ────────────────────────────────────────────────
   _aiWantsSpell(style, spells, monsters, emptyM, lpPct) {
     if(!spells.length) return null;
 
+    const s = this._state;
+    const pActive = s.pMonsters.filter(Boolean);
+    const pHasSynth = pActive.some(m => m?.card?.faction === 'synth');
+    const pCount = pActive.length;
+    const pMaxAtk = pActive.length ? Math.max(...pActive.map(m => m.card.atk || 0)) : 0;
+    const eActive = s.eMonsters.filter(Boolean);
+    const eMaxAtk = eActive.length ? Math.max(...eActive.map(m => m.card.atk || 0)) : 0;
+    const eHasSynth = eActive.some(m => m?.card?.faction === 'synth');
+    const eHasOrganic = eActive.some(m => m?.card?.faction === 'organic');
+    const corruptionLvl = GameState?.corruption?.level || 0;
+
+    // ── Univerzální matchery (běží před style-specific větvemi) ──────────────
+    // Pomocné: najdi spell, který vyhovuje globálním podmínkám
+    const findMatch = (effect, cond) => cond ? spells.find(sp => sp.effect === effect) : null;
+
+    // destroy_synth — pouze pokud hráč má synth monstrum
+    const destroySynth = findMatch('destroy_synth', pHasSynth);
+    // area_dmg — pokud má hráč 2+ monster na poli
+    const areaDmg = findMatch('area_dmg', pCount >= 2);
+    // corruption_heal — pokud je korupce > 2 a LP < 60%
+    const corrHeal = findMatch('corruption_heal', corruptionLvl > 2 && lpPct < 0.6);
+    // heal_pure — pokud LP < 50%
+    const healPure = findMatch('heal_pure', lpPct < 0.5);
+    // buff_all_synth — jen pokud AI má synth monstrum
+    const buffAllSynth = findMatch('buff_all_synth', eHasSynth);
+    // buff_all_organic — jen pokud AI má organic monstrum
+    const buffAllOrganic = findMatch('buff_all_organic', eHasOrganic);
+    // buff_all — jen pokud AI má alespoň 1 monstrum na poli
+    const buffAll = findMatch('buff_all', eActive.length >= 1);
+    // copy_atk — pokud AI má slabé monstrum a hráč silné
+    const copyAtk = findMatch('copy_atk', eActive.length > 0 && pMaxAtk > eMaxAtk && pMaxAtk - eMaxAtk >= 300);
+
     // Defensive/reactive — spell jen pokud nemůže hrát monstrum
+    // ALE: pokud má kritický spell (destroy_synth, heal při low LP), může hrát i tak
     if(style === 'defensive' || style === 'reactive') {
+      // Kritické: heal při low LP, destroy proti hrozbě, corruption_heal
+      if(healPure) return healPure;
+      if(corrHeal) return corrHeal;
+      if(destroySynth) return destroySynth;
       if(emptyM.length > 0 && monsters.length > 0) return null;
     }
 
-    // Strategic — heal spelly při nízkém LP, buff spelly při plném poli
+    // Strategic — kombinace: kritické spelly mají přednost
     if(style === 'strategic' || style === 'perfect') {
+      // Heal při kritickém LP
+      if(healPure) return healPure;
+      if(corrHeal) return corrHeal;
+      // Destruktivní spelly podle hrozby
+      if(destroySynth) return destroySynth;
+      if(areaDmg) return areaDmg;
+      // Copy ATK proti silnému soupeři
+      if(copyAtk) return copyAtk;
+      // Buff vlastních monster
+      if(buffAllSynth) return buffAllSynth;
+      if(buffAllOrganic) return buffAllOrganic;
+      if(buffAll) return buffAll;
+      // Generic heal/buff (legacy includes-matcher)
       const healSpell = spells.find(sp => sp.effect?.includes('heal'));
       if(lpPct < 0.4 && healSpell) return healSpell;
       const buffSpell = spells.find(sp => sp.effect?.includes('buff'));
@@ -1899,27 +2043,34 @@ const BattleSystem = {
 
     // Aggressive — buff/destroy/dmg okamžitě, heal nikdy
     if(style === 'aggressive') {
-      const s = this._state;
-      const pHasSynth = s.pMonsters.some(m => m?.card?.faction === 'synth');
-      const pCount = s.pMonsters.filter(Boolean).length;
-      if(pHasSynth) {
-        const destroySynth = spells.find(sp => sp.effect === 'destroy_synth');
-        if(destroySynth) return destroySynth;
-      }
-      if(pCount >= 2) {
-        const areaDmg = spells.find(sp => sp.effect === 'area_dmg');
-        if(areaDmg) return areaDmg;
-      }
+      if(destroySynth) return destroySynth;
+      if(areaDmg) return areaDmg;
+      if(copyAtk) return copyAtk;
+      if(buffAllSynth) return buffAllSynth;
+      if(buffAllOrganic) return buffAllOrganic;
+      if(buffAll) return buffAll;
       return spells.find(sp => sp.effect?.includes('buff') || sp.effect?.includes('dmg')) || null;
     }
 
-    // Corruption — corruption spelly vždy
+    // Corruption — corruption spelly vždy, ale i jiné kritické
     if(style === 'corruption') {
+      if(corrHeal) return corrHeal;
       const corrSpell = spells.find(sp => sp.effect?.includes('corrupt') || sp.faction === 'corruption');
-      return corrSpell || spells[0];
+      if(corrSpell) return corrSpell;
+      if(healPure) return healPure;
+      return spells[0];
     }
 
-    // Default — hraj první spell
+    // Default (balanced, growth, accumulator, mirror, rewrite, ...) — pořadí podle priority
+    if(healPure) return healPure;
+    if(corrHeal) return corrHeal;
+    if(destroySynth) return destroySynth;
+    if(areaDmg) return areaDmg;
+    if(copyAtk) return copyAtk;
+    if(buffAllSynth) return buffAllSynth;
+    if(buffAllOrganic) return buffAllOrganic;
+    if(buffAll) return buffAll;
+
     return spells[0];
   },
 
@@ -1940,7 +2091,7 @@ const BattleSystem = {
       if(!s.eMonsters[atkSlot]){next();return;}
       if(!lethal && Math.random()<mistakeChance){this._log('◀ Nepřítel váhá...','hint');setTimeout(next,400);return;}
       attacker.hasAttacked=true;
-      const trapSlot=s.pSpells.findIndex(sp=>sp&&sp.faceDown);
+      const trapSlot=s.pSpells.findIndex(sp=>sp&&sp.faceDown&&sp.card?.kind==='trap');
       if(trapSlot>=0){const r=this._activateTrap(trapSlot,atkSlot,'p');if(r==='negate'||r==='destroyed'){this._render();setTimeout(next,500);return;}if(!s.eMonsters[atkSlot]){this._render();setTimeout(next,500);return;}}
       const pM=s.pMonsters.filter(m=>m);
       if(!pM.length){
@@ -3639,8 +3790,20 @@ const BattleSystem = {
       // ── Face-down ──
       if(slot.faceDown) {
         const isMyTurn = who === 'p' && s.isPlayerTurn && !s.busy;
-        return `<div class="sl ${isMyTurn ? 'sl-active' : ''}" data-who="${who}" data-spell-slot="${i}">
+        const isArena = slot.card?.kind === 'arena';
+        const isTrap  = slot.card?.kind === 'trap';
+        // Hint: hráč by měl vědět, jakého typu je face-down karta na svém poli
+        const hint = isPlayer
+          ? (isArena ? '<div class="sl-fd-hint sl-fd-arena">ARÉNA (lícem dolů)</div>'
+             : isTrap ? '<div class="sl-fd-hint sl-fd-trap">PAST (lícem dolů)</div>'
+             : '<div class="sl-fd-hint">LÍCEM DOLŮ</div>')
+          : '';
+        const fdCls = isArena ? 'sl-fd sl-fd-arena-slot'
+                    : isTrap ? 'sl-fd sl-fd-trap-slot'
+                    : 'sl-fd';
+        return `<div class="sl ${fdCls} ${isMyTurn ? 'sl-active' : ''}" data-who="${who}" data-spell-slot="${i}" data-fd-kind="${slot.card?.kind || ''}">
           ${_rcEl(null, 'sm', {faceDown:true})}
+          ${hint}
         </div>`;
       }
 
@@ -4562,6 +4725,13 @@ const BattleSystem = {
       .sl.sl-atk .cx-card{box-shadow:0 0 0 2px var(--gold),0 0 18px rgba(212,168,67,0.45);}
       .sl.sl-target .cx-facedown,.sl.sl-target .cx-card{animation:tg .45s ease infinite alternate;}
       .sl-swap .cx-card,.sl-swap .sl-e{box-shadow:0 0 0 1px var(--gold);}
+
+      /* ── Face-down hint pro spell sloty ── */
+      .sl-fd-hint{position:absolute;left:0;right:0;bottom:-12px;font-size:7px;line-height:1.1;text-align:center;color:rgba(255,255,255,0.55);letter-spacing:.5px;text-transform:uppercase;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,0.8);}
+      .sl-fd-hint.sl-fd-arena{color:rgba(212,168,67,0.85);}
+      .sl-fd-hint.sl-fd-trap{color:rgba(224,79,106,0.85);}
+      .sl-fd.sl-fd-arena-slot .cx-facedown{box-shadow:inset 0 0 0 1px rgba(212,168,67,0.45);}
+      .sl-fd.sl-fd-trap-slot .cx-facedown{box-shadow:inset 0 0 0 1px rgba(224,79,106,0.45);}
 
       /* ── cx-card state hooks for battle (slot context) ── */
       .sl .cx-card { width:100%; height:100%; cursor:pointer; }
