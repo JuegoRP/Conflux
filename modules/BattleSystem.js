@@ -2382,6 +2382,11 @@ const BattleSystem = {
         : [...(GameState.player.deck || [])];
     }
     GameState.player.collection.push(card.id);
+    // Sleduj dropy v tomto boji — _showResult je pak může vykreslit
+    if(this._state) {
+      this._state._droppedCards = this._state._droppedCards || [];
+      this._state._droppedCards.push(card);
+    }
     console.log('[Battle] Drop: karta', card.id, card.name, '| Kolekce má', GameState.player.collection.length, 'karet');
     // Autosave kolekce — aby drop přežil refresh
     try { SaveManager.save(0); } catch(e) { console.warn('[Battle] Autosave po dropu selhal:', e); }
@@ -2602,6 +2607,8 @@ const BattleSystem = {
     const fc = drop ? factionColor(drop.faction) : '#4fa3e0';
     const rarity = drop ? rarityFor(drop) : null;
     const copiesBefore = drop ? (GameState.player.collection||[]).filter(id=>id===drop.id||id===parseInt(drop.id)).length : 0;
+    // Karetní styly pro vykreslení dropu jako reálné karty
+    if(drop) injectCardStyles();
 
     // Drop vždy padne — přidáme do kolekce
     if(drop) this._grantDrop(drop);
@@ -2652,7 +2659,7 @@ const BattleSystem = {
           <div class="ov-drop-inline-label">▼ KARTA ZÍSKÁNA</div>
           <div class="ov-drop-inline-card" style="--fc:${fc}">
             <div class="ov-drop-inline-left">
-              <div class="ov-drop-inline-emoji">${drop.emoji}</div>
+              ${_rcEl(drop, 'sm')}
             </div>
             <div class="ov-drop-inline-right">
               <div class="ov-drop-inline-rarity" style="color:${rarity?.color}">${rarity?.label}</div>
@@ -4897,8 +4904,9 @@ const BattleSystem = {
       .ov-letter-sub{font-family:var(--mono);font-size:11px;color:var(--dim);}
       .ov-drop-inline{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;margin-top:4px;}
       .ov-drop-inline-label{font-family:var(--px);font-size:clamp(5px,.55vw,7px);color:var(--gold);letter-spacing:3px;}
-      .ov-drop-inline-card{display:flex;gap:12px;padding:10px 14px;border:1px solid rgba(212,168,67,0.25);background:rgba(212,168,67,0.04);width:100%;}
-      .ov-drop-inline-left{display:flex;align-items:center;}
+      .ov-drop-inline-card{display:flex;gap:14px;padding:10px 14px;border:1px solid rgba(212,168,67,0.25);background:rgba(212,168,67,0.04);width:100%;align-items:center;}
+      .ov-drop-inline-left{display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+      .ov-drop-inline-left .cx-card{box-shadow:0 4px 14px rgba(0,0,0,0.7),0 0 0 1px rgba(212,168,67,0.2);}
       .ov-drop-inline-emoji{font-size:28px;}
       .ov-drop-inline-right{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;}
       .ov-drop-inline-rarity{font-family:var(--px);font-size:7px;letter-spacing:2px;}

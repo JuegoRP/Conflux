@@ -6,6 +6,7 @@ import GameState    from '../engine/GameState.js';
 import AssetLoader  from '../engine/AssetLoader.js';
 import AudioSystem  from '../modules/AudioSystem.js';
 import SaveManager  from '../engine/SaveManager.js';
+import { renderCardEl, injectCardStyles } from './CardRenderer.js';
 
 /**
  * StoryEngine — CONFLUX v2039
@@ -1935,24 +1936,45 @@ const StoryEngine = {
       GameState.player.collection.push(node.cardId);
       EventBus.emit('story:cardReceived', { cardId: node.cardId });
     }
+    // Inject card styles so renderCardEl výstup vypadá správně
+    injectCardStyles();
     // Najdi info o kartě z GameState (cards.json)
     const card = GameState.getCard(node.cardId);
-    const cardHtml = card ? `
-      <div style="font-size:clamp(36px,6vw,52px);margin:12px 0">${card.emoji || '?'}</div>
-      <div style="font-family:var(--font-px);font-size:8px;color:var(--text);letter-spacing:1px">${card.name}</div>
-      <div style="font-family:var(--font-px);font-size:6px;color:#4a5a6a;letter-spacing:2px;margin-top:4px">${card.faction?.toUpperCase() || ''}</div>
-      ${card.atk !== undefined ? `<div style="font-family:var(--font-mono);font-size:14px;color:#607080;margin-top:6px">⚔ ${card.atk}  🛡 ${card.def}</div>` : ''}
-    ` : '';
+
+    // Skutečná karta přes renderCardEl, fallback na starý emoji blok
+    let cardHtml = '';
+    if(card) {
+      cardHtml = `<div class="reward-card-wrap">${renderCardEl(card, 'md')}</div>`;
+    } else if(node.cardId !== undefined) {
+      // Karta s daným ID neexistuje — fallback (např. legacy reward node)
+      cardHtml = `
+        <div style="font-size:clamp(36px,6vw,52px);margin:12px 0">?</div>
+        <div style="font-family:var(--font-px);font-size:8px;color:var(--text);letter-spacing:1px">karta #${node.cardId}</div>
+      `;
+    }
+
     this._container.innerHTML = `
       <div class="story-screen fade-in" style="align-items:center;justify-content:center">
-        <div class="story-content" style="text-align:center">
+        <div class="story-content reward-content" style="text-align:center">
           <div style="font-family:var(--font-px);font-size:7px;color:#c8a84b;letter-spacing:3px;margin-bottom:16px">▶ KARTA ZÍSKÁNA</div>
           ${cardHtml}
-          <div style="font-family:var(--font-vt);font-size:18px;color:#607080;margin:16px 8px;line-height:1.6">${node.message || ''}</div>
+          ${card ? `<div style="font-family:var(--font-px);font-size:9px;color:#c8d6e5;letter-spacing:2px;margin-top:14px">${card.name || ''}</div>` : ''}
+          <div style="font-family:var(--font-vt);font-size:18px;color:#8090a0;margin:16px 8px;line-height:1.6;max-width:520px">${node.message || ''}</div>
           <button class="vn-btn" id="reward-next" style="margin-top:16px">▶ POKRAČOVAT</button>
         </div>
       </div>`;
     this._addStyles();
+    // Lokální dopočet stylu pro karetní wrapper
+    if(!document.getElementById('reward-card-styles')) {
+      const s = document.createElement('style');
+      s.id = 'reward-card-styles';
+      s.textContent = `
+        .reward-card-wrap{display:flex;justify-content:center;margin:12px auto;}
+        .reward-card-wrap .cx-card{transform:scale(1.6);transform-origin:center top;margin-bottom:60px;box-shadow:0 8px 32px rgba(0,0,0,0.7),0 0 0 1px rgba(200,168,75,0.15);}
+        .reward-content{display:flex;flex-direction:column;align-items:center;}
+      `;
+      document.head.appendChild(s);
+    }
     this._container.querySelector('#reward-next')
       ?.addEventListener('click', () => { if(node.next) this._goToNode(node.next, true); });
   },

@@ -263,16 +263,22 @@ const DeckBuilder = {
       const c  = this._cardById(id);
       if(!c) return '';
       const fc = factionColor(c.faction);
-      const statsHtml = c.kind === 'monster'
-        ? `<span class="db-de-atk">A:${c.atk}</span><span class="db-de-def">D:${c.def}</span>`
-        : '';
+      // Monster karty: jen FACTION + ATK/DEF, žádný plný název
+      // Spell/trap/arena: zkrácený název (max 12 znaků) + typ
+      const isMonster = c.kind === 'monster';
+      const shortName = (c.name || '').length > 12 ? (c.name || '').slice(0, 12) + '…' : (c.name || '');
+      const mainLine = isMonster
+        ? `<div class="db-de-faction" style="color:${fc}">${factionLabel(c.faction)}</div>`
+        : `<div class="db-de-name">${shortName}</div>`;
+      const subLine = isMonster
+        ? `<div class="db-de-stats"><span class="db-de-atk">A:${c.atk}</span><span class="db-de-def">D:${c.def}</span></div>`
+        : `<div class="db-de-sub" style="color:${fc}">${kindLabel(c.kind)}</div>`;
       return `
-        <div class="db-deck-entry" data-remove="${c.id}" style="--fc:${fc}">
+        <div class="db-deck-entry" data-remove="${c.id}" data-card-id="${c.id}" style="--fc:${fc}">
           <div class="db-de-bar" style="background:${fc}"></div>
           <div class="db-de-info">
-            <div class="db-de-name">${c.name}</div>
-            <div class="db-de-sub" style="color:${fc}">${factionLabel(c.faction)} · ${kindLabel(c.kind)}</div>
-            ${statsHtml ? `<div class="db-de-stats">${statsHtml}</div>` : ''}
+            ${mainLine}
+            ${subLine}
           </div>
           ${counts[id]>1 ? `<div class="db-de-count" style="color:${fc}">×${counts[id]}</div>` : ''}
           <div class="db-de-remove">−</div>
@@ -400,6 +406,8 @@ const DeckBuilder = {
   },
 
   _doRefresh() {
+    // Skryj hover preview — DOM se přerenderuje, posunul by se mimo
+    this._hideHoverPreview?.();
     const grid = this._container.querySelector('#db-grid');
     if(grid) grid.innerHTML = this._renderGrid();
 
@@ -504,12 +512,70 @@ const DeckBuilder = {
       el.addEventListener('click', () => {
         this._removeCard(el.dataset.remove);
       });
-      // Right-click = preview
+      // Right-click = full preview overlay
       el.addEventListener('contextmenu', e => {
         e.preventDefault();
         this._showPreview(el.dataset.remove);
       });
+      // Hover = floating preview (desktop)
+      el.addEventListener('mouseenter', () => {
+        this._showHoverPreview(el.dataset.cardId || el.dataset.remove, el);
+      });
+      el.addEventListener('mouseleave', () => {
+        this._hideHoverPreview();
+      });
+      // Touch = long-press 400ms → show preview
+      let touchTimer = null;
+      el.addEventListener('touchstart', (e) => {
+        clearTimeout(touchTimer);
+        touchTimer = setTimeout(() => {
+          this._showHoverPreview(el.dataset.cardId || el.dataset.remove, el);
+        }, 400);
+      }, { passive: true });
+      el.addEventListener('touchend', () => {
+        clearTimeout(touchTimer);
+        this._hideHoverPreview();
+      });
+      el.addEventListener('touchcancel', () => {
+        clearTimeout(touchTimer);
+        this._hideHoverPreview();
+      });
     });
+  },
+
+  // ── HOVER PREVIEW (floating card vedle entry v ruce) ──────────────────────
+  _showHoverPreview(id, anchorEl) {
+    const numId = Number(id);
+    const c = this._cardById(numId);
+    if(!c) return;
+    this._hideHoverPreview();
+
+    const isFused  = this._fusionIds.has(c.id);
+    const inDeck   = this._deck.filter(x => Number(x) === numId).length;
+    const owned    = this._collection.filter(x => Number(x) === numId).length;
+    const scarData = GameState.getScarData ? GameState.getScarData(c.id) : null;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'db-hover-preview';
+    wrap.id = 'db-hover-preview';
+    wrap.innerHTML = renderCardPreview(c, { owned, inDeck, isFused, scarData, readOnly: true });
+    document.body.appendChild(wrap);
+
+    // Pozice: vlevo od entry pokud je dost místa, jinak vpravo
+    const rect = anchorEl.getBoundingClientRect();
+    const ph = wrap.offsetHeight;
+    const pw = wrap.offsetWidth;
+    let left = rect.left - pw - 14;
+    if(left < 8) left = rect.right + 14;
+    let top = rect.top + rect.height / 2 - ph / 2;
+    if(top < 8) top = 8;
+    if(top + ph > window.innerHeight - 8) top = window.innerHeight - ph - 8;
+    wrap.style.left = left + 'px';
+    wrap.style.top  = top + 'px';
+  },
+
+  _hideHoverPreview() {
+    document.getElementById('db-hover-preview')?.remove();
   },
 
   // ── HELPERS ───────────────────────────────────────────────────────────────
@@ -702,6 +768,7 @@ const DeckBuilder = {
       .db-de-emoji  { font-size:13px; flex-shrink:0; }
       .db-de-info   { flex:1; min-width:0; }
       .db-de-name   { font-family:'Press Start 2P',monospace; font-size:4.5px; color:#c8d6e5; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+      .db-de-faction{ font-family:'Press Start 2P',monospace; font-size:5px; letter-spacing:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
       .db-de-sub    { font-family:'Press Start 2P',monospace; font-size:4px; margin-top:2px; }
       .db-de-count  { font-family:'Press Start 2P',monospace; font-size:7px; flex-shrink:0; }
       .db-de-stats { display:flex; gap:5px; margin-top:2px; }
@@ -738,6 +805,16 @@ const DeckBuilder = {
       .dbp-btn-disabled { opacity:0.2; cursor:not-allowed !important; pointer-events:none; }
       .dbp-fusion-note { font-family:'Press Start 2P',monospace; font-size:6px; color:#50e0b8; }
       .dbp-scar-evo    { font-family:'Press Start 2P',monospace; font-size:6px; color:#b570e0; }
+      /* Floating hover preview vedle deck entry */
+      .db-hover-preview {
+        position:fixed; z-index:200;
+        background:#0a0f18; border:1px solid #1a2535;
+        padding:12px; pointer-events:none;
+        box-shadow:0 12px 40px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.03);
+        animation:dbp-in 0.12s ease;
+      }
+      .db-hover-preview .cp-layout { gap:14px; }
+      .db-hover-preview .cp-actions { display:none; }
       /* Toast */
       .db-toast {
         position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
@@ -753,6 +830,7 @@ const DeckBuilder = {
 
   destroy() {
     clearTimeout(this._toastTimer);
+    this._hideHoverPreview?.();
     AudioSystem.stopMusic(600);
   }
 };
