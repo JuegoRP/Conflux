@@ -551,28 +551,28 @@ const BattleSystem = {
   },
 
   // Aplikuje per-turn efekty aktivní arény na začátku tahu
+  // Arény ovlivňují OBA hráče — léčení i tažení karet platí pro každého.
   _applyArenaTurnEffects() {
     const s = this._state;
     const arena = s.activeArena;
     if(!arena) return;
 
-    const who = s.isPlayerTurn ? 'p' : 'e';
-    const myM = who==='p' ? s.pMonsters : s.eMonsters;
-
     switch(arena.effect) {
       case 'arena_heal': {
         const hp = arena.value || 300;
-        if(who==='p') s.pLP = clamp(s.pLP+hp, 0, s.pMaxLP);
-        else          s.eLP = clamp(s.eLP+hp, 0, s.eMaxLP);
-        this._animateLP(who, hp, true);
-        this._log(`🏟 [${arena.name}]: +${hp} LP.`,'sys');
+        s.pLP = clamp(s.pLP+hp, 0, s.pMaxLP);
+        s.eLP = clamp(s.eLP+hp, 0, s.eMaxLP);
+        this._animateLP('p', hp, true);
+        this._animateLP('e', hp, true);
+        this._log(`🏟 [${arena.name}]: oba hráči +${hp} LP.`,'sys');
         break;
       }
       case 'arena_draw': {
         const n = arena.value || 1;
-        let drew = 0;
-        for(let i=0;i<n;i++) { if(who==='p'?this._draw('p'):this._draw('e')) drew++; }
-        if(drew) this._log(`🏟 [${arena.name}]: +${drew} karta(y).`,'sys');
+        let pDrew = 0, eDrew = 0;
+        for(let i=0;i<n;i++) { if(this._draw('p')) pDrew++; }
+        for(let i=0;i<n;i++) { if(this._draw('e')) eDrew++; }
+        if(pDrew || eDrew) this._log(`🏟 [${arena.name}]: tažení karet (hráč +${pDrew}, nepřítel +${eDrew}).`,'sys');
         break;
       }
       case 'arena_corrupt': {
@@ -692,8 +692,11 @@ const BattleSystem = {
       if(slot>=0 && s.pSpells[slot]!==null) { this._showSwapConfirm(handIdx, slot, 'spell', mode); return; }
       if(slot<0) { this._log('Žádný volný slot!','warn'); return; }
       s.pHand.splice(handIdx,1);
-      s.pSpells[slot] = {card:{...card}, faceDown:false, used:false};
-      this._log(`✨ [${card.name}] vyložen — klikni pro aktivaci.`,'sys');
+      // Arény se pokládají VŽDY lícem dolů — aktivují se až klikem na slot
+      const faceDownPlacement = card.kind === 'arena';
+      s.pSpells[slot] = {card:{...card}, faceDown:faceDownPlacement, used:false};
+      if(faceDownPlacement) this._log(`🏟 [${card.name}] nastavena lícem dolů — klikni pro aktivaci.`,'warn');
+      else                  this._log(`✨ [${card.name}] vyložen — klikni pro aktivaci.`,'sys');
       s.cardPlayedThisTurn=true;
       s.selectedHandIdx=null;
     }
@@ -1396,18 +1399,19 @@ const BattleSystem = {
       }
 
       // ── Arena efekty — aplikují se při umístění i při aktivaci ──────────
+      // Arény ovlivňují OBĚ strany (efekt platí pro celé pole).
       case 'arena_buff_atk': {
-        myM.forEach(m=>{ if(m) m.card.atk += card.value; });
+        [...myM, ...oppM].forEach(m=>{ if(m) m.card.atk += card.value; });
         this._log(`🏟 [${card.name}]: všichni +${card.value} ATK.`,'sys');
         break;
       }
       case 'arena_buff_def': {
-        myM.forEach(m=>{ if(m) m.card.def = (m.card.def||0)+card.value; });
+        [...myM, ...oppM].forEach(m=>{ if(m) m.card.def = (m.card.def||0)+card.value; });
         this._log(`🏟 Arena: obrana +${card.value}.`,'sys');
         break;
       }
       case 'arena_buff_all': {
-        myM.forEach(m=>{ if(m) m.card.atk += card.value; });
+        [...myM, ...oppM].forEach(m=>{ if(m) m.card.atk += card.value; });
         this._log(`🏟 Arena: všichni +${card.value} ATK.`,'sys');
         break;
       }
@@ -2563,19 +2567,34 @@ const BattleSystem = {
       return;
     }
 
-    // Arena — vždy rovnou na slot + okamžitá aktivace efektu
+    // Arena — pokládá se face-down, NEAKTIVUJE se hned. Hráč ji aktivuje klikem.
     if(isArena) {
       if(s.cardPlayedThisTurn) { this._log('Už jsi zahral kartu v tomto tahu.','warn'); s.selectedHandIdx=null; this._render(); return; }
       const slot = s.pSpells.findIndex(m => m === null);
       if(slot < 0) { this._log('Žádný volný slot pro arenu!', 'warn'); s.selectedHandIdx = null; this._render(); return; }
       s.pHand.splice(handIdx, 1);
-      s.pSpells[slot] = { card: {...card}, faceDown: false, used: false };
+      s.pSpells[slot] = { card: {...card}, faceDown: true, used: false };
       s.cardPlayedThisTurn = true; s.selectedHandIdx = null;
-      this._activateSpell(card, 'p'); // nastaví s.activeArena + aplikuje efekt
+      this._log(`🏟 [${card.name}] nastavena lícem dolů — klikni pro aktivaci.`, 'warn');
+      this._render();
       return;
     }
 
-    // Spell — zobraz picker s volbou
+    // Spell — rozhodni podle typu efektu:
+    //   - noTarget (single-use bez cíle)            → aktivuj okamžitě, bez popup
+    //   - needsMyMonster / needsEneMonster (target) → přeskoč popup, rovnou target picker
+    //   - jinak (buff/heal který může být uložen)   → zobraz popup s volbou
+    const noTarget        = ['buff_all_organic','buff_all','buff_all_synth','area_dmg','corruption_heal','heal_pure','corrupt_debuff'].includes(card.effect);
+    const needsMyMonster  = ['buff_atk','buff_atk_cost','heal_buff','heal_dual','copy_atk'].includes(card.effect);
+    const needsEneMonster = ['destroy_synth'].includes(card.effect);
+
+    if(noTarget || needsMyMonster || needsEneMonster) {
+      // Přímá aktivace přes existující target picker (zvládne i case noTarget = aktivuje rovnou)
+      this._showSpellTargetPicker(handIdx, card, null);
+      return;
+    }
+
+    // Spell který nemá zafixovaný efekt — zobraz popup s volbou (Použít hned / Uložit na pole)
     const pop = document.createElement('div');
     pop.className = 'sap-overlay';
     pop.innerHTML = `
@@ -3863,10 +3882,10 @@ const BattleSystem = {
             if(freeSlot < 0) { this._log('Žádný volný slot pro arenu!','warn'); break; }
             const aCard = {...(s.pHand[Number(idx)] || card)};
             s.pHand.splice(Number(idx), 1);
-            s.pSpells[freeSlot] = { card: aCard, faceDown: false, used: false };
+            // Aréna se pokládá face-down — aktivuje se až klikem na slot
+            s.pSpells[freeSlot] = { card: aCard, faceDown: true, used: false };
             s.cardPlayedThisTurn = true; s.selectedHandIdx = null;
-            this._activateSpell(aCard, 'p');
-            this._log(`🏟 [${aCard.name}] umístěna jako aktivní aréna!`, 'sys');
+            this._log(`🏟 [${aCard.name}] nastavena lícem dolů — klikni pro aktivaci.`, 'warn');
             this._render(); break;
           }
           case 'arena-use': { removePopup();
@@ -4281,10 +4300,11 @@ const BattleSystem = {
           if((hCard?.kind === 'spell' || hCard?.kind === 'arena' || hCard?.kind === 'trap') && !s.cardPlayedThisTurn) {
             const hi = s.selectedHandIdx;
             s.pGY.push(sp.card);
-            s.pSpells[slot] = { card:{...hCard}, faceDown: hCard.kind==='trap', used:false };
+            // Trap i arena se pokládají lícem dolů (aréna se aktivuje až klikem)
+            const fd = (hCard.kind === 'trap' || hCard.kind === 'arena');
+            s.pSpells[slot] = { card:{...hCard}, faceDown: fd, used:false };
             s.pHand.splice(hi, 1);
             s.cardPlayedThisTurn=true; s.selectedHandIdx=null;
-            if(hCard.kind==='arena') this._activateSpell(hCard, 'p');
             EventBus.emit('sfx:play', 'card_play');
             this._log(`⇄ [${sp.card.name}] zahozen, [${hCard.name}] nasazen.`, 'sys');
             this._render();
@@ -4292,11 +4312,27 @@ const BattleSystem = {
           }
         }
 
-        // Existující karta → aktivuj
-        if(sp && !sp.used && sp.card.kind === 'spell') {
-          if(sp.faceDown) sp.faceDown = false;
-          this._render();
-          this._showSpellTargetPicker(-1, sp.card, slot);
+        // Existující karta na poli → aktivuj
+        if(sp && !sp.used) {
+          // Face-down aréna → odhal + aktivuj
+          if(sp.faceDown && sp.card.kind === 'arena') {
+            sp.faceDown = false;
+            this._render();
+            this._activateSpell(sp.card, 'p');
+            return;
+          }
+          // Spell (face-down i face-up) → otevři target picker
+          if(sp.card.kind === 'spell') {
+            if(sp.faceDown) sp.faceDown = false;
+            this._render();
+            this._showSpellTargetPicker(-1, sp.card, slot);
+            return;
+          }
+          // Face-up aréna → re-aktivuj efekt (volitelné použití)
+          if(!sp.faceDown && sp.card.kind === 'arena') {
+            this._activateSpell(sp.card, 'p');
+            return;
+          }
         }
         return;
       }

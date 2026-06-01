@@ -540,6 +540,9 @@ const StoryEngine = {
         ? `<button class="vn-btn" data-next="${node.next}">▶ POKRAČOVAT</button>`
         : '';
 
+    // Zachyť starý background pro cross-fade
+    const oldBgImg = this._container.querySelector('.vn-bg')?.style.backgroundImage || '';
+
     this._container.innerHTML = `
       <div class="vn-screen fade-in">
         <div class="vn-bg" style="${bgStyle}"><div class="vn-bg-overlay"></div></div>
@@ -557,6 +560,16 @@ const StoryEngine = {
     this._addStyles();
     this._bindChoices(node.choices || []);
     this._startTypewriter();
+
+    // Cross-fade pozadí — pokud se bg změnil, zfaduji starý přes overlay
+    const newBgEl = this._container.querySelector('.vn-bg');
+    if(newBgEl && oldBgImg && oldBgImg !== (newBgEl.style.backgroundImage || '')) {
+      const fadeOut = document.createElement('div');
+      fadeOut.style.cssText = `position:absolute;inset:0;z-index:3;background-image:${oldBgImg};background-size:cover;background-position:center top;opacity:1;transition:opacity 0.55s ease;pointer-events:none;`;
+      newBgEl.appendChild(fadeOut);
+      requestAnimationFrame(() => requestAnimationFrame(() => { fadeOut.style.opacity = '0'; }));
+      setTimeout(() => fadeOut.remove(), 560);
+    }
 
     // Klik kdekoliv = skip typewriter nebo pokračovat (jen pokud není choice)
     if(!node.choices && node.next) {
@@ -936,15 +949,15 @@ const StoryEngine = {
   },
 
   _glitchTimer:  null,
-  _glitchChars: '!@#%░▒▓<>[]{}|¿×÷±~^*§',
+  _glitchChars: '░▒▓×±~§▪▫◈',
 
   _startLiveGlitch(spans, corrLevel) {
     clearInterval(this._glitchTimer);
-    // 1 simultaneous glitch at level 1, up to 3 at level 5+
-    const maxActive = Math.min(Math.ceil(corrLevel * 0.6), 3);
-    // Interval: 160ms at level 1, 70ms at level 5
-    const ms = Math.max(70, 180 - corrLevel * 22);
-    const candidates = spans.filter(s => s.dataset.char.trim());
+    // Max 2 zároveň — text musí být čitelný i při max korupci
+    const maxActive = Math.min(Math.ceil(corrLevel * 0.4), 2);
+    // Interval: 220ms při korupci 1, 90ms při korupci 5+
+    const ms = Math.max(90, 240 - corrLevel * 30);
+    const candidates = spans.filter(s => s.dataset.char.trim() && s.dataset.char !== ' ');
     if(!candidates.length) return;
 
     this._glitchTimer = setInterval(() => {
@@ -952,15 +965,24 @@ const StoryEngine = {
         const span = candidates[Math.floor(Math.random() * candidates.length)];
         if(!span || span._glitching) continue;
         span._glitching = true;
-        span.textContent = this._glitchChars[Math.floor(Math.random() * this._glitchChars.length)];
-        span.style.color = '#9b59b6';
-        span.style.opacity = '0.75';
+        const orig = span.dataset.char;
+        const gc = this._glitchChars[Math.floor(Math.random() * this._glitchChars.length)];
+
+        // Krátký text flicker (30ms) — sotva postřehnutelný, char se vrátí rychle
+        span.textContent = gc;
+        span.style.color = '#b070d8';
+        span.style.textShadow = '0 0 6px rgba(155,89,182,0.8)';
+
         setTimeout(() => {
-          span.textContent = span.dataset.char;
+          span.textContent = orig; // text zpět po 30ms
+        }, 30);
+
+        // Glow efekt zůstane déle (charakter "doznívá")
+        setTimeout(() => {
           span.style.color = '';
-          span.style.opacity = '';
+          span.style.textShadow = '';
           span._glitching = false;
-        }, 70 + Math.random() * 80);
+        }, 120 + Math.random() * 100);
       }
     }, ms);
   },
@@ -1052,7 +1074,6 @@ const StoryEngine = {
         background-size: cover;
         background-position: center top;
         background-color: #06080a;
-        transition: background-image 0.6s ease;
         animation: vn-kenburns 10s ease-out forwards;
       }
       .vn-bg-overlay {
