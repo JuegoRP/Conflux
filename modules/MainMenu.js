@@ -563,35 +563,74 @@ const MainMenu = {
   },
 
   _showSettings() {
-    const s = GameState.settings || {};
+    const s = GameState.settings;
+    const musicPct  = Math.round((s.musicVolume ?? 0.5) * 100);
+    const sfxPct    = Math.round((s.sfxVolume   ?? 0.8) * 100);
+    const speed     = s.textSpeed   ?? 'normal';
+    const diff      = s.difficulty  ?? 0;
+    const kbOn      = s.keyboardShortcuts !== false;
+    const fsOn      = !!document.fullscreenElement;
+
+    const speedOpts = [
+      { val:'slow',    label:'POMALÁ'   },
+      { val:'normal',  label:'NORMÁLNÍ' },
+      { val:'fast',    label:'RYCHLÁ'   },
+      { val:'instant', label:'OKAMŽITÁ' },
+    ];
+    const diffOpts = [
+      { val:0, label:'NORMÁLNÍ'  },
+      { val:1, label:'TĚŽKÁ'     },
+      { val:2, label:'PERFEKTNÍ' },
+    ];
+
+    const speedBtns = speedOpts.map(o =>
+      `<button class="m-tog m-set-btn${speed===o.val?' m-tog--on':''}" data-speed="${o.val}">${o.label}</button>`
+    ).join('');
+    const diffBtns = diffOpts.map(o =>
+      `<button class="m-tog m-set-btn${diff===o.val?' m-tog--on':''}" data-diff="${o.val}">${o.label}</button>`
+    ).join('');
+
     const ov = this._overlay(`
       <div class="m-dialog-title">NASTAVENÍ</div>
 
       <div class="m-row">
         <span class="m-row-label">HUDBA</span>
-        <button class="m-tog ${s.music !== false ? 'm-tog--on' : ''}" id="tog-music">
-          ${s.music !== false ? 'ON' : 'OFF'}
-        </button>
+        <div class="m-slider-wrap">
+          <input type="range" class="m-slider" id="sl-music" min="0" max="100" value="${musicPct}">
+          <span class="m-slider-val" id="sl-music-val">${musicPct}%</span>
+        </div>
       </div>
+
       <div class="m-row">
         <span class="m-row-label">ZVUKY</span>
-        <button class="m-tog ${s.sfx !== false ? 'm-tog--on' : ''}" id="tog-sfx">
-          ${s.sfx !== false ? 'ON' : 'OFF'}
-        </button>
+        <div class="m-slider-wrap">
+          <input type="range" class="m-slider" id="sl-sfx" min="0" max="100" value="${sfxPct}">
+          <span class="m-slider-val" id="sl-sfx-val">${sfxPct}%</span>
+        </div>
       </div>
+
+      <div class="m-row m-row--col">
+        <span class="m-row-label">RYCHLOST TEXTU</span>
+        <div class="m-btn-group" id="grp-speed">${speedBtns}</div>
+      </div>
+
+      <div class="m-row m-row--col">
+        <span class="m-row-label">OBTÍŽNOST AI</span>
+        <div class="m-btn-group" id="grp-diff">${diffBtns}</div>
+      </div>
+
       <div class="m-row">
-        <span class="m-row-label">JAZYK</span>
-        <button class="m-tog m-tog--on" disabled>CS</button>
+        <span class="m-row-label">FULLSCREEN</span>
+        <button class="m-tog${fsOn?' m-tog--on':''}" id="tog-fs">${fsOn?'ON':'OFF'}</button>
       </div>
+
       <div class="m-row">
         <span class="m-row-label">KLÁVESNICE</span>
-        <button class="m-tog ${s.keyboardShortcuts !== false ? 'm-tog--on' : ''}" id="tog-keyboard">
-          ${s.keyboardShortcuts !== false ? 'ON' : 'OFF'}
-        </button>
+        <button class="m-tog${kbOn?' m-tog--on':''}" id="tog-kb">${kbOn?'ON':'OFF'}</button>
       </div>
       <div class="m-row-hint">Enter · Mezerník · Esc</div>
 
-      <div class="m-row m-row--danger" style="margin-top:20px">
+      <div class="m-row m-row--danger" style="margin-top:16px">
         <span class="m-row-label" style="color:#3d4a5c">RESET</span>
         <button class="m-tog m-tog--danger" id="tog-reset">NOVÝ CYKLUS</button>
       </div>
@@ -599,18 +638,64 @@ const MainMenu = {
       <button class="m-cancel-btn" id="ov-cancel">✕  ZAVŘÍT</button>
     `);
 
-    const tog = (id, key) => {
-      ov.querySelector(id)?.addEventListener('click', e => {
-        GameState.settings[key] = !GameState.settings[key];
-        const on = GameState.settings[key];
-        e.target.textContent = on ? 'ON' : 'OFF';
-        e.target.classList.toggle('m-tog--on', on);
-      });
-    };
-    tog('#tog-music', 'music');
-    tog('#tog-sfx', 'sfx');
-    tog('#tog-keyboard', 'keyboardShortcuts');
+    const save = () => { try { SaveManager.save?.(0); } catch(e) {} };
 
+    // Hudba slider
+    ov.querySelector('#sl-music')?.addEventListener('input', e => {
+      const v = Number(e.target.value) / 100;
+      ov.querySelector('#sl-music-val').textContent = e.target.value + '%';
+      s.musicVolume = v;
+      AudioSystem?.setMusicVolume?.(v);
+      save();
+    });
+
+    // SFX slider
+    ov.querySelector('#sl-sfx')?.addEventListener('input', e => {
+      const v = Number(e.target.value) / 100;
+      ov.querySelector('#sl-sfx-val').textContent = e.target.value + '%';
+      s.sfxVolume = v;
+      AudioSystem?.setSfxVolume?.(v);
+      save();
+    });
+
+    // Text speed group
+    ov.querySelector('#grp-speed')?.addEventListener('click', e => {
+      const btn = e.target.closest('[data-speed]');
+      if(!btn) return;
+      s.textSpeed = btn.dataset.speed;
+      ov.querySelectorAll('[data-speed]').forEach(b => b.classList.toggle('m-tog--on', b===btn));
+      save();
+    });
+
+    // Difficulty group
+    ov.querySelector('#grp-diff')?.addEventListener('click', e => {
+      const btn = e.target.closest('[data-diff]');
+      if(!btn) return;
+      s.difficulty = Number(btn.dataset.diff);
+      ov.querySelectorAll('[data-diff]').forEach(b => b.classList.toggle('m-tog--on', b===btn));
+      save();
+    });
+
+    // Fullscreen
+    ov.querySelector('#tog-fs')?.addEventListener('click', e => {
+      if(!document.fullscreenElement) {
+        document.documentElement.requestFullscreen?.().catch(()=>{});
+        e.target.textContent = 'ON'; e.target.classList.add('m-tog--on');
+      } else {
+        document.exitFullscreen?.();
+        e.target.textContent = 'OFF'; e.target.classList.remove('m-tog--on');
+      }
+    });
+
+    // Klávesnice
+    ov.querySelector('#tog-kb')?.addEventListener('click', e => {
+      s.keyboardShortcuts = !s.keyboardShortcuts;
+      e.target.textContent = s.keyboardShortcuts ? 'ON' : 'OFF';
+      e.target.classList.toggle('m-tog--on', s.keyboardShortcuts);
+      save();
+    });
+
+    // Reset
     ov.querySelector('#tog-reset')?.addEventListener('click', e => {
       if(e.target.dataset.confirm !== '1') {
         e.target.textContent = 'JISTĚ?';
@@ -622,8 +707,8 @@ const MainMenu = {
           }
         }, 2500);
       } else {
-        SaveManager.clearAll();
-        GameState.reset();
+        SaveManager.clearAll?.();
+        GameState.reset?.();
         ov.remove();
         Router.goto('menu');
       }
@@ -1235,6 +1320,43 @@ const MainMenu = {
 .m-row-hint {
   font-family: 'VT323', monospace; font-size: 13px; color: #2a3546;
   letter-spacing: 1.5px; padding: 0 0 4px 0; text-align: right;
+}
+
+/* ── SETTINGS — SLIDER ── */
+.m-row--col {
+  flex-direction: column; align-items: flex-start; gap: 10px;
+}
+.m-slider-wrap {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+}
+.m-slider {
+  -webkit-appearance: none; appearance: none;
+  flex: 1; height: 3px;
+  background: #1a2230;
+  outline: none; cursor: pointer;
+}
+.m-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 12px; height: 12px;
+  background: #4fa3e0;
+  border: none; cursor: pointer;
+}
+.m-slider::-moz-range-thumb {
+  width: 12px; height: 12px;
+  background: #4fa3e0;
+  border: none; cursor: pointer;
+}
+.m-slider-val {
+  font-family: 'VT323', monospace; font-size: 18px; color: #4fa3e0;
+  min-width: 38px; text-align: right; letter-spacing: 1px;
+}
+
+/* ── SETTINGS — BTN GROUP ── */
+.m-btn-group {
+  display: flex; gap: 4px; flex-wrap: wrap;
+}
+.m-btn-group .m-tog {
+  font-size: 15px; padding: 4px 10px; min-width: 0;
 }
 
 /* ── SLOT LIST ── */

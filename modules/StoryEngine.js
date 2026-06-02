@@ -936,6 +936,15 @@ const StoryEngine = {
       return s;
     });
 
+    const speedMap = { slow: 65, normal: 42, fast: 18, instant: 0 };
+    const ms = speedMap[GameState.settings?.textSpeed ?? 'normal'] ?? 42;
+
+    if(ms === 0) {
+      spans.forEach(s => { s.textContent = s.dataset.char; });
+      if(corrLevel > 0) this._startLiveGlitch(spans, corrLevel);
+      return;
+    }
+
     let i = 0;
     this._typewriterTimer = setInterval(() => {
       if(i < spans.length) {
@@ -946,7 +955,7 @@ const StoryEngine = {
         this._typewriterTimer = null;
         if(corrLevel > 0) this._startLiveGlitch(spans, corrLevel);
       }
-    }, 42);
+    }, ms);
   },
 
   _glitchTimer:  null,

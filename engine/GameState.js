@@ -77,7 +77,10 @@ const GameState = {
   },
 
   settings: {
-    volume: 0.7, sfx: 0.8, music: 0.5, language: 'cs',
+    musicVolume: 0.5, sfxVolume: 0.8,
+    textSpeed: 'normal',   // slow | normal | fast | instant
+    difficulty: 0,         // 0 = normální, 1 = těžká, 2 = perfektní
+    language: 'cs',
     keyboardShortcuts: true,
   },
 

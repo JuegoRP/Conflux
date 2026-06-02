@@ -2077,7 +2077,7 @@ const BattleSystem = {
     const s = this._state;
     const attackers=s.eMonsters.map((m,i)=>({m,i})).filter(x=>x.m&&!x.m.hasAttacked&&x.m.mode==='atk');
     if(!attackers.length){onDone();return;}
-    const difficulty=(this._params?.difficulty??0);
+    const difficulty = this._params?.difficulty ?? GameState.settings?.difficulty ?? 0;
     const mistakeChance=[0.15,0.05,0.0][difficulty]??0.1;
     // Lethal detection: if player field is empty and total AI ATK kills player, skip mistakes
     const pFieldEmpty = !s.pMonsters.some(Boolean);
