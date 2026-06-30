@@ -1,3 +1,7 @@
 .DS_Store
 **/.DS_Store
 .claude/
+
+# Asset redo — raw plné PNG před kompresí (negenerovat do repa)
+assets/images/cards/_raw/
+assets/images/**/_raw/
