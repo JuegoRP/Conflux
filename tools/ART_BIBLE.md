@@ -25,49 +25,48 @@
 
 ## 1. GLOBÁLNÍ VIZUÁLNÍ JAZYK
 
-- **Médium:** malovaný digitální concept art / klíčová ilustrace. Bohaté textury, viditelný tah,
-  malá hloubka ostrosti. NE 3D render, NE fotorealismus, NE anime, NE pixel-art, NE cel-shading.
-- **Světlo:** jeden měkký dominantní zdroj, atmosférická mlha/prach, jemný volumetrický nádech.
-- **Paleta (základ celé hry):** tlumená zemitá — antracit, mokrá hlína, mech, rez, kostní bílá,
-  matná měď. Akcenty nasycené střídmě a jen podle frakce (viz níže).
-- **Nálada:** melancholická, kontemplativní, „něco se rozhoduje". Klid před/po zlomu, ne akční řež.
+- **Médium:** malovaný, texturní, „ručně dělaný" digitální obraz. Viditelný tah, bohatý detail.
+  NE lesklé sci-fi, NE 3D render, NE fotorealismus, NE anime, NE pixel-art, NE cel-shading, NE fantasy.
+- **ROZMANITOST je pravidlo:** každá karta má VLASTNÍ prostředí, světlo a barevnou náladu.
+  ŽÁDNÁ jednotná celohrová paleta ani jeden opar přes všechno — to dělá karty uniformní (chyba v1).
+  Paletu určuje FRAKCE (§2), variaci světla zajišťuje deterministický `VARIETY` klíč podle ID.
+- **Svět:** obydlený, opotřebovaný, prastarý. „Blízká budoucnost", ale ne úplně sci-fi.
 - **Detail:** střední až vysoký, ale čitelná silueta na malém rozměru (karta je malá).
 
 ---
 
 ## 2. FRAKCE — barevný a charakterový klíč
 
-Každá karta má `faction`. Frakce určuje paletu akcentů, materiál a „pocit".
+Každá karta má `faction`. **Frakce jsou ČISTÉ a NEMÍCHAJÍ se — jedině `hybrid` kombinuje obojí.**
+Frakční negativy (v `generate.py` → `FACTION_NEG`) tuhle čistotu vynucují.
 
 ### synth — *Chladná struktura* („Funguje to. Nech to fungovat.")
-- **Akcenty:** chladná tyrkysová / oceloměď, jantarové stavové diody. Na teplém podkladu, ne na neonu.
-- **Materiál:** matný kov, keramický plát, opotřebovaný kompozit, tenké světelné linky, spáry, šrouby.
-- **Forma:** přesná, modulární, symetrická. Geometrie, mřížky, opakující se prvky.
-- **Pocit:** řád a efektivita, ale unavený — stroj který slouží dlouho a možná zapomněl proč.
+- **JEN STROJ, žádná příroda.** (zakázáno: rostliny, kořeny, mech, dřevo, organická tkáň)
+- **Materiál:** stará, opotřebovaná, ručně stavěná technika — patinovaný kov, korodované panely,
+  prasklá keramika, obnažené kabely, nýty, ciferníky. NE lesklé futuro.
+- **Paleta:** chladná ocelová modrá + tyrkys, drobné jantarové diody. **Forma:** rigidní, modulární.
+- **Pocit:** stroj, co běží příliš dlouho.
 
 ### organic — *Teplá paměť* („Pamatuj si, co jsi byl.")
-- **Akcenty:** mechová zeleň, jantar, hlinková okrová, teplé biolumin. body.
-- **Materiál:** kůra, mycelium, šlachy, kámen porostlý, vlhká hlína, chitin, listoví.
-- **Forma:** asymetrická, rostlá, plynulá. Příroda, která si pamatuje.
-- **Pocit:** živé, prastaré, vědomé. Příroda jako paměť, ne jako idyla.
+- **JEN ŽIVÁ PŘÍRODA, žádná technika.** (zakázáno: kov, stroje, kabely, displeje, obvody, roboti)
+- **Materiál:** kůra, kořeny, mycelium, šlachy, chitin, listí, vlhký kámen, živá tkáň.
+- **Paleta:** teplá — mechová zeleň, jantar, okrová, kůrová hněď, medové světlo. **Forma:** rostlá, asymetrická.
+- **Pocit:** prastarý živoucí les, vědomý.
 
 ### hybrid — *Most* („Nemusíš si vybrat stranu.")
-- **Akcenty:** kombinace synth tyrkys + organic zeleň/jantar ve VYVÁŽENÉ kompozici.
-- **Materiál:** kov prorostlý kořeny, displej v kůře, kabel jako šlacha. Srůst, ne koláž.
-- **Forma:** symetrie potkává organický růst — třetí cesta, ne půl na půl nalepené.
-- **Pocit:** smíření protikladů, křehká rovnováha, naděje s napětím.
+- **VÁŽNĚ OBOJÍ, zhruba 50/50** — skutečné srůstání stroje A přírody (kov srostlý s tkání,
+  kořeny protkané strojem, displej v kůře, kabel jako šlacha). Žádná strana nepřevažuje. Srůst, ne koláž.
+- **Paleta:** vyvážená tyrkys + zeleň. **Pocit:** křehké smíření protikladů.
 
-### corruption — *Rozpad* („Zapomeň. Je to snazší.")
-- **Akcenty:** purpurová/magenta a hluboká čerň, glitch, prázdná místa kde chybí data.
-- **Materiál:** rozpadající se hmota, statický šum, „vyžraná" textura, fraktální trhliny, void.
-- **Forma:** láme synth i organic — rozbitá symetrie, hnijící růst, dezintegrace okrajů.
-- **Pocit:** ztráta, pohlcení, tichá hrozba. Krásné a špatné zároveň.
+### corruption — *Trhlina v realitě* („Zapomeň. Je to snazší.")
+- **TRHLINA V REALITĚ, vesmírná tématika** — ne „postava", ne objekt. Subjekt je tvořen roztrženým
+  časoprostorem: napůl rozpuštěný v zářivé trhlině, tříští se do voidu, statiky a hvězd, okraje se lámou/glitchují.
+- **Paleta:** chorobná purpurová, magenta, hluboká čerň, duhové zlomené světlo, hvězdné pole.
+- **Pocit:** realita se rozpadá ve švech; kosmický horor, „mimo".
 
 ### neutral — *Bez strany* („Jen nesu zprávu.")
-- **Akcenty:** odbarvené, šedo-béžové, jediný teplý lidský akcent (lampa, dopis, dlaň).
-- **Materiál:** obyčejné — látka, kůže, papír, ošoupaný kov. Lidské měřítko.
-- **Forma:** prostá, civilní, bez frakční okázalosti.
-- **Pocit:** osamělý poutník mezi systémy. Civilní, zranitelné, lidské.
+- **Lidské měřítko, prakticky bez techniky.** Odbarvené šedo-béžové, vybledlá látka, kůže, papír,
+  ošoupané dřevo/železo; jediný teplý lidský akcent (lampa, dopis). Civilní, osamělé, křehké.
 
 ---
 
@@ -107,6 +106,11 @@ Vzácnost nemění styl, jen nákladnost provedení:
 ---
 
 ## 6. KONZISTENCE (nejdůležitější a nejtěžší)
+
+> **Portréty a pozadí mají PŘEDLOHU.** Postavy (16 v `portraits/`) i lokace (64 v `backgrounds/`)
+> mají zavedený design ve stávajících souborech. Nevymýšlet od nuly — použít existující obrázek
+> jako REFERENČNÍ vstup (gpt-image-1 image edit) a jen ho pozvednout do nového stylu při zachování
+> identity postavy/místa. Karty (card artworky) předlohu nemají → generují se čistě z popisku.
 
 gpt-image-1 nemá nativní style-reference, proto:
 
