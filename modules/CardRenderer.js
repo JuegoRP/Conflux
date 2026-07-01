@@ -328,19 +328,17 @@ export function injectCardStyles() {
     .cx-md{width:100px;height:150px;}
     .cx-lg{width:336px;height:504px;}
 
-    /* Artwork — fills the full card, then hard-clipped to the art-hole area.
-       clip-path is definitive: artwork cannot bleed through frame borders
-       regardless of PNG transparency or z-index rendering quirks.
-       Values tuned to sit safely inside all frame variants.
-       inset(top, right, bottom, left) */
+    /* Artwork — umístěno přesně do OKNA rámu (měřeno z průhledné díry v PNG:
+       x ~11-86%, y ~15-74%, poměr ~0.85). Dřív byl artwork přes celou kartu (2:3)
+       s object-fit:cover → čtverec ztratil ~38% šířky. Teď rect ~okno → zobrazí se
+       celá šířka subjektu, ořez jen ~15% svisle. Rect je o kousek větší než okno,
+       aby artwork dosedl pod okraje rámu (rám maskuje přesah). */
     .cx-art{
       position:absolute;
-      inset:0;
-      width:100%;height:100%;
+      top:12%;left:9%;width:82%;height:64%;
       object-fit:cover;
-      object-position:center 30%;
+      object-position:center 40%;
       z-index:1;pointer-events:none;
-      clip-path:inset(14% 6% 20% 6%);
     }
     .cx-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:2;pointer-events:none;}
     .cx-content{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;pointer-events:none;}
