@@ -239,38 +239,37 @@ const LetterEngine = {
         position: fixed;
         inset: 0;
         background: #04080e;
-        display: flex;
-        align-items: center;
-        justify-content: center;
       }
 
-      /* Wrapper kolem device image — určuje rozměry */
+      /* Holo vyplňuje CELÝ displej (full-bleed) — žádná černá kolem */
       .letter-device {
-        position: relative;
-        width: min(82vw, 780px);
-        flex-shrink: 0;
+        position: absolute;
+        inset: 0;
       }
 
       .letter-device-img {
+        position: absolute;
+        inset: 0;
         width: 100%;
+        height: 100%;
+        object-fit: cover;
         display: block;
-        filter: drop-shadow(0 0 32px rgba(79, 200, 240, 0.25));
       }
 
       /* Overlay přesně na oblast displeje uvnitř hologramu */
       /* Hodnoty: top/bottom/left/right jsou % výšky/šířky .letter-device */
       .letter-screen {
         position: absolute;
-        /* holo teď vyplňuje celý rámeček (bez podstavce) → text využívá celou plochu */
-        top: 13%;      /* pod horním okrajem rámečku */
-        bottom: 13%;   /* nad spodním okrajem rámečku */
-        left: 13%;     /* za levým okrajem */
-        right: 13%;    /* za pravým okrajem */
+        /* holo je full-bleed → text jako čitelný sloupec přímo na hologramu */
+        top: 12%;
+        bottom: 12%;
+        left: 8%;
+        right: 8%;
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        /* průhledné — text se zobrazí na jasné ploše hologramu */
-        background: rgba(8, 20, 40, 0.18);
+        /* žádný barevný podkres — text se píše přímo do hologramu */
+        background: transparent;
         padding: 0.8rem 1.2rem 0.5rem;
       }
 
@@ -279,17 +278,22 @@ const LetterEngine = {
         overflow-y: auto;
         scrollbar-width: none;
         padding-right: 0.2rem;
+        max-width: 62ch;
+        margin: 0 auto;
+        width: 100%;
       }
       .letter-content::-webkit-scrollbar { display: none; }
 
       /* ── Text — sci-fi terminál, tmavé písmo na jasném hologramu ── */
       .letter-line {
-        font-family: 'Share Tech Mono', 'Courier New', monospace;
-        font-size: clamp(12px, 1.4vw, 16px);
-        line-height: 1.75;
+        /* serif s plnou českou diakritikou (Share Tech Mono háčky/čárky neměl);
+           navíc dle DESIGN.md = dopisy nese serifové "lidské" písmo */
+        font-family: Georgia, 'Times New Roman', 'Noto Serif', serif;
+        font-size: clamp(14px, 1.6vw, 19px);
+        line-height: 1.7;
         color: #0a2035;
         margin: 0 0 0.15em 0;
-        min-height: 1.75em;
+        min-height: 1.7em;
       }
 
       .letter-line--greeting {
