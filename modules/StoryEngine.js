@@ -60,9 +60,18 @@ const StoryEngine = {
     'pramáti':      { portrait: 'pramati',      side: 'left'  },
     'pozorovatel':  { portrait: 'pozorovatel',  side: 'right' },
     'rekalibrator': { portrait: 'rekalibrator', side: 'right' },
-    'reka':         { portrait: 'voit',         side: 'right' },
     'paradox':      { portrait: 'paradox',      side: 'right' },
-    'vykonavatel':  { portrait: 'voit',         side: 'right' },
+    // Dogenerované portréty (dřív placeholder / chyběly)
+    'reka':         { portrait: 'reka',         side: 'right' },
+    'vykonavatel':  { portrait: 'vykonavatel',  side: 'right' },
+    'kellner':      { portrait: 'kellner',      side: 'right' },
+    'straz':        { portrait: 'straz',        side: 'right' },
+    'rada':         { portrait: 'rada',         side: 'right' },
+    'vanek':        { portrait: 'vanek',        side: 'right' },
+    'tichy':        { portrait: 'tichy',        side: 'right' },
+    'strazce':      { portrait: 'strazce',      side: 'right' },
+    'hana':         { portrait: 'hana',         side: 'right' },
+    'duelista':     { portrait: 'duelista',     side: 'right' },
   },
   _resolveSpeaker(speakerKey) {
     if (!speakerKey) return null;
@@ -138,8 +147,25 @@ const StoryEngine = {
     'act10_fourth_space':'act7_distorted_road', 'act10_fourth_horizon':'act7_distorted_road',
     'act10_protocol_space':'act10_konvergence', 'act10_open_horizon':'act10_konvergence',
   },
+  // Scénická pozadí dogenerovaná podle děje (soubor existuje → přednost před aliasem)
+  _bgReal: new Set([
+    'act2_synth_border','act2_crossroads','act2_synth_deep','act2_before_boss','act2_gate','act2_beyond',
+    'act3_fusion_zone','act3_nexus_deep','act3_nexus_edge','act3_before_boss','act3_duel_arena','act3_beyond',
+    'act3_horizon','act4_border_dusk','act4_city_corridor','act4_syndicate_hall','act4_red_zone','act4_sector7',
+    'act4_veritel_office','act4_syndicate','act5_outer_ring','act5_transit_station','act5_duel_memory','act5_road_evening',
+    'act5_road_dusk','act6_crossing','act6_crossing_fight','act6_ruins','act6_open_road','act6_horizon',
+    'act6_city','act6_synth_hq','act7_checkpoint','act7_checkpoint_fight','act7_deep_road','act7_core_facility',
+    'act7_core_inner','act7_core_battle','act7_exit','act7_horizon_glitch','act8_border_town','act8_battle_town',
+    'act8_road_after','act8_horizon_clear','act9_convergence_plain','act9_memory_space','act9_mirror_space','act9_transition_fight',
+    'act9_threshold','act9_synth_gate','act9_organic_gate','act9_center_gate','act9_fourth_gate','act9_threshold_open',
+    'act10_convergence','act10_synth_core','act10_synth_battle','act10_synth_horizon','act10_organic_deep','act10_organic_battle',
+    'act10_organic_horizon','act10_center_void','act10_void_battle','act10_open_horizon','act10_fourth_space','act10_protocol_space',
+    'act10_fourth_horizon','act10_void',
+  ]),
   _resolveBgName(name) {
     if (!name) return '';
+    // Máme-li dogenerovaný scénický soubor, použij ho (přednost před aliasem na hero-pozadí)
+    if (this._bgReal.has(name)) return name;
     return this._bgAlias[name] || name;
   },
   _bgUrl(name) {

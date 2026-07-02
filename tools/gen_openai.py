@@ -28,9 +28,12 @@ def call_openai(prompt, size, quality, key, timeout=180):
 def to_jpg(png_bytes, dest, quality=85):
     from PIL import Image
     import io
-    im = Image.open(io.BytesIO(png_bytes)).convert("RGB")
     os.makedirs(os.path.dirname(dest), exist_ok=True)
-    im.save(dest, "JPEG", quality=quality)
+    # respektuj příponu cíle — portréty jsou .png, pozadí/karty .jpg
+    if dest.lower().endswith(".png"):
+        Image.open(io.BytesIO(png_bytes)).save(dest, "PNG")
+    else:
+        Image.open(io.BytesIO(png_bytes)).convert("RGB").save(dest, "JPEG", quality=quality)
 
 def main():
     ap = argparse.ArgumentParser()
@@ -39,6 +42,7 @@ def main():
     ap.add_argument("--workers", type=int, default=5)
     ap.add_argument("--force", action="store_true")
     ap.add_argument("--retries", type=int, default=2)
+    ap.add_argument("--quality", default="medium", help="fallback když job nemá vlastní quality")
     a = ap.parse_args()
 
     key = os.environ.get("OPENAI_API_KEY")
@@ -59,20 +63,22 @@ def main():
     print(f"Ke generování: {len(todo)}/{len(items)} (workers={a.workers})")
 
     def work(it):
+        label = it.get("id", it.get("name"))
         dest = os.path.join(a.root, it["file"])
-        raw = os.path.join(raw_dir, f'{str(it["id"]).zfill(3)}.png')
+        raw = os.path.join(raw_dir, f'{str(label)}.png')
+        quality = it.get("quality", a.quality)
         last = None
         for attempt in range(a.retries + 1):
             try:
                 t0 = time.time()
-                png = call_openai(it["prompt"], it["size"], it["quality"], key)
+                png = call_openai(it["prompt"], it["size"], quality, key)
                 open(raw, "wb").write(png)
                 to_jpg(png, dest)
-                return (it["id"], "OK", round(time.time()-t0, 1), None)
+                return (label, "OK", round(time.time()-t0, 1), None)
             except Exception as e:
                 last = str(e)[:160]
                 time.sleep(3 * (attempt + 1))
-        return (it["id"], "FAIL", 0, last)
+        return (label, "FAIL", 0, last)
 
     ok = fail = 0
     with ThreadPoolExecutor(max_workers=a.workers) as ex:
