@@ -104,6 +104,9 @@ const BattleSystem = {
     this['_tut_first_attack_phase'] = false;
     this['_tut_first_attack_done'] = false;
     this['_tut_tutorial_end'] = false;
+    // Reset in-battle lore (barks)
+    this._barkTurns = 0;
+    this._barkState = { fired:{}, idx:{} };
 
     container.innerHTML = `<div class="b-loading"><span>Cyklus pokračuje.</span></div>`;
     injectCardStyles();
@@ -151,6 +154,7 @@ const BattleSystem = {
     this._render();
     this._bindEvents();
     this._showCoinflip(container, () => {
+      if(!this._isTutorial()) setTimeout(() => this._maybeBark('start'), 600);
       this._checkTutorial('battle_start', () => {
         this._startTurn();
       });
@@ -596,6 +600,12 @@ const BattleSystem = {
     if(s.isPlayerTurn && !s.cardPlayedThisTurn) {
       this._log('Musíš zahrát kartu!', 'warn');
       return;
+    }
+    // In-battle lore (nevtíravé titulky) — na konci tahu hráče, mimo tutorial
+    if(!this._isTutorial() && s.isPlayerTurn) {
+      this._barkTurns = (this._barkTurns || 0) + 1;
+      if(this._barkTurns >= 2) this._maybeBark('midfight');
+      if(s.eLP <= s.eMaxLP * 0.5) this._maybeBark('lowHP');
     }
     s.busy = true;
     s.turnNumber++;
@@ -3013,6 +3023,55 @@ const BattleSystem = {
     this._toastTimer = setTimeout(() => {
       toastEl.classList.remove('on');
     }, 2200);
+  },
+
+  // ── In-battle lore (nevtíravé titulky) ──
+  // enemies.js: barks: { start:[{speaker,text}], midfight:[...], lowHP:[...] }
+  _maybeBark(trigger) {
+    const arr = this._enemy?.barks?.[trigger];
+    if(!arr || !arr.length) return;
+    this._barkState = this._barkState || { fired:{}, idx:{} };
+    if(trigger === 'midfight') {
+      const i = this._barkState.idx.midfight || 0;
+      if(i >= arr.length) return;
+      this._barkState.idx.midfight = i + 1;
+      const b = arr[i]; this._bark(b.speaker || '', b.text);
+    } else {
+      if(this._barkState.fired[trigger]) return;
+      this._barkState.fired[trigger] = true;
+      arr.forEach((b, k) => setTimeout(() => this._bark(b.speaker || '', b.text), k * 3600));
+    }
+  },
+
+  _bark(speaker, text) {
+    this._injectBarkCSS();
+    let layer = document.getElementById('cf-bark-layer');
+    if(!layer) { layer = document.createElement('div'); layer.id = 'cf-bark-layer'; document.body.appendChild(layer); }
+    const el = document.createElement('div');
+    el.className = 'cf-bark';
+    const port = speaker
+      ? `<img class="cf-bark-port" src="assets/images/portraits/${speaker}.png" onerror="this.style.display='none'" alt="">`
+      : '';
+    const who = speaker ? `<span class="cf-bark-who">${speaker}</span>` : '';
+    el.innerHTML = `${port}<div class="cf-bark-body">${who}<span class="cf-bark-txt">${text}</span></div>`;
+    layer.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('cf-bark--in'));
+    setTimeout(() => { el.classList.remove('cf-bark--in'); setTimeout(() => el.remove(), 450); }, 4200);
+  },
+
+  _injectBarkCSS() {
+    if(document.getElementById('cf-bark-css')) return;
+    const s = document.createElement('style'); s.id = 'cf-bark-css';
+    s.textContent = `
+      #cf-bark-layer{position:fixed;left:16px;bottom:96px;z-index:60;display:flex;flex-direction:column;gap:8px;pointer-events:none;max-width:min(46vw,420px);}
+      .cf-bark{display:flex;align-items:flex-end;gap:10px;opacity:0;transform:translateX(-16px);transition:opacity .4s ease,transform .4s ease;}
+      .cf-bark--in{opacity:1;transform:translateX(0);}
+      .cf-bark-port{width:44px;height:44px;border-radius:6px;object-fit:cover;object-position:top center;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.6);}
+      .cf-bark-body{background:linear-gradient(to right,rgba(3,6,10,.92),rgba(3,6,10,.72));border-left:2px solid rgba(79,163,224,.55);border-radius:4px;padding:7px 12px;}
+      .cf-bark-who{display:block;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;color:#7fb0d8;text-transform:uppercase;margin-bottom:2px;}
+      .cf-bark-txt{font-family:'VT323',monospace;font-size:17px;line-height:1.25;color:#dfe9f2;text-shadow:0 1px 4px rgba(0,0,0,.9);}
+    `;
+    document.head.appendChild(s);
   },
 
   _animateLP(who, amount, isHeal) {
