@@ -541,16 +541,15 @@ const GameState = {
   _updateCorruption() {
     const a = this.player.alignment;
     let level = 0, side = null;
-    if(a > 0) {
-      side = 'order';
-      level = a > 80 ? 5 : a > 60 ? 4 : a > 40 ? 3 : a > 20 ? 2 : 1;
-    } else if(a < 0) {
-      side = 'chaos';
-      const abs = Math.abs(a);
-      level = abs > 80 ? 5 : abs > 60 ? 4 : abs > 40 ? 3 : abs > 20 ? 2 : 1;
-    }
-    // Story choices can independently push corruption (arena effects, dark choices)
-    const storyBonus = this._storyCorruption || 0;
+    // POMALEJŠÍ posun: vyšší prahy → level neroste hned při malém alignmentu.
+    // (dřív a>0 = hned level 1). Doladit tady, když bude pořád moc/málo citlivé.
+    const lvlFromAlignment = (x) => x > 92 ? 5 : x > 72 ? 4 : x > 52 ? 3 : x > 32 ? 2 : x > 15 ? 1 : 0;
+    if(a > 0)      { side = 'order'; level = lvlFromAlignment(a); }
+    else if(a < 0) { side = 'chaos'; level = lvlFromAlignment(Math.abs(a)); }
+    // Story choices můžou nezávisle tlačit corruption — ale POMALU:
+    // teprve každých STORY_CORRUPTION_PER_TIER bodů = +1 vizuální stupeň (dřív 1 bod = +1 stupeň).
+    const STORY_CORRUPTION_PER_TIER = 3;
+    const storyBonus = Math.floor((this._storyCorruption || 0) / STORY_CORRUPTION_PER_TIER);
     level = Math.min(5, level + storyBonus);
     if(level > 0 && !side) side = 'chaos';
     const clampedLevel = Math.min(level, 3);

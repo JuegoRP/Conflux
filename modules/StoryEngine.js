@@ -1043,7 +1043,7 @@ const StoryEngine = {
     style.textContent = `
       /* ═══ CONFLUX STORY ENGINE v2030 — VN LAYOUT ═══ */
       :root {
-        --vn-panel-h: clamp(200px, 32vh, 280px);
+        --vn-panel-h: clamp(130px, 22vh, 200px);
         --font-px:   'Press Start 2P', monospace;
         --font-vt:   'VT323', monospace;
         --font-mono: 'Share Tech Mono', monospace;
@@ -1141,45 +1141,35 @@ const StoryEngine = {
       }
 
       /* ── BOTTOM PANEL ── */
+      /* Cinematic: menší panel, gradient splývá s obrazem (žádný neprůhledný sci-fi box) */
       .vn-panel {
         position: relative; z-index: 4;
         width: 100%;
         height: var(--vn-panel-h);
         min-height: unset;
-        background:
-          repeating-linear-gradient(
-            0deg,
-            transparent,
-            transparent 3px,
-            rgba(255,255,255,0.012) 3px,
-            rgba(255,255,255,0.012) 4px
-          ),
-          rgba(2,5,8,0.97);
-        border-top: 1px solid #1e2c3a;
-        box-shadow: inset 0 1px 0 rgba(79,163,224,0.08), 0 -8px 32px rgba(0,0,0,0.6);
-        padding: 14px 36px 14px 20px;
+        background: linear-gradient(
+          to top,
+          rgba(3,6,10,0.94) 0%,
+          rgba(3,6,10,0.82) 45%,
+          rgba(3,6,10,0.35) 78%,
+          rgba(3,6,10,0) 100%
+        );
+        border-top: none;
+        /* text sedí v tmavší dolní části; horní feather prosvítá obraz */
+        padding: 42px 36px 16px 22px;
         display: flex; flex-direction: column; gap: 8px;
         animation: vnSlideUp 0.25s ease;
         box-sizing: border-box;
         overflow: hidden;
       }
-      /* Thin faction-accent left border */
+      /* Jemný frakční akcent vlevo (bez sci-fi konzole) */
       .vn-panel::before {
         content: '';
         position: absolute;
-        left: 0; top: 0; bottom: 0;
-        width: 3px;
-        background: linear-gradient(to bottom, #4fa3e0 0%, rgba(79,163,224,0.15) 100%);
-      }
-      /* Corner bracket top-right */
-      .vn-panel::after {
-        content: '';
-        position: absolute;
-        top: 0; right: 0;
-        width: 20px; height: 20px;
-        border-top: 1px solid #1e2c3a;
-        border-right: 1px solid #1e2c3a;
-        pointer-events: none;
+        left: 0; bottom: 0;
+        top: 42px;
+        width: 2px;
+        background: linear-gradient(to bottom, rgba(79,163,224,0.5) 0%, rgba(79,163,224,0) 100%);
       }
 
       /* ── NAMEPLATE (speaker name above text) ── */

@@ -228,8 +228,9 @@ const DeckBuilder = {
       const scarData = GameState.getScarData ? GameState.getScarData(c.id) : null;
       const scarCount = scarData?.scars || 0;
 
+      // ATK/DEF číslíska v řádcích skryta (Roman: nelíbí se). Staty jsou v detailu karty (preview).
       const statsStr = c.kind === 'monster'
-        ? `<span class="db-row-atk">A:${c.atk}</span><span class="db-row-def">D:${c.def}</span>`
+        ? ''
         : `<span class="db-row-kind">${kindLabel(c.kind)}</span>`;
       return `
         <div class="db-row ${canAdd ? 'db-row-addable' : 'db-row-maxed'} ${inDeck > 0 ? 'db-row-indeck' : ''}"

@@ -95,13 +95,13 @@ const Collection = {
     const isFused = this._fusionIds.has(c.id);
     if(owned) {
       return `<div class="col-card-wrap owned" data-id="${c.id}">
-        ${renderCardEl(c, 'sm', { inDeck: inDeck || null, inFuse: isFused })}
+        ${renderCardEl(c, 'sm', { inDeck: inDeck || null, inFuse: isFused, hideStats: true })}
       </div>`;
     }
     if(discovered) {
       // Viděná přes fúzi, ale nevlastněná — zašedlá náhled bez interakce
       return `<div class="col-card-wrap discovered" data-id="${c.id}">
-        ${renderCardEl(c, 'sm', { discovered: true })}
+        ${renderCardEl(c, 'sm', { discovered: true, hideStats: true })}
       </div>`;
     }
     return `<div class="col-card-wrap unowned" data-id="${c.id}">

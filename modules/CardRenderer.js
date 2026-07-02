@@ -155,7 +155,10 @@ export function renderCardEl(card, size = 'md', opts = {}) {
 
   // ── SMALL SIZES (sm/md) ──
   if (isSmall) {
-    const statsBottom = isMonster
+    // opts.hideStats — skryje ATK/DEF číslíska (kolekce/deckbuilder je nechtějí; v bitvě zůstávají)
+    const statsBottom = opts.hideStats
+      ? ''
+      : isMonster
       ? `<div class="cx-sm-stats">
            <span class="cx-sm-atk">${card.atk || 0}</span>
            <span class="cx-sm-sep">/</span>
