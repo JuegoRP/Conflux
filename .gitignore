@@ -7,3 +7,4 @@ assets/images/cards/_raw/
 assets/images/**/_raw/
 tools/*_prompts.json
 tools/gen_log.jsonl
+tools/*_jobs.json
