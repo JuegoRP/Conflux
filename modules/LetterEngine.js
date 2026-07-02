@@ -261,10 +261,11 @@ const LetterEngine = {
       /* Hodnoty: top/bottom/left/right jsou % výšky/šířky .letter-device */
       .letter-screen {
         position: absolute;
-        top: 13%;      /* pod horním rámečkem displeje */
-        bottom: 31%;   /* nad základnou device */
-        left: 13%;     /* za levým okrajem displeje */
-        right: 13%;    /* za pravým okrajem displeje */
+        /* holo teď vyplňuje celý rámeček (bez podstavce) → text využívá celou plochu */
+        top: 13%;      /* pod horním okrajem rámečku */
+        bottom: 13%;   /* nad spodním okrajem rámečku */
+        left: 13%;     /* za levým okrajem */
+        right: 13%;    /* za pravým okrajem */
         display: flex;
         flex-direction: column;
         overflow: hidden;
