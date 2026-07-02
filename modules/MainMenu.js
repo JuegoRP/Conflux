@@ -1100,6 +1100,16 @@ const MainMenu = {
   gap: 0;
   text-align: center;
 }
+/* Scrim za obsahem — čitelnost textu na malovaném pozadí (po redesignu) */
+.m-content::before {
+  content: '';
+  position: absolute; z-index: -1;
+  left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: min(700px, 94vw); height: min(700px, 92vh);
+  background: radial-gradient(ellipse at center,
+    rgba(4,7,11,0.74) 0%, rgba(4,7,11,0.48) 45%, rgba(4,7,11,0) 75%);
+  pointer-events: none;
+}
 
 /* ── TITLE ── */
 .m-title-wrap {
@@ -1117,7 +1127,8 @@ const MainMenu = {
   user-select: none;
   text-shadow:
     3px 3px 0 rgba(79,163,224,0.15),
-    -1px -1px 0 rgba(0,0,0,0.8);
+    -1px -1px 0 rgba(0,0,0,0.8),
+    0 2px 14px rgba(0,0,0,0.9);
 }
 
 /* Pixel shift glitch — žádný blur, jen posun */
@@ -1138,9 +1149,10 @@ const MainMenu = {
 .m-tagline {
   font-family: 'VT323', monospace;
   font-size: clamp(16px, 2vw, 22px);
-  color: var(--dim);
+  color: #9fb0c2;
   letter-spacing: 2px;
   margin-top: 12px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.95);
   animation: m-tag-pulse 5s ease-in-out infinite;
 }
 @keyframes m-tag-pulse {
@@ -1166,19 +1178,20 @@ const MainMenu = {
   background: transparent; border: none;
   font-family: 'VT323', monospace;
   font-size: clamp(18px, 2.2vw, 22px);
-  color: #8090a0;
+  color: #cdd8e6;
   cursor: pointer;
   padding: 5px 0;
   display: flex; align-items: center; justify-content: center; gap: 10px;
   transition: color 0.08s, transform 0.08s;
   letter-spacing: 2px;
   width: 100%;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.95), 0 0 2px rgba(0,0,0,0.9);
 }
 .m-btn:active  { transform: translateX(6px) !important; }
 .m-btn-cur     { font-size: 14px; opacity: 0.6; transition: opacity 0.08s; }
 .m-btn:hover .m-btn-cur { opacity: 1; }
-.m-btn-dim     { font-size: clamp(15px, 1.8vw, 18px); color: #3d4a5c; }
-.m-btn-dev     { font-size: clamp(15px, 1.8vw, 18px); color: #b570e0; opacity: 0.7; }
+.m-btn-dim     { font-size: clamp(15px, 1.8vw, 18px); color: #93a2b3; }
+.m-btn-dev     { font-size: clamp(15px, 1.8vw, 18px); color: #c98bec; opacity: 0.85; }
 .dev-input     { background:#0a0f18; border:1px solid #b570e040; color:#c8d6e5; font-family:monospace; font-size:11px; padding:6px 10px; flex:1; outline:none; }
 .dev-input:focus { border-color:#b570e0; }
 .m-btn-label   { }
