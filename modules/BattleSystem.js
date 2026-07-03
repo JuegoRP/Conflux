@@ -151,15 +151,17 @@ const BattleSystem = {
       return;
     }
 
-    // Vykresli pole, pak zobraz coinflip overlay nad ním
+    // Vykresli pole, pak (u profilujícího nepřítele profil-screen →) coinflip
     this._render();
     this._bindEvents();
-    this._showCoinflip(container, () => {
+    const beginBattle = () => this._showCoinflip(container, () => {
       if(!this._isTutorial()) setTimeout(() => this._maybeBark('start'), 600);
       this._checkTutorial('battle_start', () => {
         this._startTurn();
       });
     });
+    if(this._enemy?.profiler && !this._isTutorial()) this._showProfileReadout(beginBattle);
+    else beginBattle();
   },
 
   _defaultEnemy() {
@@ -3089,6 +3091,58 @@ const BattleSystem = {
       .cf-bark-body{background:linear-gradient(to right,rgba(3,6,10,.92),rgba(3,6,10,.72));border-left:2px solid rgba(79,163,224,.55);border-radius:4px;padding:7px 12px;}
       .cf-bark-who{display:block;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;color:#7fb0d8;text-transform:uppercase;margin-bottom:2px;}
       .cf-bark-txt{font-family:'VT323',monospace;font-size:17px;line-height:1.25;color:#dfe9f2;text-shadow:0 1px 4px rgba(0,0,0,.9);}
+    `;
+    document.head.appendChild(s);
+  },
+
+  // ── Profil-screen: systém ti před mirror-bossem hodí, co o tobě ví ──
+  _showProfileReadout(cb) {
+    const obs = (GameState.profileBarks && GameState.profileBarks()) || [];
+    if(!obs.length) { cb(); return; }
+    this._injectProfileCSS();
+    const lines = obs.slice(0, 5);
+    const ov = document.createElement('div');
+    ov.className = 'cf-profile';
+    ov.innerHTML = `
+      <img class="cf-profile-emblem" src="assets/images/emblem_sm.png" alt="">
+      <div class="cf-profile-head">SYSTÉM &middot; PROFIL KURÝRA</div>
+      <div class="cf-profile-sub">Čtu tvůj deck. A tebe.</div>
+      <div class="cf-profile-list">
+        ${lines.map(t => `<div class="cf-profile-line">&rsaquo; ${t}</div>`).join('')}
+      </div>
+      <button class="cf-profile-go">▶ POKRAČOVAT</button>`;
+    document.body.appendChild(ov);
+    requestAnimationFrame(() => ov.classList.add('on'));
+    const lineEls = ov.querySelectorAll('.cf-profile-line');
+    lineEls.forEach((el, i) => setTimeout(() => el.classList.add('on'), 700 + i * 750));
+    const btn = ov.querySelector('.cf-profile-go');
+    btn.style.opacity = '0';
+    setTimeout(() => { btn.style.opacity = '1'; }, 700 + lineEls.length * 750 + 200);
+    const done = () => { ov.classList.remove('on'); setTimeout(() => ov.remove(), 350); cb(); };
+    btn.addEventListener('click', done, { once: true });
+  },
+
+  _injectProfileCSS() {
+    if(document.getElementById('cf-profile-css')) return;
+    const s = document.createElement('style'); s.id = 'cf-profile-css';
+    s.textContent = `
+      .cf-profile{position:fixed;inset:0;z-index:210;background:radial-gradient(ellipse at center,#0a1018 0%,#04070b 80%);
+        display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;
+        opacity:0;transition:opacity .4s ease;text-align:center;}
+      .cf-profile.on{opacity:1;}
+      .cf-profile-emblem{width:clamp(70px,10vw,110px);height:auto;opacity:.85;filter:drop-shadow(0 0 20px rgba(79,163,224,.3));margin-bottom:6px;}
+      .cf-profile-head{font-family:'Press Start 2P',monospace;font-size:clamp(11px,1.6vw,16px);letter-spacing:3px;color:#8fd0ff;
+        text-shadow:2px 0 0 rgba(224,79,106,.35),-2px 0 0 rgba(80,224,184,.3);}
+      .cf-profile-sub{font-family:'Share Tech Mono',monospace;font-size:clamp(11px,1.2vw,14px);letter-spacing:2px;color:#5f7f9f;margin-bottom:10px;}
+      .cf-profile-list{display:flex;flex-direction:column;gap:10px;max-width:min(620px,88vw);}
+      .cf-profile-line{font-family:'VT323',monospace;font-size:clamp(16px,1.9vw,22px);color:#dfe9f2;
+        opacity:0;transform:translateY(6px);transition:opacity .5s ease,transform .5s ease;
+        border-left:2px solid rgba(79,163,224,.5);padding:4px 0 4px 12px;text-align:left;text-shadow:0 1px 4px rgba(0,0,0,.9);}
+      .cf-profile-line.on{opacity:1;transform:none;}
+      .cf-profile-go{margin-top:18px;background:transparent;border:1px solid rgba(79,163,224,.4);color:#cdd8e6;
+        font-family:'VT323',monospace;font-size:clamp(15px,1.6vw,19px);letter-spacing:2px;padding:8px 26px;cursor:pointer;
+        transition:opacity .4s ease,background .15s;}
+      .cf-profile-go:hover{background:rgba(79,163,224,.12);}
     `;
     document.head.appendChild(s);
   },
