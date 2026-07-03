@@ -397,6 +397,19 @@ const BattleSystem = {
       return base ? (GameState.applyScars ? GameState.applyScars({...base}) : {...base}) : null;
     }).filter(Boolean);
 
+    // Mirror/profiler nepřítel hraje TEBOU: vmíchej karty z hráčova decku
+    if(this._mirrorEnemy) {
+      const yourCards = (GameState.player.deck || [])
+        .map(entry => getCard((typeof entry === 'object') ? entry?.id : entry))
+        .filter(Boolean)
+        .map(c => (GameState.applyScars ? GameState.applyScars({...c}) : {...c}));
+      if(yourCards.length) {
+        const inject = shuffle([...yourCards]).slice(0, Math.min(12, yourCards.length));
+        enemyDeckCards = enemyDeckCards.slice(0, Math.max(0, enemyDeckCards.length - inject.length));
+        enemyDeckCards.push(...inject);
+      }
+    }
+
     // Doplň na 30 karet z GameState.cards (faction pool)
     if(enemyDeckCards.length < 30) {
       const faction = this._enemy.faction || 'synth';
