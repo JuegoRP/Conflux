@@ -8,13 +8,17 @@
 - ✅ **Profil-screen** před mirror-bossem — systém ti hodí, co o tobě z playstyle ví
 - ✅ **„TVOJE KARTA" label** — mirror/profilující nepřítel hraje karty z tvého decku
 - ✅ **Profilovací barky** v boji (Rekalibrátor/Správce/Pozorovatel/Paradox/Sigma)
-- 🔜 **Dynamické story barky** — Správce/Monyra v cutscénách zmíní tvůj konkrétní profil
+- ✅ **Dynamické story barky** — Správce/Pozorovatel/Sigma zmíní tvůj profil v cutscéně (`{{profile}}` token)
 - ⬜ **Cyklický / roguelike rám** (větší) — „cykly" jako fikce → replayability, každý běh tě přepíše jinak
 
-## 2. AI (po dokončení vizuálu)
-- ⬜ **Dořešit bojové AI** — pořád nevyužívá všechny mechaniky, co může:
-  fúze, pasti, arény, stance (ATK/DEF), výměna karet; lepší rozhodování per `aiStyle`
-  (aggressive/defensive/mirror/accumulator/growth/rewrite…)
+## 2. AI (po dokončení vizuálu) — ASSESSMENT hotový
+AI reálně UMÍ fúze, monstra (se stancem), arény, kouzla, pasti, odhalení face-down, útok per styl.
+**Skutečný problém = rigidní priorita:** `_aiPlayCard` zkouší v pořadí fúze → monstrum → aréna → kouzlo → past,
+a kvůli limitu 1 karta/tah po zahrání monstra skončí → **skoro vždy hraje monstrum, kouzla/pasti/arény sotva.**
+- ⬜ **Fix:** `_aiPlayCard` má SKÓROVAT všechny možné tahy (nejlepší monstrum/fúze/kouzlo/past/aréna) a vybrat
+  nejhodnotnější pro situaci+styl — místo pevné priority
+- ⬜ **Mirror/profiler nepřátelé:** skládat/naklánět deck k hráčovým kartám (víc „TVOJE KARTA" + reálný zrcadlový pocit)
+- ⬜ Bohatší per-`aiStyle` chování + doladit útok/stance rozhodování
 
 ## 3. Dva herní mody (při balancingu)
 - ⬜ **Výběr na začátku hry**, přepínatelný:
