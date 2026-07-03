@@ -1582,91 +1582,94 @@ const BattleSystem = {
     const pMaxAtk  = pActive.length ? Math.max(...pActive.map(m => m.card.atk || 0)) : 0;
     let played = false;
 
-    // ── FÚZE — najdi NEJLEPŠÍ možnost ───────────────────────────────────────
-    // Prohledá: ruka+ruka, ruka+pole. Vybere fúzi podle stylu.
+    // NOVÁ AI (v2040): místo pevné priority oskóruj všechny "chtěné" tahy a vyber nejhodnotnější.
+    // Vetting dělají helpery (rozhodují, JESTLI je tah dobrý); skóre rozhoduje, KTERÝ se zahraje.
+    // Dřív pořadí fúze→monstrum→… + limit 1 karta/tah → AI hrála skoro jen monstra.
+    const candidates = [];
+
+    // ── FÚZE ──
     const allFusions = this._aiFindAllFusions(monsters, fieldM);
-    
     if(allFusions.length > 0) {
-      // Vyber nejlepší fúzi podle stylu
       const bestFusion = this._aiPickBestFusion(allFusions, style, pMaxAtk, lpPct);
-
-      if(bestFusion) {
-        // Rozhodnutí: fúzovat nebo ne?
-        const shouldFuse = this._aiShouldFuse(bestFusion, style, pMaxAtk, monsters, emptyM);
-
-        if(shouldFuse) {
-          played = this._aiExecuteFusion(bestFusion);
-        }
+      if(bestFusion && this._aiShouldFuse(bestFusion, style, pMaxAtk, monsters, emptyM)) {
+        candidates.push({ t:'fuse', score: 1200 + (bestFusion.result.atk || 0),
+          exec: () => this._aiExecuteFusion(bestFusion) });
       }
     }
 
-    // ── ZAHRÁNÍ MONSTRA (pokud jsme nefúzovali) ─────────────────────────────
-    if(!played && monsters.length && emptyM.length) {
-      const {card: best, mode} = this._aiPickMonster(monsters, style, pMaxAtk, lpPct, pActive);
-      if(best) {
-        const idx = s.eHand.indexOf(best);
-        if(idx >= 0) s.eHand.splice(idx, 1);
-        s.eMonsters[emptyM[0]] = {card:{...best}, mode, hasAttacked:false, revealed:false};
-        this._log('◀ Nepřítel vyložil kartu lícem dolů.', 'hint');
-        played = true;
+    // ── MONSTRUM ──
+    if(monsters.length && emptyM.length) {
+      const pick = this._aiPickMonster(monsters, style, pMaxAtk, lpPct, pActive);
+      if(pick && pick.card) {
+        candidates.push({ t:'monster', score: 600 + (pick.card.atk || 0), exec: () => {
+          const idx = s.eHand.indexOf(pick.card);
+          if(idx >= 0) s.eHand.splice(idx, 1);
+          s.eMonsters[emptyM[0]] = {card:{...pick.card}, mode: pick.mode, hasAttacked:false, revealed:false};
+          this._log('◀ Nepřítel vyložil kartu lícem dolů.', 'hint');
+          return true;
+        }});
       }
     }
 
-    // ── ARENA ─────────────────────────────────────────────────────────────────
-    // AI strategicky vybere arénu podle situace a stylu
-    if(!played && emptyS.length) {
+    // ── KOUZLO ── (jen když ho AI opravdu chce — helper gate)
+    if(spells.length) {
+      const useSpell = this._aiWantsSpell(style, spells, monsters, emptyM, lpPct);
+      if(useSpell) {
+        candidates.push({ t:'spell', score: 1000 + Math.min(400, (useSpell.value || 0) / 2), exec: () => {
+          s.eHand.splice(s.eHand.indexOf(useSpell), 1);
+          s.eGY.push({...useSpell});
+          this._activateSpell(useSpell, 'e');
+          this._log(`◀ Nepřítel použil [${useSpell.name}]!`, 'warn');
+          return true;
+        }});
+      }
+    }
+
+    // ── ARÉNA ──
+    if(emptyS.length) {
       const arenas = s.eHand.filter(c => c.kind === 'arena');
       if(arenas.length) {
         const arena = this._aiPickArena(arenas, style, lpPct);
         if(arena) {
-          s.eHand.splice(s.eHand.indexOf(arena), 1);
-          s.eSpells[emptyS[0]] = {card:{...arena}, faceDown:false, used:false};
-          this._activateSpell(arena, 'e');
-          this._log(`◀ Nepřítel vyložil arénu [${arena.name}]!`, 'warn');
-          played = true;
+          candidates.push({ t:'arena', score: 760, exec: () => {
+            s.eHand.splice(s.eHand.indexOf(arena), 1);
+            s.eSpells[emptyS[0]] = {card:{...arena}, faceDown:false, used:false};
+            this._activateSpell(arena, 'e');
+            this._log(`◀ Nepřítel vyložil arénu [${arena.name}]!`, 'warn');
+            return true;
+          }});
         }
       }
     }
 
-    // ── SPELL ─────────────────────────────────────────────────────────────────
-    if(!played && spells.length) {
-      const useSpell = this._aiWantsSpell(style, spells, monsters, emptyM, lpPct);
-      if(useSpell) {
-        const sp = useSpell;
-        s.eHand.splice(s.eHand.indexOf(sp), 1);
-        s.eGY.push({...sp});
-        this._activateSpell(sp, 'e');
-        this._log(`◀ Nepřítel použil [${sp.name}]!`, 'warn');
-        played = true;
+    // ── PAST ──
+    if(traps.length && emptyS.length) {
+      const pHasMonster = pActive.length > 0;
+      let wantTrap = false;
+      if(style === 'defensive') wantTrap = true;
+      else if(style === 'aggressive') wantTrap = pHasMonster && Math.random() < 0.1;
+      else if(style === 'strategic' || style === 'perfect' || style === 'rewrite' || style === 'reactive') wantTrap = pHasMonster;
+      else wantTrap = pHasMonster && Math.random() < 0.5;
+      if(wantTrap) {
+        const trap = this._aiPickTrap(traps, pActive) || traps[0];
+        candidates.push({ t:'trap', score: 720, exec: () => {
+          s.eHand.splice(s.eHand.indexOf(trap), 1);
+          s.eSpells[emptyS[0]] = {card:{...trap}, faceDown:true};
+          this._log('◀ Nepřítel nastražil past.', 'hint');
+          return true;
+        }});
       }
     }
 
-    // ── TRAP ──────────────────────────────────────────────────────────────────
-    // AI pokládá trap jen pokud má hráč monstrum (jinak na koho by reagoval?)
-    // Defensive style — pokládá hned, agresivní skoro nikdy
-    if(!played && traps.length && emptyS.length) {
-      const pHasMonster = pActive.length > 0;
-      let wantTrap = false;
-      if(style === 'defensive') {
-        // Defensive: trap hned i bez monstra (připrava do předu)
-        wantTrap = true;
-      } else if(style === 'aggressive') {
-        // Agresivní: trap skoro nikdy
-        wantTrap = pHasMonster && Math.random() < 0.1;
-      } else if(style === 'strategic' || style === 'perfect' || style === 'rewrite' || style === 'reactive') {
-        // Strategické styly: trap vždy pokud má hráč monstrum
-        wantTrap = pHasMonster;
-      } else {
-        // Balanced / ostatní: jen pokud má hráč monstrum a šance 50%
-        wantTrap = pHasMonster && Math.random() < 0.5;
-      }
-      if(wantTrap) {
-        // Vyber trap, který nejlépe pasuje na situaci
-        const trap = this._aiPickTrap(traps, pActive) || traps[0];
-        s.eHand.splice(s.eHand.indexOf(trap), 1);
-        s.eSpells[emptyS[0]] = {card:{...trap}, faceDown:true};
-        played = true;
-      }
+    // Jemný styl-posun: útočné styly boostnou monstrum/fúzi, defensive past/arénu
+    for(const c of candidates) {
+      if((style === 'aggressive' || style === 'perfect') && (c.t === 'monster' || c.t === 'fuse')) c.score += 150;
+      if(style === 'defensive' && (c.t === 'trap' || c.t === 'arena')) c.score += 200;
+    }
+
+    if(candidates.length) {
+      candidates.sort((a, b) => b.score - a.score);
+      played = candidates[0].exec();
     }
 
     // ── FORCE PLAY — AI musí zahrát alespoň 1 kartu ──────────────────────
