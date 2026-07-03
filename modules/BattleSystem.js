@@ -214,18 +214,30 @@ const BattleSystem = {
         align-items: center; gap: 28px;
       }
       .cf-logo-wrap {
-        cursor: pointer;
+        cursor: pointer; position: relative;
         display: flex; align-items: center; justify-content: center;
       }
+      /* Čistý kruhový glow za mincí (efekt kolem, ale čistě) */
+      .cf-logo-wrap::before {
+        content: ''; position: absolute; left: 50%; top: 50%;
+        width: 280px; height: 280px; transform: translate(-50%,-50%);
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(79,163,224,0.22) 0%, rgba(80,224,184,0.10) 42%, rgba(0,0,0,0) 68%);
+        pointer-events: none;
+        animation: cf-glow-pulse 3.5s ease-in-out infinite;
+      }
+      @keyframes cf-glow-pulse { 0%,100%{opacity:0.65;transform:translate(-50%,-50%) scale(0.98)} 50%{opacity:1;transform:translate(-50%,-50%) scale(1.05)} }
       .cf-logo {
-        width: 200px; height: 200px;
+        width: 210px; height: 210px;
         object-fit: contain;
-        filter: drop-shadow(0 0 12px rgba(79,163,224,0.4));
-        transition: filter 0.3s ease;
-        display: block;
+        border-radius: 50%;
+        filter: drop-shadow(0 3px 14px rgba(0,0,0,0.55));
+        transition: filter 0.3s ease, transform 0.3s ease;
+        display: block; position: relative;
       }
       .cf-logo-wrap:hover .cf-logo {
-        filter: drop-shadow(0 0 22px rgba(79,163,224,0.8));
+        filter: drop-shadow(0 0 20px rgba(79,163,224,0.6));
+        transform: scale(1.03);
       }
       .cf-logo.spinning {
         animation: cf-spin 0.75s cubic-bezier(0.2, 0.05, 0.3, 1) forwards;

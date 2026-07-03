@@ -78,6 +78,13 @@ const StoryEngine = {
     const key = String(speakerKey).toLowerCase();
     return this._speakerMap[key] || null;
   },
+  // Jmenovka mluvčího — player/kuryr ukáže jméno zvolené hráčem
+  _speakerLabel(sp) {
+    if (!sp) return '';
+    const k = String(sp).toLowerCase();
+    if (k === 'player' || k === 'kuryr') return (GameState.player.name || 'Kurýr');
+    return sp;
+  },
 
   // ── BG resolver: některé backgroundy jsou .png místo .jpg ────────────────
   _bgPngSet: new Set([
@@ -525,7 +532,7 @@ const StoryEngine = {
 
     const setLine = (speaker, text) => {
       const col = factionColor({ monyra:'hybrid', player:'neutral' }[speaker] || 'neutral');
-      textEl.innerHTML = `<span class="vn-speaker" style="color:${col}">${speaker.toUpperCase()}</span>${text}`;
+      textEl.innerHTML = `<span class="vn-speaker" style="color:${col}">${this._speakerLabel(speaker).toUpperCase()}</span>${text}`;
     };
 
     const showBtn = (label, onClick) => {
@@ -910,7 +917,7 @@ const StoryEngine = {
 
       // ── Nameplate + text ───────────────────────────────────────────────────
       nameplateSlot.innerHTML = (f.speaker || f.portrait)
-        ? `<div class="vn-nameplate"><span class="vn-nameplate-dot"></span>${(f.speaker||f.portrait).toUpperCase()}</div>`
+        ? `<div class="vn-nameplate"><span class="vn-nameplate-dot"></span>${this._speakerLabel(f.speaker||f.portrait).toUpperCase()}</div>`
         : '';
       textEl.textContent = f.text || '';
     };
@@ -1648,7 +1655,7 @@ const StoryEngine = {
     if(hasInput) {
       const allHtml = lines.map(l => `
         <div class="vn-dialog-line">
-          ${l.speaker ? `<span class="vn-speaker">${l.speaker.toUpperCase()}</span>` : ''}
+          ${l.speaker ? `<span class="vn-speaker">${this._speakerLabel(l.speaker).toUpperCase()}</span>` : ''}
           <span class="vn-text">${resolveTpl(l.text)}</span>
         </div>`).join('');
       this._container.innerHTML = `
@@ -1738,7 +1745,7 @@ const StoryEngine = {
       const panel = this._container.querySelector('.vn-panel');
       if(panel) {
         panel.innerHTML = `
-          ${speaker ? `<div class="vn-nameplate"><span class="vn-nameplate-dot"></span>${speaker.toUpperCase()}</div>` : ''}
+          ${speaker ? `<div class="vn-nameplate"><span class="vn-nameplate-dot"></span>${this._speakerLabel(speaker).toUpperCase()}</div>` : ''}
           <div class="vn-dialog-line vn-line-active">
             <span class="vn-text typewriter-text" data-full="${text.replace(/"/g,'&quot;')}"></span>
           </div>
@@ -1847,7 +1854,7 @@ const StoryEngine = {
         if(!panel) return;
         panel.innerHTML = `
           <div class="vn-dialog-line vn-line-active">
-            ${l.speaker ? `<span class="vn-speaker">${l.speaker.toUpperCase()}</span>` : ''}
+            ${l.speaker ? `<span class="vn-speaker">${this._speakerLabel(l.speaker).toUpperCase()}</span>` : ''}
             <span class="vn-text">${resolveTpl(l.text)}</span>
           </div>
           <div class="vn-choices">
