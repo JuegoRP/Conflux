@@ -4758,7 +4758,8 @@ const BattleSystem = {
       #flash.on{opacity:1;}
 
       /* ── BATTLE SCREEN ── */
-      .battle-screen{width:100%;height:100vh;display:flex;flex-direction:column;position:relative;overflow:hidden;}
+      @keyframes battle-in{from{opacity:0;transform:scale(1.015)}to{opacity:1;transform:none}}
+      .battle-screen{width:100%;height:100vh;display:flex;flex-direction:column;position:relative;overflow:hidden;animation:battle-in .55s ease both;}
       .battle-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0.42;filter:brightness(1.12) saturate(1.06);z-index:0;pointer-events:none;transition:background-image 0.8s ease,opacity 0.8s ease;}
 
       /* ── CORRUPTION VIZUÁLNÍ EFEKTY (skryté — hráč neví proč) ── */
@@ -4785,7 +4786,7 @@ const BattleSystem = {
       @keyframes corr-cb{0%{transform:translateY(-100%)}100%{transform:translateY(100%)}}
 
       /* ── LP ROW ── */
-      .lp-row{position:relative;z-index:20;display:flex;align-items:center;padding:8px 16px;flex-shrink:0;gap:10px;background:rgba(2,4,8,0.97);border-bottom:1px solid rgba(255,255,255,0.04);}
+      .lp-row{position:relative;z-index:20;display:flex;align-items:center;padding:10px 16px 16px;flex-shrink:0;gap:10px;background:linear-gradient(to bottom,rgba(4,7,11,0.86) 0%,rgba(4,7,11,0.4) 62%,rgba(4,7,11,0) 100%);border-bottom:none;}
       .lp-block{display:flex;align-items:center;gap:10px;flex:1;position:relative;overflow:visible;}
       .lp-block.e{flex-direction:row-reverse;}
       /* Portrait */
@@ -4921,8 +4922,8 @@ const BattleSystem = {
         position:relative;
         z-index:10;
         overflow:visible;
-        background:linear-gradient(0deg,rgba(2,4,8,0.97),rgba(2,4,8,0.8));
-        border-top:1px solid rgba(255,255,255,0.05);
+        background:linear-gradient(to top,rgba(4,7,11,0.88) 0%,rgba(4,7,11,0.42) 58%,rgba(4,7,11,0) 100%);
+        border-top:none;
         transition:max-height .4s ease, opacity .3s ease, padding .4s ease, min-height .4s ease;
       }
       /* Ruka schovaná po zahrání karty */

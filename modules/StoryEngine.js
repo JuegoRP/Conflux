@@ -1259,21 +1259,23 @@ const StoryEngine = {
         margin-top: 4px;
       }
       .vn-btn {
-        background: transparent;
-        border: 1px solid #1e2a38;
-        font-family: var(--font-px);
-        font-size: 7px;
-        color: var(--muted);
+        background: rgba(10,16,24,0.5);
+        border: 1px solid rgba(130,160,190,0.34);
+        border-left: 2px solid rgba(130,160,190,0.55);
+        font-family: 'VT323', monospace;
+        font-size: clamp(15px, 1.7vw, 19px);
+        color: #d3dded;
         cursor: pointer;
-        padding: 9px 16px;
-        letter-spacing: 1px;
+        padding: 8px 16px;
+        letter-spacing: 0.5px;
         transition: all 0.12s;
-        white-space: nowrap;
+        text-align: left;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.9);
       }
       .vn-btn:hover {
-        border-color: var(--text);
-        color: var(--text);
-        background: rgba(200,214,229,0.04);
+        border-color: #8fd0ff;
+        color: #ffffff;
+        background: rgba(79,163,224,0.14);
       }
       .vn-btn--fight {
         border-color: rgba(224,79,106,0.5);

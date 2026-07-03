@@ -1110,16 +1110,6 @@ const MainMenu = {
     rgba(4,7,11,0.74) 0%, rgba(4,7,11,0.48) 45%, rgba(4,7,11,0) 75%);
   pointer-events: none;
 }
-/* Emblém CONFLUXu — jemný designový watermark za obsahem menu */
-.m-content::after {
-  content: '';
-  position: absolute; z-index: -2;
-  left: 50%; top: 47%; transform: translate(-50%, -50%);
-  width: min(460px, 74vw); height: min(460px, 74vw);
-  background: url('assets/images/emblem.png') center/contain no-repeat;
-  opacity: 0.12;
-  pointer-events: none;
-}
 
 /* ── TITLE ── */
 .m-title-wrap {
