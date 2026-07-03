@@ -1101,16 +1101,22 @@ const StoryEngine = {
       .fade-in { animation: fadeIn 0.4s ease; }
 
       /* ── BACKGROUND ── */
+      /* Pomalý nekonečný Ken Burns drift (pan + zoom) — scény „dýchají" celou dobu */
       @keyframes vn-kenburns {
-        from { transform: scale(1.07) translate(2.2%, -1.6%); }
-        to   { transform: scale(1.02) translate(0%,    0%  ); }
+        0%   { transform: scale(1.05) translate(-1.6%, -1.1%); }
+        100% { transform: scale(1.10) translate( 1.6%,  1.1%); }
       }
+      /* Jemný nájezd při vstupu do scény */
+      @keyframes vn-bg-in { from { opacity: 0; } to { opacity: 1; } }
       .vn-bg {
         position: absolute; inset: 0;
         background-size: cover;
         background-position: center top;
         background-color: #06080a;
-        animation: vn-kenburns 10s ease-out forwards;
+        transform-origin: center;
+        will-change: transform;
+        animation: vn-kenburns 34s ease-in-out infinite alternate,
+                   vn-bg-in 0.8s ease both;
       }
       .vn-bg-overlay {
         position: absolute; inset: 0;
