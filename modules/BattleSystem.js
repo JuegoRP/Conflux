@@ -108,6 +108,9 @@ const BattleSystem = {
     this._barkTurns = 0;
     this._barkState = { fired:{}, idx:{} };
     this._profileBarkFired = false;
+    // "TVOJE KARTA": karty z tvého decku (mirror-flag se dopočítá po načtení nepřítele)
+    this._yourCardIds = new Set((GameState.player.deck || []).map(Number));
+    this._mirrorEnemy = false;
 
     container.innerHTML = `<div class="b-loading" style="display:flex;align-items:center;justify-content:center;height:100vh"><img src="assets/images/emblem_sm.png" alt="" style="width:76px;height:76px;opacity:0.75;animation:b-emblem-rot 4s linear infinite"></div><style>@keyframes b-emblem-rot{from{transform:rotate(0)}to{transform:rotate(360deg)}}</style>`;
     injectCardStyles();
@@ -133,6 +136,7 @@ const BattleSystem = {
       if(!enemy) enemy = this._defaultEnemy();
     }
     this._enemy = enemy;
+    this._mirrorEnemy = !!(enemy?.profiler || enemy?.aiStyle === 'mirror');
 
     // Mark enemy as encountered (for Free Battle name reveal)
     if(params.enemyId && params.enemyId !== '__self__') {
@@ -3875,7 +3879,9 @@ const BattleSystem = {
       // ── Karta viditelná ──
       const isRevealing = who === 'e' && slot.revealed && slot.justRevealed;
 
-      return `<div class="sl ${isDef ? 'def' : ''} ${isUsed ? 'sl-used' : ''} ${isSelected ? 'sl-atk' : ''} ${isSwap ? 'sl-swap' : ''}" data-who="${who}" data-slot="${i}">
+      const isYourCard = who === 'e' && this._mirrorEnemy && this._yourCardIds?.has(card.id);
+      return `<div class="sl ${isDef ? 'def' : ''} ${isUsed ? 'sl-used' : ''} ${isSelected ? 'sl-atk' : ''} ${isSwap ? 'sl-swap' : ''}" data-who="${who}" data-slot="${i}" style="position:relative">
+        ${isYourCard ? '<div class="cf-yourcard">◈ TVOJE KARTA</div>' : ''}
         ${_rcEl(card, 'sm', {
           selected: isSelected,
           attacker: isSelected,
@@ -4754,6 +4760,9 @@ const BattleSystem = {
       @keyframes battle-in{from{opacity:0;transform:scale(1.015)}to{opacity:1;transform:none}}
       .battle-screen{width:100%;height:100vh;display:flex;flex-direction:column;position:relative;overflow:hidden;animation:battle-in .55s ease both;}
       .battle-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0.42;filter:brightness(1.12) saturate(1.06);z-index:0;pointer-events:none;transition:background-image 0.8s ease,opacity 0.8s ease;}
+      /* "TVOJE KARTA" — mirror/profilující nepřítel hraje kartu z tvého decku */
+      @keyframes yc-in{from{opacity:0;transform:translateX(-50%) translateY(4px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+      .cf-yourcard{position:absolute;top:-9px;left:50%;transform:translateX(-50%);z-index:35;font-family:var(--mono);font-size:8px;letter-spacing:1px;color:#8fd0ff;background:rgba(4,7,11,0.92);border:1px solid rgba(79,163,224,0.6);padding:1px 6px;white-space:nowrap;box-shadow:0 0 10px rgba(79,163,224,0.45);pointer-events:none;animation:yc-in .4s ease both;}
 
       /* ── CORRUPTION VIZUÁLNÍ EFEKTY (skryté — hráč neví proč) ── */
       .corr-glitch::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:100;
