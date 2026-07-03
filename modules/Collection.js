@@ -221,7 +221,7 @@ const Collection = {
     style.id = 'collection-styles';
     style.textContent = `
       .col-wrap{display:flex;flex-direction:column;height:100vh;background:#060a0f;color:#c8d6e5;overflow:hidden;position:relative}
-      .col-wrap::before{content:'';position:absolute;inset:0;background:url('assets/images/backgrounds/collection_bg.png') center/cover no-repeat;opacity:0.12;pointer-events:none;z-index:0}
+      .col-wrap::before{content:'';position:absolute;inset:0;background:url('assets/images/backgrounds/collection_bg.png') center/cover no-repeat;opacity:0.42;filter:brightness(1.12) saturate(1.05);pointer-events:none;z-index:0}
       .col-header{display:flex;align-items:center;gap:16px;padding:12px 16px;border-bottom:1px solid #0d1520;flex-shrink:0;position:relative;z-index:1}
       .col-back{background:none;border:none;color:#607080;font-size:18px;cursor:pointer;padding:4px 8px}
       .col-back:hover{color:#c8d6e5}

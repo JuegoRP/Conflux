@@ -4696,7 +4696,7 @@ const BattleSystem = {
 
       /* ── BATTLE SCREEN ── */
       .battle-screen{width:100%;height:100vh;display:flex;flex-direction:column;position:relative;overflow:hidden;}
-      .battle-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0.12;z-index:0;pointer-events:none;transition:background-image 0.8s ease,opacity 0.8s ease;}
+      .battle-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0.42;filter:brightness(1.12) saturate(1.06);z-index:0;pointer-events:none;transition:background-image 0.8s ease,opacity 0.8s ease;}
 
       /* ── CORRUPTION VIZUÁLNÍ EFEKTY (skryté — hráč neví proč) ── */
       .corr-glitch::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:100;

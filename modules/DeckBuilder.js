@@ -620,7 +620,7 @@ const DeckBuilder = {
       .db-wrap::before {
         content:''; position:absolute; inset:0;
         background:url('assets/images/backgrounds/deckbuilder_bg.png') center/cover no-repeat;
-        opacity:0.1; pointer-events:none; z-index:0;
+        opacity:0.42; filter:brightness(1.12) saturate(1.05); pointer-events:none; z-index:0;
       }
       /* Header */
       .db-header {

@@ -1115,16 +1115,20 @@ const StoryEngine = {
         background-color: #06080a;
         transform-origin: center;
         will-change: transform;
+        /* Zesvětleno — scény byly moc tmavé; jas+sytost, ať pozadí vynikne */
+        filter: brightness(1.22) saturate(1.1) contrast(1.02);
         animation: vn-kenburns 34s ease-in-out infinite alternate,
                    vn-bg-in 0.8s ease both;
       }
+      /* Overlay drasticky stažen (dřív dole 98% černá dusila pozadí).
+         Text má kontrast z dolního panelu, tady stačí jemný vignette. */
       .vn-bg-overlay {
         position: absolute; inset: 0;
         background: linear-gradient(
           to top,
-          rgba(4,6,8,0.98)  0%,
-          rgba(4,6,8,0.6)   45%,
-          rgba(4,6,8,0.15)  100%
+          rgba(6,9,13,0.34)  0%,
+          rgba(6,9,13,0.10)  42%,
+          rgba(6,9,13,0)     100%
         );
       }
 
