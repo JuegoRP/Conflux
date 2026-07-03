@@ -1635,7 +1635,8 @@ const StoryEngine = {
     const resolveTpl = t => {
       const text = (t||'')
         .replace(/\{\{player\.name\}\}/g, GameState.player.name || 'Kurýr')
-        .replace(/\{\{player\.faction\}\}/g, GameState.player.faction || '');
+        .replace(/\{\{player\.faction\}\}/g, GameState.player.faction || '')
+        .replace(/\{\{profile\}\}/g, (GameState.profileBarks && GameState.profileBarks()[0]) || 'Zatím o tobě nemám dost dat.');
       return CorruptionVisuals.processDialogLine(text, '');
     };
 
@@ -1814,7 +1815,8 @@ const StoryEngine = {
   // ── CHOICE (fork s volbami) ──────────────────────────────────────────────
   _renderChoice2(nodeId, node) {
     const resolveTpl = t => (t||'')
-      .replace(/\{\{player\.name\}\}/g, GameState.player.name || 'Kurýr');
+      .replace(/\{\{player\.name\}\}/g, GameState.player.name || 'Kurýr')
+      .replace(/\{\{profile\}\}/g, (GameState.profileBarks && GameState.profileBarks()[0]) || 'Zatím o tobě nemám dost dat.');
     const setup     = node.setup || [];
     const choices   = node.choices || [];
     const portrait  = node.portrait || '';
