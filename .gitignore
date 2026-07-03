@@ -8,3 +8,7 @@ assets/images/**/_raw/
 tools/*_prompts.json
 tools/gen_log.jsonl
 tools/*_jobs.json
+_UKAZKA_*
+tools/edit_done.txt
+tools/*_run.log
+tools/gen_log.jsonl

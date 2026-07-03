@@ -16,7 +16,7 @@ AI reálně UMÍ fúze, monstra (se stancem), arény, kouzla, pasti, odhalení f
 **Skutečný problém = rigidní priorita:** `_aiPlayCard` zkouší v pořadí fúze → monstrum → aréna → kouzlo → past,
 a kvůli limitu 1 karta/tah po zahrání monstra skončí → **skoro vždy hraje monstrum, kouzla/pasti/arény sotva.**
 - ✅ **Fix HOTOVO:** `_aiPlayCard` teď SKÓRUJE všechny chtěné tahy a vybere nejhodnotnější (místo pevné priority) → hraje i kouzla/pasti/arény, ne jen monstra
-- ⬜ **Mirror/profiler nepřátelé:** skládat/naklánět deck k hráčovým kartám (víc „TVOJE KARTA" + reálný zrcadlový pocit)
+- ✅ **Mirror/profiler nepřátelé HOTOVO:** do decku vmícháno ~12 karet z hráčova decku → hrají TEBOU (TVOJE KARTA se reálně ukazuje)
 - ⬜ Bohatší per-`aiStyle` chování + doladit útok/stance rozhodování
 
 ## 3. Dva herní mody (při balancingu)
