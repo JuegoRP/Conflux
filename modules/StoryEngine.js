@@ -228,6 +228,32 @@ const StoryEngine = {
       if(node.onLose && !nodeIds.has(node.onLose)) broken.push(`'${id}' → onLose:'${node.onLose}' (nenalezen)`);
     }
     if(broken.length) console.warn('[StoryEngine] Broken node links:', broken.length, '\n' + broken.slice(0,10).join('\n'));
+
+    // Preload VŠECH scénických pozadí + portrétů (proti trhání při přechodech).
+    // Fire-and-forget — browser cachuje na pozadí, přechody jsou pak plynulé.
+    this._preloadAllScenes();
+  },
+
+  _preloadAllScenes() {
+    try {
+      const bgs = new Set(), ports = new Set();
+      const addPortrait = (key) => { const i = this._resolveSpeaker(key); if(i && i.portrait) ports.add(i.portrait); };
+      for(const node of Object.values(this._nodes)) {
+        if(node.background) bgs.add(this._resolveBgName(node.background));
+        (node.frames || []).forEach(f => {
+          if(f.background) bgs.add(this._resolveBgName(f.background));
+          if(f.portrait) addPortrait(f.portrait);
+          if(f.speaker) addPortrait(f.speaker);
+        });
+        [...(node.setup || []), ...(node.lines || [])].forEach(l => { if(l.speaker) addPortrait(l.speaker); });
+        if(node.portrait) addPortrait(node.portrait);
+      }
+      const urls = [];
+      bgs.forEach(b => { if(b) urls.push(`assets/images/backgrounds/${b}${this._bgPngSet.has(b) ? '.png' : '.jpg'}`); });
+      ports.forEach(p => urls.push(`assets/images/portraits/${p}.png`));
+      AssetLoader.preloadImages(urls);
+      console.log('[StoryEngine] Preload scén:', urls.length, 'obrázků');
+    } catch(e) { console.warn('[StoryEngine] preload scén selhal:', e); }
   },
 
   async init(container, params = {}) {
