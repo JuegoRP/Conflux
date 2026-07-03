@@ -107,6 +107,7 @@ const BattleSystem = {
     // Reset in-battle lore (barks)
     this._barkTurns = 0;
     this._barkState = { fired:{}, idx:{} };
+    this._profileBarkFired = false;
 
     container.innerHTML = `<div class="b-loading"><span>Cyklus pokračuje.</span></div>`;
     injectCardStyles();
@@ -3028,6 +3029,15 @@ const BattleSystem = {
   // ── In-battle lore (nevtíravé titulky) ──
   // enemies.js: barks: { start:[{speaker,text}], midfight:[...], lowHP:[...] }
   _maybeBark(trigger) {
+    // Profilující nepřítel: v průběhu boje hodí repliku z TVÉHO reálného playstyle
+    // ("systém tě zná a hraje tebou"). Jednou za boj, ta nejsilnější věc co o tobě ví.
+    if(trigger === 'midfight' && this._enemy?.profiler && !this._profileBarkFired) {
+      const obs = (GameState.profileBarks && GameState.profileBarks()) || [];
+      if(obs.length) {
+        this._profileBarkFired = true;
+        this._bark(this._enemy.portrait || this._enemy.id || '', obs[0]);
+      }
+    }
     const arr = this._enemy?.barks?.[trigger];
     if(!arr || !arr.length) return;
     this._barkState = this._barkState || { fired:{}, idx:{} };

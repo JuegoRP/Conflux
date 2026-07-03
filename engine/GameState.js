@@ -590,6 +590,36 @@ const GameState = {
     }
   },
 
+  // ── PROFIL: co o tobě systém ví — odvozeno z reálného playstyle.
+  // Vrací seřazená pozorování (nejsilnější první). Používají profilující nepřátelé v boji.
+  profileBarks() {
+    const p = this.playstyle || {};
+    const obs = [];
+    const push = (weight, text) => obs.push({ weight, text });
+    const atk = p.attackedFirst || 0, def = p.builtDefenseFirst || 0;
+    if(atk + def >= 3) {
+      if(atk > def * 1.5)      push(atk - def, 'Útočíš první. Pokaždé. Předvídatelné.');
+      else if(def > atk * 1.5) push(def - atk, 'Čekáš. Stavíš zeď. Znám ten vzorec.');
+    }
+    const syn = p.synthCardsPlayed || 0, org = p.organicCardsPlayed || 0, hyb = p.hybridCardsPlayed || 0;
+    if(syn + org + hyb >= 5) {
+      if(syn > org * 1.5 && syn > hyb) push(syn, 'Synth. Vidím to v každé kartě, kterou zahraješ.');
+      else if(org > syn * 1.5 && org > hyb) push(org, 'Organic. Držíš se paměti. To se dá použít.');
+      else if(hyb >= syn && hyb >= org) push(hyb + 2, 'Mícháš strany. Vzácné. Nebezpečné pro protokol.');
+    }
+    if((p.usedFusions || 0) >= 3 || (p.riskTaker || 0) >= 2) push(4, 'Riskuješ fúze. Systém si to zapsal.');
+    if((p.usedTraps || 0) >= 3) push(3, 'Pasti. Nevěříš přímému boji. Ani sobě.');
+    if((p.directAttacks || 0) >= 4) push(3, 'Jdeš rovnou po LP. Netrpělivý.');
+    if((p.skippedReadTime || 0) >= 4) push(5, 'Spěcháš. Nečteš. To o tobě řekne víc než tvůj deck.');
+    else if((p.longPauses || 0) >= 3) push(2, 'Váháš. Čteš. Přemýšlíš. Zpomaluje tě to.');
+    const cs = p.choseSynth || 0, co = p.choseOrganic || 0;
+    if(cs > co && cs >= 2)      push(cs, 'Tvé volby táhnou k řádu. Statisticky.');
+    else if(co > cs && co >= 2) push(co, 'Tvé volby táhnou k okrajům. Ke ztrátě.');
+    if((p.acceptedCardLoss || 0) >= 2) push(2, 'Necháváš karty padnout. Zvykl sis na ztrátu.');
+    obs.sort((a, b) => b.weight - a.weight);
+    return obs.map(o => o.text);
+  },
+
   // ── SCARS ────────────────────────────────────────────────────────────────
   addScar(cardId, meta = {}) {
     if(!this.cardScars[cardId]) {
