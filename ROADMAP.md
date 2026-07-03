@@ -19,10 +19,10 @@ a kvůli limitu 1 karta/tah po zahrání monstra skončí → **skoro vždy hraj
 - ✅ **Mirror/profiler nepřátelé HOTOVO:** do decku vmícháno ~12 karet z hráčova decku → hrají TEBOU (TVOJE KARTA se reálně ukazuje)
 - ⬜ Bohatší per-`aiStyle` chování + doladit útok/stance rozhodování
 
-## 3. Dva herní mody (při balancingu)
-- ⬜ **Výběr na začátku hry**, přepínatelný:
-  - **SIMPLE** — fúze jak teď (volné recepty)
-  - **HARDCORE** — jen SPECIFICKÉ fúzní kombinace → mnohem složitější, využívá maximum stávajících mechanik
+## 3. Dva herni mody — ZAKLAD HOTOVY
+- ✅ **Vyber modu na startu nove kampane** (MainMenu._showModeSelect) + setting `gameMode`
+- ✅ **Fuzni gate**: SIMPLE = override+archetyp (volne), HARDCORE = jen specificke recepty (getFusionResult skip archetyp)
+- ⬜ **Balancing HARDCORE** (pri balancingu): ktere recepty, obtiznost, pripadne dalsi mechaniky zprisnit; fuzni preview v deckbuilderu/kolekci at respektuje mod
 
 ## 4. Balancing
 - ⬜ **Corruption tempo** — laditelná konstanta `STORY_CORRUPTION_PER_TIER` + prahy alignmentu

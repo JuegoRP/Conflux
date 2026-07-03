@@ -487,10 +487,11 @@ const MainMenu = {
       });
     });
 
-    on('btn-campaign', () => this._clickGo(() => {
+    on('btn-campaign', () => this._showModeSelect(mode => this._clickGo(() => {
       GameState.reset();
+      GameState.settings.gameMode = mode;
       Router.goto('story', { nodeId: 'act1_intro' });
-    }));
+    })));
 
     on('btn-continue', () => {
       const slots = SaveManager.listSlots?.() || [];
@@ -560,6 +561,34 @@ const MainMenu = {
       setTimeout(() => ov.remove(), 140);
     });
     return ov;
+  },
+
+  // Výběr herního módu na startu nové kampaně
+  _showModeSelect(cb) {
+    const card = (mode, mark, name, desc, accent) => `
+      <button class="m-mode-card" data-mode="${mode}" style="flex:1;min-width:210px;background:rgba(10,16,24,0.6);border:1px solid ${accent}55;border-left:3px solid ${accent};color:#cdd8e6;text-align:left;padding:16px 18px;cursor:pointer;transition:all .12s">
+        <div style="font-family:'Press Start 2P',monospace;font-size:11px;color:${accent};margin-bottom:10px;letter-spacing:2px">${mark} ${name}</div>
+        <div style="font-family:'VT323',monospace;font-size:16px;line-height:1.35;color:#a8b6c6">${desc}</div>
+      </button>`;
+    const ov = this._overlay(`
+      <div style="font-family:'Press Start 2P',monospace;font-size:13px;letter-spacing:2px;color:#dfe9f2;margin-bottom:6px">VYBER HERNÍ MÓD</div>
+      <div style="font-family:'VT323',monospace;font-size:15px;color:#7f8ea0;margin-bottom:18px">Nastavíš jen na začátku nové hry.</div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;max-width:660px">
+        ${card('simple','◈','SIMPLE','Volné fúze (archetypy). Přístupnější — většina kombinací něco vytvoří. Doporučeno poprvé.','#4fa3e0')}
+        ${card('hardcore','◆','HARDCORE','Jen specifické fúzní recepty. Mnohem složitější, využívá maximum mechanik. Pro znalce.','#e0c060')}
+      </div>
+      <button class="m-btn m-btn-dim" id="ov-cancel" style="margin-top:16px">← ZPĚT</button>
+    `);
+    ov.querySelectorAll('.m-mode-card').forEach(btn => {
+      btn.addEventListener('mouseenter', () => { btn.style.background = 'rgba(79,163,224,0.12)'; });
+      btn.addEventListener('mouseleave', () => { btn.style.background = 'rgba(10,16,24,0.6)'; });
+      btn.addEventListener('click', () => {
+        const mode = btn.dataset.mode;
+        ov.classList.remove('m-overlay--visible');
+        setTimeout(() => ov.remove(), 140);
+        cb(mode);
+      });
+    });
   },
 
   _showSettings() {

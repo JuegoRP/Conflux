@@ -80,6 +80,7 @@ const GameState = {
     musicVolume: 0.5, sfxVolume: 0.8,
     textSpeed: 'normal',   // slow | normal | fast | instant
     difficulty: 0,         // 0 = normální, 1 = těžká, 2 = perfektní
+    gameMode: 'simple',    // simple = volné fúze (archetypy) | hardcore = jen specifické recepty
     language: 'cs',
     keyboardShortcuts: true,
   },
@@ -149,7 +150,9 @@ const GameState = {
       if(card) return card;
     }
 
-    // 2) Systémový výpočet
+    // 2) Systémový výpočet (archetyp fallback) — jen SIMPLE mod.
+    //    HARDCORE = fúze jen ze SPECIFICKÝCH receptů (overrides) → mnohem složitější.
+    if(this.settings?.gameMode === 'hardcore') return null;
     return this._computeFusion(a, b);
   },
 
