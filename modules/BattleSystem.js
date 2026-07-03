@@ -176,9 +176,16 @@ const BattleSystem = {
     style.textContent = `
       .cf-transition {
         position: fixed; inset: 0; z-index: 200;
-        background: #000;
-        display: flex; align-items: center; justify-content: center;
+        background: #05080c;
+        display: flex; flex-direction: column; gap: 26px;
+        align-items: center; justify-content: center;
         opacity: 1; transition: opacity 0.5s ease;
+      }
+      @keyframes cf-emblem-spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+      .cf-transition-emblem {
+        width: clamp(84px, 12vw, 130px); height: auto;
+        filter: drop-shadow(0 0 22px rgba(79,163,224,0.28));
+        animation: cf-emblem-spin 18s linear infinite;
       }
       .cf-transition-text {
         font-family: 'Press Start 2P', monospace;
@@ -242,7 +249,9 @@ const BattleSystem = {
     // Fáze 1: černá přechodová obrazovka "Cyklus pokračuje."
     const transition = document.createElement('div');
     transition.className = 'cf-transition';
-    transition.innerHTML = `<span class="cf-transition-text">Cyklus pokračuje.</span>`;
+    transition.innerHTML = `
+      <img class="cf-transition-emblem" src="assets/images/emblem_sm.png" alt="">
+      <span class="cf-transition-text">Cyklus pokračuje.</span>`;
     document.body.appendChild(transition);
 
     // Fáze 2: po 1.5s fade-out přechodu, fade-in coinflip
