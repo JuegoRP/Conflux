@@ -615,7 +615,7 @@ const DeckBuilder = {
       }
       .db-wrap {
         display:flex; flex-direction:column; height:100%;
-        background:#06080a; position:relative; overflow:hidden;
+        background:#0d141e; position:relative; overflow:hidden;
       }
       .db-wrap::before {
         content:''; position:absolute; inset:0;

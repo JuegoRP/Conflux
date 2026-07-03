@@ -207,7 +207,7 @@ const FreeBattle = {
     const s = document.createElement('style');
     s.id = 'freebattle-styles';
     s.textContent = `
-      .fb-screen{width:100%;height:100vh;display:flex;flex-direction:column;position:relative;overflow:hidden;background:#040608;}
+      .fb-screen{width:100%;height:100vh;display:flex;flex-direction:column;position:relative;overflow:hidden;background:#0d141e;}
       .fb-bg{position:absolute;inset:0;background:url('assets/images/backgrounds/freebattle_bg.png') center/cover no-repeat;opacity:0.1;pointer-events:none;z-index:0;}
       .fb-content{position:relative;z-index:1;display:flex;flex-direction:column;height:100%;overflow:hidden;}
 
