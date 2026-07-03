@@ -109,7 +109,7 @@ const BattleSystem = {
     this._barkState = { fired:{}, idx:{} };
     this._profileBarkFired = false;
 
-    container.innerHTML = `<div class="b-loading"><span>Cyklus pokračuje.</span></div>`;
+    container.innerHTML = `<div class="b-loading" style="display:flex;align-items:center;justify-content:center;height:100vh"><img src="assets/images/emblem_sm.png" alt="" style="width:76px;height:76px;opacity:0.75;animation:b-emblem-rot 4s linear infinite"></div><style>@keyframes b-emblem-rot{from{transform:rotate(0)}to{transform:rotate(360deg)}}</style>`;
     injectCardStyles();
     this._injectStyles();
     AudioSystem.playBattleMusic(!!params.freeBattle);
@@ -248,38 +248,19 @@ const BattleSystem = {
     if(existing) existing.remove();
     document.head.appendChild(style);
 
-    // Fáze 1: černá přechodová obrazovka "Cyklus pokračuje."
-    const transition = document.createElement('div');
-    transition.className = 'cf-transition';
-    transition.innerHTML = `
-      <img class="cf-transition-emblem" src="assets/images/emblem_sm.png" alt="">
-      <span class="cf-transition-text">Cyklus pokračuje.</span>`;
-    document.body.appendChild(transition);
-
-    // Fáze 2: po 1.5s fade-out přechodu, fade-in coinflip
+    // Coinflip = EMBLÉM jako mince, na kterou klikneš. Žádná "Cyklus pokračuje" obrazovka.
     const overlay = document.createElement('div');
     overlay.className = 'cf-overlay';
     overlay.innerHTML = `
       <div class="cf-inner">
         <div class="cf-logo-wrap" id="cf-logo-wrap">
-          <img class="cf-logo" id="cf-logo" src="assets/images/logo.png" alt="CONFLUX">
+          <img class="cf-logo" id="cf-logo" src="assets/images/emblem.png" alt="">
         </div>
-        <div class="cf-hint" id="cf-hint">klikni</div>
+        <div class="cf-hint" id="cf-hint">klikni na minci — kdo začíná</div>
         <div class="cf-result" id="cf-result"></div>
       </div>`;
     document.body.appendChild(overlay);
-
-    let overlayShown = false;
-    const showOverlay = () => {
-      if(overlayShown) return;
-      overlayShown = true;
-      transition.style.opacity = '0';
-      overlay.style.opacity = '1';
-      setTimeout(() => transition.remove(), 500);
-    };
-    // Klik na přechodovou obrazovku = přeskoč čekání
-    transition.addEventListener('click', showOverlay, { once: true });
-    setTimeout(showOverlay, 1500);
+    requestAnimationFrame(() => { overlay.style.opacity = '1'; });
 
     const logoWrap = overlay.querySelector('#cf-logo-wrap');
     const logo     = overlay.querySelector('#cf-logo');
