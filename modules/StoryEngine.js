@@ -156,6 +156,18 @@ const StoryEngine = {
   },
   // Scénická pozadí dogenerovaná podle děje (soubor existuje → přednost před aliasem)
   _bgReal: new Set([
+    'act1_kellner_scene',
+    'act1_vykonavatel_scene',
+    'act2_tichy_scene',
+    'act3_hana_scene',
+    'act3_duelista_scene',
+    'act3_lens_scene',
+    'act4_veritel_scene',
+    'act7_rekalibrator_scene',
+    'act4_marta_scene',
+    'act10_sigma_scene',
+    'act10_paradox_scene',
+    'act2_romen_scene',
     'act5_eli_scene',
     'act6_voit_scene',
     'act2_rozara_scene',
