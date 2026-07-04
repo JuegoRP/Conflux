@@ -1550,6 +1550,8 @@ const BattleSystem = {
   // AI příprava útočníků — odhal face-down, přepni DEF→ATK
   _aiPrepareAttackers(style) {
     const s = this._state;
+    // V prvním tahu (nesmí útočit) neodhaluj ani nepřepínej do ATK — zbytečné prozrazení
+    if(!s.canAttack) return;
     // Kolik monster chceme přepnout do ATK závisí na stylu
     const wantAttack = !['defensive'].includes(style);
     if(!wantAttack) return;
@@ -2110,6 +2112,8 @@ const BattleSystem = {
 
   _aiAttack(onDone) {
     const s = this._state;
+    // FÉR pravidlo: kdo začíná, nesmí v 1. tahu útočit (stejně jako hráč). Dřív AI útočila i tak.
+    if(!s.canAttack){ onDone(); return; }
     const attackers=s.eMonsters.map((m,i)=>({m,i})).filter(x=>x.m&&!x.m.hasAttacked&&x.m.mode==='atk');
     if(!attackers.length){onDone();return;}
     const difficulty = this._params?.difficulty ?? GameState.settings?.difficulty ?? 0;
