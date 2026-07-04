@@ -17,7 +17,9 @@ AI reálně UMÍ fúze, monstra (se stancem), arény, kouzla, pasti, odhalení f
 a kvůli limitu 1 karta/tah po zahrání monstra skončí → **skoro vždy hraje monstrum, kouzla/pasti/arény sotva.**
 - ✅ **Fix HOTOVO:** `_aiPlayCard` teď SKÓRUJE všechny chtěné tahy a vybere nejhodnotnější (místo pevné priority) → hraje i kouzla/pasti/arény, ne jen monstra
 - ✅ **Mirror/profiler nepřátelé HOTOVO:** do decku vmícháno ~12 karet z hráčova decku → hrají TEBOU (TVOJE KARTA se reálně ukazuje)
-- ⬜ Bohatší per-`aiStyle` chování + doladit útok/stance rozhodování
+- ✅ **Fér fix:** kdo začíná nesmí v 1. tahu útočit (platilo jen pro hráče; AI útočila = nefér) — `_aiAttack`/`_aiPrepareAttackers` respektují `canAttack`
+- ✅ **Útočná logika ověřena** — útočí na nejsilnější poražitelný cíl, vyhýbá se sebevraždě, přímý jen na čisté pole, respektuje pasti. Hraje jako kompetentní hráč.
+- ⬜ Jemné doladění per-`aiStyle` (až podle playtest pozorování — co konkrétně dělá špatně)
 
 ## 3. Dva herni mody — ZAKLAD HOTOVY
 - ✅ **Vyber modu na startu nove kampane** (MainMenu._showModeSelect) + setting `gameMode`
