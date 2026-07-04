@@ -156,6 +156,15 @@ const StoryEngine = {
   },
   // Scénická pozadí dogenerovaná podle děje (soubor existuje → přednost před aliasem)
   _bgReal: new Set([
+    'act2_intro_scene',
+    'act3_intro_scene',
+    'act4_intro_scene',
+    'act5_intro_scene',
+    'act6_intro_scene',
+    'act7_intro_scene',
+    'act8_intro_scene',
+    'act9_intro_scene',
+    'act10_intro_scene',
     'act1_room',
     'act2_synth_border','act2_crossroads','act2_synth_deep','act2_before_boss','act2_gate','act2_beyond',
     'act3_fusion_zone','act3_nexus_deep','act3_nexus_edge','act3_before_boss','act3_duel_arena','act3_beyond',
