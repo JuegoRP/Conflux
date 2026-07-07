@@ -22,7 +22,7 @@
 - [ ] act3–act6 backgroundy — zatím aliasy na existující soubory, ideálně vlastní artwork
 - [ ] act7–act10 backgroundy — totéž
 
-### Hudba (BGM)
+### Hudba (BGM) — detailní zadání všech tracků/stingerů/voice: **AUDIO_PLAN.md**
 - [x] menu_theme, collection, deckbuilder, freebattle_menu, freebattle_battle (hotovo dříve)
 - [x] story_calm, story_quiet, story_slow, story_tension, story_dramatic, story_hybrid (hotovo dříve)
 - [x] story_battle_low_corruption, story_battle_high_corruption (hotovo dříve)
