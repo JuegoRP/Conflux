@@ -73,7 +73,9 @@ Stejná melodie (krátký, váhavý motiv ~5 tónů), tři aranže podle jejího
 
 ---
 
-## 3. MLUVENÉ SLOVO (CZ + EN) — „systém mluví"
+## 3. MLUVENÉ SLOVO (CZ + EN) — „systém mluví" ✅ IMPLEMENTOVÁNO 2026-07-07
+
+**HOTOVO:** 23 linek × CZ+EN vygenerováno (`tools/gen_voice.py`), `modules/VoiceOver.js` + hooky (typewriter, barky, profil-screen, TVOJE KARTA). Soubory `assets/audio/voice/{cs,en}/`. Regenerace linky: `python3 tools/gen_voice.py --only klic --force`.
 
 **Princip:** dabují se JEN strojové/systémové hlasy — TTS je tu **diegetické** (systém MÁ znít syntetěji).
 Lidské postavy (Monyra, Eli, Rozara…) se NEdabují. Tři hlasové profily:
