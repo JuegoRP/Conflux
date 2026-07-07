@@ -688,6 +688,7 @@ const BattleSystem = {
         justPlaced:true,
         scarCount: GameState.getScarData?.(card.id)?.scars || 0,
       };
+      this._applyArenaToMonster(s.pMonsters[slot]);
       setTimeout(()=>{ if(s.pMonsters[slot]) s.pMonsters[slot].justPlaced=false; }, 600);
       setTimeout(() => this._animatePlayFromHand(slot), 50);
       if(faceDown) {
@@ -877,6 +878,7 @@ const BattleSystem = {
       if(zone === 'monster') {
         const faceDown = s.afterFusion ? false : (mode?.faceDown || false);
         s.pMonsters[slot] = { card:{...newCard}, mode: faceDown?'def':(mode?.stance||'atk'), faceDown, hasAttacked:false };
+        this._applyArenaToMonster(s.pMonsters[slot]);
         this._log(`⇄ [${oldCard.name}] zahozen, [${newCard.name}] nasazen.`,'sys');
       } else {
         s.pSpells[slot] = { card:{...newCard}, faceDown: newCard.kind==='trap', used:false };
@@ -976,6 +978,7 @@ const BattleSystem = {
       const slot = s.pMonsters.findIndex(m=>m===null);
       if(slot<0) { this._log('Žádný volný slot!','warn'); this._cancelFuse(); return; }
       s.pMonsters[slot] = {card:newCard, mode:'atk', hasAttacked:false};
+      this._applyArenaToMonster(s.pMonsters[slot]);
       if(isExperimental) {
         this._log(`⚗ EXPERIMENT! [${result.name}] vznikl z nestabilní fúze.`,'fuse');
       } else {
@@ -1025,6 +1028,7 @@ const BattleSystem = {
       const slot = s.pMonsters.findIndex(m => m === null);
       if(slot >= 0) {
         s.pMonsters[slot] = {card:{...survivor}, mode:'atk', faceDown:false, hasAttacked:false};
+        this._applyArenaToMonster(s.pMonsters[slot]);
         this._log(`⚗ [${survivor.name}] přežil experiment — na poli.`, 'fuse');
       } else {
         s.pGY.push(survivor);
@@ -1323,6 +1327,18 @@ const BattleSystem = {
     }, 50);
   },
 
+// Aplikuje bonus aktivní arény na jedno nově vyložené monstrum (frakčně-vědomé).
+  // Arény platí OBĚMA stranám i pro karty zahrané po aktivaci (pravidlo z CLAUDE.md).
+  _applyArenaToMonster(m) {
+    const a = this._state?.activeArena;
+    if(!a || !m) return;
+    const fits = (a.faction==='synth'||a.faction==='organic') ? m.card.faction===a.faction : true;
+    if(!fits) return;
+    if(a.effect==='arena_buff_atk') m.card.atk += a.value;
+    else if(a.effect==='arena_buff_def') m.card.def = (m.card.def||0)+a.value;
+    else if(a.effect==='arena_buff_all') { m.card.atk += a.value; m.card.def = (m.card.def||0)+a.value; }
+  },
+
 // ── AKTIVACE SPELLU ───────────────────────────────────────────────────────
   _activateSpell(card, who) {
     const s = this._state;
@@ -1400,6 +1416,76 @@ const BattleSystem = {
         break;
       }
 
+      case 'destroy_organic': {
+        const tIdx = oppM.findIndex(m=>m&&m.card.faction==='organic');
+        if(tIdx>=0) {
+          const t = oppM[tIdx];
+          (who==='p'?s.eGY:s.pGY).push(t.card);
+          oppM[tIdx] = null;
+          this._log(`🪓 [${t.card.name}] vykořeněn!`,'sys');
+          this._checkGameOver();
+        } else this._log('Žádný Organic k zničení.','warn');
+        break;
+      }
+      case 'destroy_corruption': {
+        const tIdx = oppM.findIndex(m=>m&&m.card.faction==='corruption');
+        if(tIdx>=0) {
+          const t = oppM[tIdx];
+          (who==='p'?s.eGY:s.pGY).push(t.card);
+          oppM[tIdx] = null;
+          this._log(`📡 [${t.card.name}] vyčištěn!`,'sys');
+          this._checkGameOver();
+        } else this._log('Žádná Corruption karta k zničení.','warn');
+        break;
+      }
+      case 'destroy_strongest': {
+        // Nejsilnější monstrum soupeře — impaktní removal za cenu +1 corruption
+        let tIdx=-1, best=-1;
+        oppM.forEach((m,i)=>{ if(m && (m.card.atk||0)>best){best=m.card.atk||0;tIdx=i;} });
+        if(tIdx>=0) {
+          const t = oppM[tIdx];
+          (who==='p'?s.eGY:s.pGY).push(t.card);
+          oppM[tIdx] = null;
+          GameState.adjustCorruption?.(1) || (GameState.corruption.level = (GameState.corruption?.level||0)+1);
+          this._log(`⌫ [${t.card.name}] přepsán! +1 corruption.`,'entropy');
+          this._checkGameOver();
+        } else this._log('Žádný cíl k přepsání.','warn');
+        break;
+      }
+      case 'force_def': {
+        // Nejsilnější kartu soupeře do DEF + sniž ATK
+        let tIdx=-1, best=-1;
+        oppM.forEach((m,i)=>{ if(m && (m.card.atk||0)>best){best=m.card.atk||0;tIdx=i;} });
+        if(tIdx>=0) {
+          const t = oppM[tIdx];
+          t.mode='def';
+          t.card.atk = Math.max(0, (t.card.atk||0) - card.value);
+          this._log(`🔄 [${t.card.name}] přepnut do DEF, -${card.value} ATK.`,'sys');
+        } else this._log('Žádný cíl k přesměrování.','warn');
+        break;
+      }
+      case 'buff_synergy': {
+        const hasOrg = myM.some(m=>m&&m.card.faction==='organic');
+        const hasSyn = myM.some(m=>m&&m.card.faction==='synth');
+        if(hasOrg && hasSyn) {
+          myM.forEach(m=>{ if(m&&(m.card.faction==='synth'||m.card.faction==='organic')) m.card.atk += card.value; });
+          this._log(`🌉 Synergie: Synth + Organic +${card.value} ATK.`,'sys');
+        } else this._log('Potřebuješ Synth i Organic na poli!','warn');
+        break;
+      }
+      case 'arena_break': {
+        if(s.activeArena) {
+          const name = s.activeArena.name;
+          s.activeArena = null;
+          // Odstraň arénu ze spell slotů (obou stran) → do hřbitova majitele
+          [['p',s.pSpells,s.pGY],['e',s.eSpells,s.eGY]].forEach(([sd,slots,gy])=>{
+            slots.forEach((sp,i)=>{ if(sp && sp.card?.kind==='arena'){ gy.push(sp.card); slots[i]=null; } });
+          });
+          this._log(`🏟 Aréna [${name}] zničena. Pole je zase jen pole.`,'sys');
+        } else this._log('Žádná aktivní aréna.','warn');
+        break;
+      }
+
       // ── Corruption ───────────────────────────────────────────────────────
       case 'corrupt_debuff': {
         const t = oppM.find(m=>m);
@@ -1431,19 +1517,19 @@ const BattleSystem = {
 
       // ── Arena efekty — aplikují se při umístění i při aktivaci ──────────
       // Arény ovlivňují OBĚ strany (efekt platí pro celé pole).
-      case 'arena_buff_atk': {
-        [...myM, ...oppM].forEach(m=>{ if(m) m.card.atk += card.value; });
-        this._log(`🏟 [${card.name}]: všichni +${card.value} ATK.`,'sys');
-        break;
-      }
-      case 'arena_buff_def': {
-        [...myM, ...oppM].forEach(m=>{ if(m) m.card.def = (m.card.def||0)+card.value; });
-        this._log(`🏟 Arena: obrana +${card.value}.`,'sys');
-        break;
-      }
+      case 'arena_buff_atk':
+      case 'arena_buff_def':
       case 'arena_buff_all': {
-        [...myM, ...oppM].forEach(m=>{ if(m) m.card.atk += card.value; });
-        this._log(`🏟 Arena: všichni +${card.value} ATK.`,'sys');
+        // Frakční aréna buffuje jen svou frakci (obě strany!); hybrid/neutral všem
+        const fitsF = m => (card.faction==='synth'||card.faction==='organic') ? m.card.faction===card.faction : true;
+        [...myM, ...oppM].forEach(m=>{
+          if(!m || !fitsF(m)) return;
+          if(card.effect!=='arena_buff_def') m.card.atk += card.value;
+          if(card.effect!=='arena_buff_atk') m.card.def = (m.card.def||0)+card.value;
+        });
+        const lbl = card.faction==='synth' ? 'Synth' : card.faction==='organic' ? 'Organic' : 'všichni';
+        const stat = card.effect==='arena_buff_atk' ? 'ATK' : card.effect==='arena_buff_def' ? 'DEF' : 'ATK i DEF';
+        this._log(`🏟 [${card.name}]: ${lbl} +${card.value} ${stat} (obě strany).`,'sys');
         break;
       }
       case 'arena_draw': {
@@ -1522,6 +1608,9 @@ const BattleSystem = {
       case 'trap_emp':    if(attacker.card.faction==='synth'){(who==='p'?s.eGY:s.pGY).push(attacker.card);atkField[attackerSlot]=null;this._log(`⚡ EMP zničil [${attacker.card.name}]!`,'dmg');return 'destroyed';} return false;
       case 'trap_bounce': { const dmg=attacker.card.atk;if(who==='p'){s.eLP=clamp(s.eLP-dmg,0,s.eMaxLP);this._animateLP('e',dmg);}else{s.pLP=clamp(s.pLP-dmg,0,s.pMaxLP);this._animateLP('p',dmg);}this._log(`🔄 Odraz ${dmg} dmg!`,'dmg');this._checkGameOver();return false; }
       case 'trap_void':   { attacker.hasAttacked=false; GameState.adjustCorruption?.(1) || (GameState.corruption.level = (GameState.corruption?.level||0)+1); this._log('Void past! +1 corruption.','entropy'); return 'negate'; }
+      case 'trap_capture': { attacker.mode='def'; this._log(`🔒 [${attacker.card.name}] uvězněn — přepnut do DEF, útok zrušen!`,'sys'); return 'negate'; }
+      case 'trap_snare':  { if((attacker.card.atk||0) <= card.value){ (who==='p'?s.eGY:s.pGY).push(attacker.card); atkField[attackerSlot]=null; this._log(`🌱 [${attacker.card.name}] pohlcen půdou!`,'dmg'); return 'destroyed'; } this._log(`🌱 Past sklapla naprázdno — útočník je příliš silný (ATK > ${card.value}).`,'warn'); return false; }
+      case 'trap_decay':  { const before=attacker.card.atk||0; attacker.card.atk=Math.floor(before/2); this._log(`🌀 [${attacker.card.name}] prošel trhlinou: ATK ${before} → ${attacker.card.atk}.`,'entropy'); return false; }
     }
     return false;
   },
@@ -1620,6 +1709,7 @@ const BattleSystem = {
           const idx = s.eHand.indexOf(pick.card);
           if(idx >= 0) s.eHand.splice(idx, 1);
           s.eMonsters[emptyM[0]] = {card:{...pick.card}, mode: pick.mode, hasAttacked:false, revealed:false};
+          this._applyArenaToMonster(s.eMonsters[emptyM[0]]);
           this._log('◀ Nepřítel vyložil kartu lícem dolů.', 'hint');
           return true;
         }});
@@ -1694,6 +1784,7 @@ const BattleSystem = {
         const card = monsters[0];
         s.eHand.splice(s.eHand.indexOf(card), 1);
         s.eMonsters[emptyM[0]] = {card:{...card}, mode:'def', hasAttacked:false, revealed:false};
+        this._applyArenaToMonster(s.eMonsters[emptyM[0]]);
         played = true;
       }
       // Zkus spell/trap na spell slot
@@ -1849,6 +1940,7 @@ const BattleSystem = {
         card: {...fusion.result, kind:'monster'},
         mode: 'atk', hasAttacked: false, revealed: false,
       };
+      this._applyArenaToMonster(s.eMonsters[slot]);
       this._log(`◀ Nepřítel fúzoval dvě karty!`, 'warn');
       return true;
 
@@ -1981,7 +2073,18 @@ const BattleSystem = {
 
     const pHasSynth = pActive.some(m => m?.card?.faction === 'synth');
     const pMaxAtk = Math.max(0, ...pActive.map(m => m.card.atk || 0));
+    const pMinAtk = Math.min(...pActive.map(m => m.card.atk || 0));
     const pStrong = pMaxAtk >= 1800;
+
+    // Nové trapy — situační priorita
+    if(pStrong) {
+      const decay = traps.find(t => t.effect === 'trap_decay');      // půlí ATK — nejlepší proti obrům
+      if(decay) return decay;
+      const capture = traps.find(t => t.effect === 'trap_capture');  // uvězni do DEF
+      if(capture) return capture;
+    }
+    const snare = traps.find(t => t.effect === 'trap_snare' && pMinAtk <= (t.value || 1500));
+    if(snare) return snare;
 
     // EMP proti synth hráči
     if(pHasSynth) {
@@ -2043,6 +2146,18 @@ const BattleSystem = {
     const buffAll = findMatch('buff_all', eActive.length >= 1);
     // copy_atk — pokud AI má slabé monstrum a hráč silné
     const copyAtk = findMatch('copy_atk', eActive.length > 0 && pMaxAtk > eMaxAtk && pMaxAtk - eMaxAtk >= 300);
+
+    // ── Nové removal/tempo efekty (univerzální — mají prioritu u všech stylů) ──
+    const pHasOrganic2    = pActive.some(m => m?.card?.faction === 'organic');
+    const pHasCorruption2 = pActive.some(m => m?.card?.faction === 'corruption');
+    const destroyOrganic    = findMatch('destroy_organic', pHasOrganic2);
+    const destroyCorruption = findMatch('destroy_corruption', pHasCorruption2);
+    const destroyStrongest  = findMatch('destroy_strongest', pMaxAtk >= 1500);
+    const forceDef          = findMatch('force_def', pMaxAtk >= 1200 && pMaxAtk > eMaxAtk);
+    const arenaBreak        = findMatch('arena_break', !!s.activeArena);
+    const buffSynergy       = findMatch('buff_synergy', eHasSynth && eHasOrganic);
+    const universalPick = destroyStrongest || destroyCorruption || destroyOrganic || forceDef || arenaBreak || buffSynergy;
+    if(universalPick) return universalPick;
 
     // Defensive/reactive — spell jen pokud nemůže hrát monstrum
     // ALE: pokud má kritický spell (destroy_synth, heal při low LP), může hrát i tak
@@ -2780,9 +2895,9 @@ const BattleSystem = {
     //   - noTarget (single-use bez cíle)            → aktivuj okamžitě, bez popup
     //   - needsMyMonster / needsEneMonster (target) → přeskoč popup, rovnou target picker
     //   - jinak (buff/heal který může být uložen)   → zobraz popup s volbou
-    const noTarget        = ['buff_all_organic','buff_all','buff_all_synth','area_dmg','corruption_heal','heal_pure','corrupt_debuff'].includes(card.effect);
+    const noTarget        = ['buff_all_organic','buff_all','buff_all_synth','area_dmg','corruption_heal','heal_pure','corrupt_debuff','destroy_strongest','arena_break','buff_synergy'].includes(card.effect);
     const needsMyMonster  = ['buff_atk','buff_atk_cost','heal_buff','heal_dual','copy_atk'].includes(card.effect);
-    const needsEneMonster = ['destroy_synth'].includes(card.effect);
+    const needsEneMonster = ['destroy_synth','destroy_organic','destroy_corruption','force_def'].includes(card.effect);
 
     if(noTarget || needsMyMonster || needsEneMonster) {
       // Přímá aktivace přes existující target picker (zvládne i case noTarget = aktivuje rovnou)
@@ -2836,8 +2951,8 @@ const BattleSystem = {
     // Přidej picker přímo do body místo b-field
     const s = this._state;
     const needsMyMonster  = ['buff_atk','buff_atk_cost','heal_buff','heal_dual','copy_atk'].includes(card.effect);
-    const needsEneMonster = ['destroy_synth'].includes(card.effect);
-    const noTarget        = ['buff_all_organic','buff_all','buff_all_synth','area_dmg','corruption_heal','heal_pure','corrupt_debuff'].includes(card.effect);
+    const needsEneMonster = ['destroy_synth','destroy_organic','destroy_corruption','force_def'].includes(card.effect);
+    const noTarget        = ['buff_all_organic','buff_all','buff_all_synth','area_dmg','corruption_heal','heal_pure','corrupt_debuff','destroy_strongest','arena_break','buff_synergy'].includes(card.effect);
 
     const doActivate = (targetSlot) => {
       if(parentPopup) parentPopup.remove();
@@ -2898,13 +3013,14 @@ const BattleSystem = {
       'area_dmg','heal_pure','heal_dual','heal_buff',
       'corruption_heal','corrupt_debuff',
       'buff_atk','buff_atk_cost',   // fallback bez cíle je v _activateSpell
+      'destroy_strongest','arena_break','buff_synergy',
       'arena_buff_atk','arena_buff_def','arena_buff_all',
       'arena_draw','arena_heal','arena_mirror','arena_entropy','arena_corrupt',
     ].includes(card.effect);
 
     // Efekty které potřebují výběr cíle
     const needsMyMonster  = ['copy_atk'].includes(card.effect);
-    const needsEneMonster = ['destroy_synth'].includes(card.effect);
+    const needsEneMonster = ['destroy_synth','destroy_organic','destroy_corruption','force_def'].includes(card.effect);
 
     const doActivate = (targetSlot) => {
       // Odeber kartu ze zdroje
@@ -2935,7 +3051,10 @@ const BattleSystem = {
 
     const myM  = s.pMonsters.map((m,i) => m ? {m,i} : null).filter(Boolean);
     const eneM = s.eMonsters.map((m,i) => m ? {m,i} : null).filter(Boolean);
-    const targets = needsMyMonster ? myM : eneM;
+    // Frakční destroy → nabídni jen validní cíle
+    const factionNeed = {destroy_synth:'synth', destroy_organic:'organic', destroy_corruption:'corruption'}[card.effect];
+    const targetsAll = needsMyMonster ? myM : eneM;
+    const targets = factionNeed ? targetsAll.filter(t => t.m.card.faction === factionNeed) : targetsAll;
 
     // Žádný dostupný cíl — fallback bez cíle
     if(!targets.length) {
@@ -2990,6 +3109,14 @@ const BattleSystem = {
       case 'heal_buff':     target.card.atk+=card.value;if(who==='p')s.pLP=clamp(s.pLP+500,0,s.pMaxLP);this._log(`💚 +${card.value} ATK + 500 LP → [${target.card.name}]`,'organic');break;
       case 'destroy_synth': (who==='p'?s.eGY:s.pGY).push(target.card);oppM[targetSlot]=null;this._log(`💻 [${target.card.name}] zničen!`,'sys');this._checkGameOver();break;
       case 'copy_atk':      { const srcAtk=target.card.atk; const t2=myM.find(m=>m); if(t2){t2.card.atk=srcAtk;this._log(`🪞 ATK ${srcAtk} zkopírován.`,'fuse');} break; }
+      case 'destroy_organic':
+      case 'destroy_corruption': {
+        const need = card.effect==='destroy_organic' ? 'organic' : 'corruption';
+        if(target.card.faction===need) { (who==='p'?s.eGY:s.pGY).push(target.card); oppM[targetSlot]=null; this._log(`${need==='organic'?'🪓':'📡'} [${target.card.name}] zničen!`,'sys'); this._checkGameOver(); }
+        else this._activateSpell(card, who); // špatný cíl → auto (první validní)
+        break;
+      }
+      case 'force_def': { target.mode='def'; target.card.atk=Math.max(0,(target.card.atk||0)-card.value); this._log(`🔄 [${target.card.name}] přepnut do DEF, -${card.value} ATK.`,'sys'); break; }
       default: this._activateSpell(card, who); break;
     }
   },
@@ -4503,6 +4630,7 @@ const BattleSystem = {
               const c2 = s.pHand.splice(lo, 1)[0];
               s.pGY.push(c1); s.pGY.push(c2);
               s.pMonsters[slot] = { card:{...fusionResult, kind:'monster'}, mode:'atk', hasAttacked:false, faceDown:false };
+              this._applyArenaToMonster(s.pMonsters[slot]);
               if(fusionResult) GameState.addDiscoveredFusion(fusionResult.id);
               s.cardPlayedThisTurn=true; s.afterFusion=true;
               s.fuseSelection=[]; s.selectedHandIdx=null; s.stats.fusionsUsed++;
@@ -4550,6 +4678,7 @@ const BattleSystem = {
               s.pGY.push(s.pHand.splice(hi, 1)[0]);
               s.pGY.push(fm.card);
               s.pMonsters[slot] = { card:{...fusionResult, kind:'monster'}, mode:fm.mode, hasAttacked:false, faceDown:false };
+              this._applyArenaToMonster(s.pMonsters[slot]);
               if(fusionResult) GameState.addDiscoveredFusion(fusionResult.id);
               s.cardPlayedThisTurn=true; s.afterFusion=true;
               s.fuseSelection=[]; s.selectedHandIdx=null; s.stats.fusionsUsed++;
@@ -4561,6 +4690,7 @@ const BattleSystem = {
               const newCard = s.pHand.splice(hi, 1)[0];
               s.pGY.push(fm.card);
               s.pMonsters[slot] = { card:{...newCard}, mode:'atk', hasAttacked:false, faceDown:false };
+              this._applyArenaToMonster(s.pMonsters[slot]);
               s.cardPlayedThisTurn=true;
               s.fuseSelection=[]; s.selectedHandIdx=null;
               EventBus.emit('sfx:play', 'card_play');

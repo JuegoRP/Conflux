@@ -26,6 +26,13 @@ a kvůli limitu 1 karta/tah po zahrání monstra skončí → **skoro vždy hraj
 - ✅ **Fuzni gate**: SIMPLE = override+archetyp (volne), HARDCORE = jen specificke recepty (getFusionResult skip archetyp)
 - ⬜ **Balancing HARDCORE** (pri balancingu): ktere recepty, obtiznost, pripadne dalsi mechaniky zprisnit; fuzni preview v deckbuilderu/kolekci at respektuje mod
 
+## 3b. Card pool — opravy + removal balík ✅ HOTOVO (2026-07-07)
+- ✅ **#826-828 opraveny** (effect byl próza → nic nedělaly): Synergie=buff_synergy, Lensino řešení=force_def (hráč VYBÍRÁ cíl), Třetí cesta=arena_break
+- ✅ **6 nových karet**: Vykořenění (destroy_organic), Čistý signál (destroy_corruption), Přepsání (destroy_strongest +1 corr), Karanténa (trap_capture), Hladová půda (trap_snare ≤1500), Poloviční návrat (trap_decay ½ATK) — s artworky
+- ✅ **AI je umí používat** (universální removal priorita v _aiWantsSpell + trap picker)
+- ✅ **Arény opraveny dle popisků**: frakční buffy (synth aréna buffuje jen synth — OBĚ strany), buff_all dává ATK i DEF, bonus se aplikuje i na později vyložená monstra (_applyArenaToMonster, pravidlo z CLAUDE.md)
+- ✅ **Audit popisků**: 17 karet lhalo (čísla, +corruption, „obě strany", mirror/entropy chování) → popisky srovnány s reálným chováním
+
 ## 4. Balancing
 - ⬜ **Corruption tempo** — laditelná konstanta `STORY_CORRUPTION_PER_TIER` + prahy alignmentu
 - ⬜ **Váhy voleb** (akty 4–10 dostaly effects — doladit čísla podle pocitu)
