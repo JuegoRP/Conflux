@@ -2,6 +2,7 @@ import Router      from '../engine/Router.js';
 import { CAMPAIGN_DATA } from '../data/campaign.js';
 import CorruptionVisuals from './CorruptionVisuals.js';
 import EventBus     from '../engine/EventBus.js';
+import VoiceOver from './VoiceOver.js';
 import GameState    from '../engine/GameState.js';
 import AssetLoader  from '../engine/AssetLoader.js';
 import AudioSystem  from '../modules/AudioSystem.js';
@@ -1011,6 +1012,7 @@ const StoryEngine = {
     this._stopLiveGlitch();
 
     const full = el.dataset.full || '';
+    VoiceOver.maybeSay(full); // systémové linky mají dabing (VoiceOver mapa), zbytek tiše ignoruje
     const corrLevel = GameState.corruption?.level ?? 0;
 
     // Build one <span> per character — needed for live glitch targeting
@@ -2095,6 +2097,7 @@ const StoryEngine = {
   },
 
   destroy() {
+    VoiceOver.stop();
     clearInterval(this._typewriterTimer);
     this._typewriterTimer = null;
     this._stopLiveGlitch();

@@ -6,6 +6,7 @@ import { ENEMIES_DATA } from '../data/enemies.js';
 import EventBus    from '../engine/EventBus.js';
 import GameState   from '../engine/GameState.js';
 import AudioSystem from './AudioSystem.js';
+import VoiceOver  from './VoiceOver.js';
 import AssetLoader from '../engine/AssetLoader.js';
 import SaveManager from '../engine/SaveManager.js';
 import { renderCardEl as _rcEl, injectCardStyles, showCardZoom } from './CardRenderer.js';
@@ -137,6 +138,7 @@ const BattleSystem = {
     }
     this._enemy = enemy;
     this._mirrorEnemy = !!(enemy?.profiler || enemy?.aiStyle === 'mirror');
+    this._voSaidYourCard = false;
 
     // Mark enemy as encountered (for Free Battle name reveal)
     if(params.enemyId && params.enemyId !== '__self__') {
@@ -3210,6 +3212,7 @@ const BattleSystem = {
 
   _bark(speaker, text) {
     this._injectBarkCSS();
+    VoiceOver.maybeSay(text);
     let layer = document.getElementById('cf-bark-layer');
     if(!layer) { layer = document.createElement('div'); layer.id = 'cf-bark-layer'; document.body.appendChild(layer); }
     const el = document.createElement('div');
@@ -3257,6 +3260,8 @@ const BattleSystem = {
       <button class="cf-profile-go">▶ POKRAČOVAT</button>`;
     document.body.appendChild(ov);
     requestAnimationFrame(() => ov.classList.add('on'));
+    VoiceOver.say('profile_found');
+    setTimeout(() => VoiceOver.maybeSay(lines[0]), 1400); // nejsilnější pozorování nahlas
     const lineEls = ov.querySelectorAll('.cf-profile-line');
     lineEls.forEach((el, i) => setTimeout(() => el.classList.add('on'), 700 + i * 750));
     const btn = ov.querySelector('.cf-profile-go');
@@ -4027,6 +4032,7 @@ const BattleSystem = {
       const isRevealing = who === 'e' && slot.revealed && slot.justRevealed;
 
       const isYourCard = who === 'e' && this._mirrorEnemy && this._yourCardIds?.has(card.id);
+      if(isYourCard && !this._voSaidYourCard) { this._voSaidYourCard = true; VoiceOver.say('yourcard'); }
       return `<div class="sl ${isDef ? 'def' : ''} ${isUsed ? 'sl-used' : ''} ${isSelected ? 'sl-atk' : ''} ${isSwap ? 'sl-swap' : ''}" data-who="${who}" data-slot="${i}" style="position:relative">
         ${isYourCard ? '<div class="cf-yourcard">◈ TVOJE KARTA</div>' : ''}
         ${_rcEl(card, 'sm', {
@@ -5529,6 +5535,7 @@ if(typeof window !== 'undefined') {
 
 // Destroy pro Router
 BattleSystem.destroy = function() {
+  VoiceOver.stop();
   if (this._forcedLossTimer) { clearTimeout(this._forcedLossTimer); this._forcedLossTimer = null; }
   if (this._resultTimer) { clearTimeout(this._resultTimer); this._resultTimer = null; }
   if (this._clashTimer) { clearTimeout(this._clashTimer); this._clashTimer = null; }
