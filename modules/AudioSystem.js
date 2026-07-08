@@ -51,8 +51,13 @@ const AudioSystem = {
   playMusic(key, { loop = true, fadeIn = 1000 } = {}) {
     const url = GameState.getMusic(key);
 
-    // Always fade out whatever is playing before we switch
-    if(this._current?.audio && this._current.key !== key) {
+    // Stejný track už hraje → neděj nic. (Dřív se při stejném klíči NEfadeovala
+    // stará instance a vytvořila se druhá navrch → duplikace, kterou už nešlo vypnout.)
+    if(this._current?.audio && this._current.key === key
+       && !this._current.audio.paused && !this._current.audio.ended) return;
+
+    // Vždy zhasni cokoli právě hraje
+    if(this._current?.audio) {
       this._fadeOut(this._current.audio, Math.min(fadeIn, 1200));
       this._current = null;
     }
