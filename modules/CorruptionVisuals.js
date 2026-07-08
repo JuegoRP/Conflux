@@ -1,5 +1,6 @@
 import GameState from '../engine/GameState.js';
 import EventBus  from '../engine/EventBus.js';
+import AudioSystem from './AudioSystem.js';
 
 /**
  * CorruptionVisuals — CONFLUX
@@ -34,6 +35,7 @@ const CorruptionVisuals = {
 
     // Naslouchej na změny corruption
     EventBus.on('corruption:change', ({ level }) => {
+      if(level > (this._level ?? 0)) AudioSystem.playEffect('sting_corruption', 0.45); // trhlina jen při nárůstu
       this._level = level;
       this._updateRoot(level);
       this._restartLoops(level);

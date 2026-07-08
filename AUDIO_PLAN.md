@@ -10,6 +10,8 @@ Prompty u tracků jsou v angličtině — přímo použitelné pro Suno/Udio/Sta
 
 ## 1. TRACKY (loopy, 1:30–2:30, bezešvý loop)
 
+**STAV 2026-07-08:** ✅ dodáno (Suno): akt 1 kompletní (intro/battle/boss_intro/boss/end), Eli theme+battle, Paradox boss, všech 6 konců — nasazeno v `assets/audio/bgm/` + zapojeno (musicMap, battle respektuje node.music, konce se nesmyčcují). ⬜ zbývá: early_glitch/early_silence, 3× Monyra theme.
+
 ### Akt 1 — první dojem
 | Soubor | Jak má znít | Prompt (EN) |
 |---|---|---|
@@ -56,7 +58,9 @@ Stejná melodie (krátký, váhavý motiv ~5 tónů), tři aranže podle jejího
 
 ---
 
-## 2. STINGERY — krátké, pro efekt (1–6 s, one-shot)
+## 2. STINGERY — krátké, pro efekt (1–6 s, one-shot) ✅ SYNTETIZOVÁNO 2026-07-08
+
+**HOTOVO:** 7 stingerů syntetizováno (`tools/gen_stingers.py`, čistý Python → m4a) a zapojeno: profil-screen, TVOJE KARTA, korupce+1, act titulek, dopis, mince, bark ping. Suno je neuměl — syntéza ano. victory/defeat/fusion už existovaly jako .ogg.
 
 | Soubor | Kdy hraje | Jak má znít | Prompt (EN) |
 |---|---|---|---|

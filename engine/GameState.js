@@ -1025,6 +1025,23 @@ const GameState = {
     act9_exploration: 'assets/audio/bgm/story_hybrid.mp3',
     act10_exploration:'assets/audio/bgm/story_dramatic.mp3',
 
+    // ── SUNO TRACKY (2026-07-08) ──
+    act1_intro:      'assets/audio/bgm/act1_intro.mp3',
+    act1_battle:     'assets/audio/bgm/act1_battle.mp3',
+    act1_boss_intro: 'assets/audio/bgm/act1_boss_intro.mp3',
+    act1_boss:       'assets/audio/bgm/act1_boss.mp3',
+    act1_end:        'assets/audio/bgm/act1_end.mp3',
+    act1_after_boss: 'assets/audio/bgm/act1_end.mp3',
+    act5_eli_theme:  'assets/audio/bgm/act5_eli_theme.mp3',
+    act5_eli_battle: 'assets/audio/bgm/act5_eli_battle.mp3',
+    act10_boss_paradox: 'assets/audio/bgm/act10_boss_paradox.mp3',
+    act10_ending_a:  'assets/audio/bgm/act10_ending_a.mp3',
+    act10_ending_b:  'assets/audio/bgm/act10_ending_b.mp3',
+    act10_ending_c:  'assets/audio/bgm/act10_ending_c.mp3',
+    act10_ending_d:  'assets/audio/bgm/act10_ending_d.mp3',
+    act10_ending_e:  'assets/audio/bgm/act10_ending_e.mp3',
+    act10_ending_f:  'assets/audio/bgm/act10_ending_f.mp3',
+
     // ── SFX ──
     sfx_card_play:    'assets/audio/sfx/card_play.ogg',
     sfx_fusion:       'assets/audio/sfx/fusion.ogg',
@@ -1036,6 +1053,16 @@ const GameState = {
     sfx_arena:        'assets/audio/sfx/arena.ogg',
     sfx_victory:      'assets/audio/sfx/victory.ogg',
     sfx_defeat:       'assets/audio/sfx/defeat.ogg',
+    sfx_letter_done:  'assets/audio/sfx/letter_done.mp3',
+
+    // ── STINGERY (syntetizované, tools/gen_stingers.py) ──
+    sting_profile:    'assets/audio/sfx/sting_profile.m4a',
+    sting_corruption: 'assets/audio/sfx/sting_corruption.m4a',
+    sting_act_title:  'assets/audio/sfx/sting_act_title.m4a',
+    sting_coin:       'assets/audio/sfx/sting_coin.m4a',
+    sting_bark:       'assets/audio/sfx/sting_bark.m4a',
+    sting_yourcard:   'assets/audio/sfx/sting_yourcard.m4a',
+    sting_letter:     'assets/audio/sfx/sting_letter.m4a',
   },
   getMusic(key) {
     return this._musicMap[key] || null;

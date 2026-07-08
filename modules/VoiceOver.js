@@ -51,6 +51,9 @@ const VoiceOver = {
     } catch(e) { /* voice je bonus, nikdy neshodí hru */ }
   },
 
+  /** Má text namluvenou linku? */
+  has(text) { return !!MAP[(text || '').trim()]; },
+
   /** Přehraj, pokud text odpovídá namapované lince; jinak nic. */
   maybeSay(text) {
     const key = MAP[(text || '').trim()];

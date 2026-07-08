@@ -116,7 +116,9 @@ const BattleSystem = {
     container.innerHTML = `<div class="b-loading" style="display:flex;align-items:center;justify-content:center;height:100vh"><img src="assets/images/emblem_sm.png" alt="" style="width:76px;height:76px;opacity:0.75;animation:b-emblem-rot 4s linear infinite"></div><style>@keyframes b-emblem-rot{from{transform:rotate(0)}to{transform:rotate(360deg)}}</style>`;
     injectCardStyles();
     this._injectStyles();
-    AudioSystem.playBattleMusic(!!params.freeBattle);
+    // Battle node může mít vlastní track (act1_battle, act5_eli_battle, boss…) — jinak default
+    if(params.music && GameState.getMusic?.(params.music)) AudioSystem.playMusic(params.music, { fadeIn: 1200 });
+    else AudioSystem.playBattleMusic(!!params.freeBattle);
 
     // Zaručit že cards.json je načtené — pokud ne (např. přímý přechod do bitvy), načti nyní
     if(GameState.cards.length === 0) {
@@ -289,6 +291,7 @@ const BattleSystem = {
     logoWrap.addEventListener('click', () => {
       if(spun) return;
       spun = true;
+      AudioSystem.playEffect('sting_coin', 0.6); // ping při roztočení, dřevěný dopad ~0.9s ≈ výsledek
       hint.style.opacity = '0';
       logo.classList.add('spinning');
 
@@ -3212,7 +3215,8 @@ const BattleSystem = {
 
   _bark(speaker, text) {
     this._injectBarkCSS();
-    VoiceOver.maybeSay(text);
+    if(VoiceOver.has(text)) VoiceOver.maybeSay(text);
+    else AudioSystem.playEffect('sting_bark', 0.3); // nenamluvené barky = tichý ping
     let layer = document.getElementById('cf-bark-layer');
     if(!layer) { layer = document.createElement('div'); layer.id = 'cf-bark-layer'; document.body.appendChild(layer); }
     const el = document.createElement('div');
@@ -3260,8 +3264,9 @@ const BattleSystem = {
       <button class="cf-profile-go">▶ POKRAČOVAT</button>`;
     document.body.appendChild(ov);
     requestAnimationFrame(() => ov.classList.add('on'));
-    VoiceOver.say('profile_found');
-    setTimeout(() => VoiceOver.maybeSay(lines[0]), 1400); // nejsilnější pozorování nahlas
+    AudioSystem.playEffect('sting_profile');
+    setTimeout(() => VoiceOver.say('profile_found'), 800);
+    setTimeout(() => VoiceOver.maybeSay(lines[0]), 2100); // nejsilnější pozorování nahlas
     const lineEls = ov.querySelectorAll('.cf-profile-line');
     lineEls.forEach((el, i) => setTimeout(() => el.classList.add('on'), 700 + i * 750));
     const btn = ov.querySelector('.cf-profile-go');
@@ -4032,7 +4037,11 @@ const BattleSystem = {
       const isRevealing = who === 'e' && slot.revealed && slot.justRevealed;
 
       const isYourCard = who === 'e' && this._mirrorEnemy && this._yourCardIds?.has(card.id);
-      if(isYourCard && !this._voSaidYourCard) { this._voSaidYourCard = true; VoiceOver.say('yourcard'); }
+      if(isYourCard && !this._voSaidYourCard) {
+        this._voSaidYourCard = true;
+        AudioSystem.playEffect('sting_yourcard', 0.5);
+        setTimeout(() => VoiceOver.say('yourcard'), 900);
+      }
       return `<div class="sl ${isDef ? 'def' : ''} ${isUsed ? 'sl-used' : ''} ${isSelected ? 'sl-atk' : ''} ${isSwap ? 'sl-swap' : ''}" data-who="${who}" data-slot="${i}" style="position:relative">
         ${isYourCard ? '<div class="cf-yourcard">◈ TVOJE KARTA</div>' : ''}
         ${_rcEl(card, 'sm', {

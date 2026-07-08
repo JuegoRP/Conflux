@@ -28,6 +28,7 @@ const LetterEngine = {
   // ═══════════════════════════════════════════════════════════════
 
   init(container, params = {}) {
+    AudioSystem.playEffect('sting_letter', 0.5);
     this._destroyed = false;
     this._container = container;
     this._endingId  = params.endingId || GameState.endingPath || 'most';
@@ -81,7 +82,7 @@ const LetterEngine = {
       // Po dopsání posledního řádku — zobraz tlačítka
       setTimeout(() => {
         controls.style.display = 'flex';
-        AudioSystem.playEffect('assets/audio/sfx/letter_done.mp3');
+        AudioSystem.playEffect('sfx_letter_done');
       }, 800);
     });
 

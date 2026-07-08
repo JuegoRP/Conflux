@@ -60,7 +60,8 @@ const AudioSystem = {
     if(!url) return;
 
     const audio = new Audio(url);
-    audio.loop   = loop;
+    // Konce a boss-intro buildy mají konec — nesmyčcovat
+    audio.loop   = loop && !/_ending_|boss_intro/.test(key);
     audio.volume = 0;
 
     this._current = { key, audio };
@@ -109,7 +110,8 @@ const AudioSystem = {
 
   // Hudba pro příběhový uzel — vybírá z story_* podle korupce a aktu
   playStoryMusic(actNumber = 1, forceKey = null) {
-    if(forceKey) {
+    // Nenamapovaný klíč (téma bez souboru) → spadni na default místo ticha
+    if(forceKey && GameState.getMusic(forceKey)) {
       if(this._current?.key === forceKey) return;
       this.playMusic(forceKey, { fadeIn: 2000 });
       return;

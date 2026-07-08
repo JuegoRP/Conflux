@@ -467,6 +467,8 @@ const StoryEngine = {
     } else {
       try { AudioSystem?.playStoryMusic?.(GameState.campaign.actNumber); } catch(e) {}
     }
+    // Establishing scéna aktu → titulní sting
+    if(/^act\d+_intro$/.test(nodeId)) { try { AudioSystem?.playEffect?.('sting_act_title', 0.5); } catch(e) {} }
     if(node.alignmentDelta) GameState.adjustAlignment(node.alignmentDelta);
     if(_eff.flags?.set)     for(const f of _eff.flags.set) GameState.setFlag(f);
     if(_eff.flags?.unset)   for(const f of _eff.flags.unset) GameState.setFlag(f, false);
