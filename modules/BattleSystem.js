@@ -285,11 +285,23 @@ const BattleSystem = {
     const logoWrap = overlay.querySelector('#cf-logo-wrap');
     const logo     = overlay.querySelector('#cf-logo');
     const hint     = overlay.querySelector('#cf-hint');
+
+    // LOADING GATE: předehřej artworky obou decků, ať se karty v boji
+    // nenačítají viditelně (a máme jistotu, že každé zařízení má vše v cache).
+    const s0 = this._state;
+    const ids = new Set();
+    [...(s0?.pDeck||[]), ...(s0?.eDeck||[]), ...(s0?.pHand||[]), ...(s0?.eHand||[])].forEach(c => { if(c?.id) ids.add(c.id); });
+    const urls = [...ids].map(id => `assets/images/cards/${String(id).padStart(3,'0')}.jpg`);
+    urls.push('assets/images/cards/card_back.jpg');
+    let assetsReady = false;
+    const hintReady = hint.textContent;
+    hint.textContent = 'načítám karty…';
+    AssetLoader.preloadImages(urls).then(() => { assetsReady = true; hint.textContent = hintReady; });
     const result   = overlay.querySelector('#cf-result');
     let spun       = false;
 
     logoWrap.addEventListener('click', () => {
-      if(spun) return;
+      if(spun || !assetsReady) return;
       spun = true;
       AudioSystem.playEffect('sting_coin', 0.6); // ping při roztočení, dřevěný dopad ~0.9s ≈ výsledek
       hint.style.opacity = '0';

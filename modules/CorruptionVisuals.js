@@ -35,7 +35,11 @@ const CorruptionVisuals = {
 
     // Naslouchej na změny corruption
     EventBus.on('corruption:change', ({ level }) => {
-      if(level > (this._level ?? 0)) AudioSystem.playEffect('sting_corruption', 0.45); // trhlina jen při nárůstu
+      // Trhlina jen při nárůstu, tišší a max jednou za 2.5 s (volby/karty ji jinak spamovaly)
+      if(level > (this._level ?? 0)) {
+        const now = Date.now();
+        if(now - (this._lastSting || 0) > 2500) { this._lastSting = now; AudioSystem.playEffect('sting_corruption', 0.3); }
+      }
       this._level = level;
       this._updateRoot(level);
       this._restartLoops(level);

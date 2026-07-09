@@ -20,7 +20,8 @@ const MainMenu = {
   _noiseRaf:    null,
 
   // ── INIT ──────────────────────────────────────────────────────────
-  init(container, params = {}) {
+  init(container, params = {
+    AudioSystem?.preloadEffects?.(['sting_profile','sting_corruption','sting_act_title','sting_coin','sting_bark','sting_yourcard','sting_letter','sfx_card_play','sfx_fusion','sfx_clash','sfx_victory','sfx_defeat','sfx_letter_done']);}) {
     this._container = container;
     this._listeners = [];
     if(this._noiseRaf) cancelAnimationFrame(this._noiseRaf);

@@ -57,13 +57,11 @@ add_noise(b, 2.35, 0.010, amp=0.5, decay=0.003)                       # lock kli
 add_sine(b, 2.35, 0.28, 130, 110, amp=0.30, attack=0.002, decay=0.07) # suchý thump
 write('sting_profile', b)
 
-# ── sting_corruption: prasknutí reality + detune + sub žuchnutí ──
-b = buf(2.0)
-add_noise(b, 0.0, 0.05, amp=0.55, decay=0.010)                        # crack
-add_sine(b, 0.0, 0.09, 3100, 2700, amp=0.18, attack=0.001, decay=0.02)
-add_sine(b, 0.10, 0.95, 440, 440, amp=0.10, attack=0.05, decay=0.5)
-add_sine(b, 0.10, 0.95, 440, 396, amp=0.10, attack=0.05, decay=0.5)  # driftuje dolů = detune
-add_sine(b, 0.14, 1.1, 55, 42, amp=0.55, attack=0.004, decay=0.30)    # sub
+# ── sting_corruption: krátké tiché prasknutí (v2 — dřív 2s a ostré, rušilo) ──
+b = buf(0.7)
+add_noise(b, 0.0, 0.03, amp=0.30, decay=0.007, lp=0.35)               # měkčí crack
+add_sine(b, 0.02, 0.35, 300, 250, amp=0.10, attack=0.01, decay=0.10)  # krátký detune tón
+add_sine(b, 0.02, 0.45, 60, 48, amp=0.32, attack=0.004, decay=0.12)   # kratší sub
 write('sting_corruption', b)
 
 # ── sting_act_title: teplý akord smyčce+synth, nádech a doznění ──

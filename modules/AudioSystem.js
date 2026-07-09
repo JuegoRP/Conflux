@@ -138,15 +138,30 @@ const AudioSystem = {
   // ZVUKOVÉ EFEKTY
   // ══════════════════════════════════════════════════════════════
 
+  _fxCache: {},
+
   playEffect(effectKey, volume = null) {
     if(GameState.settings?.sfx === false) return;
     const url = GameState.getMusic(effectKey);
     if(!url) return;
     try {
-      const audio = new Audio(url);
+      // Cache: první použití stáhne, další hrají okamžitě z klonu (žádné zpoždění fetchem)
+      let base = this._fxCache[effectKey];
+      if(!base) { base = new Audio(url); base.preload = 'auto'; this._fxCache[effectKey] = base; }
+      const audio = base.cloneNode(true);
       audio.volume = Math.min(1, Math.max(0, volume ?? this._sfxVolume));
       audio.play().catch(() => {});
     } catch(e) {}
+  },
+
+  // Zahřej cache SFX dopředu (volá MainMenu při startu)
+  preloadEffects(keys) {
+    for(const k of keys) {
+      if(this._fxCache[k]) continue;
+      const url = GameState.getMusic(k);
+      if(!url) continue;
+      try { const a = new Audio(url); a.preload = 'auto'; this._fxCache[k] = a; } catch(e) {}
+    }
   },
 
   // Faction-specific zvuk útoku

@@ -114,9 +114,10 @@ function scarOverlay(cardId, phase, faction) {
 }
 
 export function renderCardEl(card, size = 'md', opts = {}) {
+  const lz = opts.lazy ? 'loading="lazy"' : '';
   if (opts.faceDown) {
     return `<div class="cx-card cx-${size} cx-facedown">
-      <img class="cx-back-img" src="assets/images/cards/card_back.jpg" loading="lazy"
+      <img class="cx-back-img" src="assets/images/cards/card_back.jpg" ${lz}
         onerror="this.onerror=null;this.src='assets/images/cards/card_back.png'" />
     </div>`;
   }
@@ -176,13 +177,13 @@ export function renderCardEl(card, size = 'md', opts = {}) {
     ].join('');
 
     const artHtml = artPath
-      ? `<img class="cx-art" src="${artPath}" loading="lazy" onerror="this.style.display='none';var f=this.closest('.cx-card').querySelector('.cx-emoji-fallback');if(f)f.style.display='';" />`
+      ? `<img class="cx-art" src="${artPath}" ${lz} onerror="this.style.display='none';var f=this.closest('.cx-card').querySelector('.cx-emoji-fallback');if(f)f.style.display='';" />`
       : '';
     const emojiHtml = `<span class="cx-emoji${artPath ? ' cx-emoji-fallback' : ''}" data-sprite-id="${card.id}">${card.emoji || '?'}</span>`;
 
     return `<div class="${cls}" style="--fc:${fc};--fbg:${fbg}" data-card-id="${card.id}">
       ${artHtml}
-      <img class="cx-frame" src="${frame}" loading="lazy" onerror="this.style.display='none'" />
+      <img class="cx-frame" src="${frame}" ${lz} onerror="this.style.display='none'" />
       <div class="cx-content cx-content-sm">
         <div class="cx-sm-emoji-wrap">
           ${emojiHtml}
@@ -230,7 +231,7 @@ export function renderCardEl(card, size = 'md', opts = {}) {
 
   return `<div class="${cls}" style="--fc:${fc};--fbg:${fbg}" data-card-id="${card.id}">
     ${artHtmlLg}
-    <img class="cx-frame" src="${frame}" loading="lazy" onerror="this.style.display='none'" />
+    <img class="cx-frame" src="${frame}" ${lz} onerror="this.style.display='none'" />
     <div class="cx-content">
       <div class="cx-zone-top">
         <span class="cx-topname">${card.name}</span>
