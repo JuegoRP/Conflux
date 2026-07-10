@@ -33,6 +33,13 @@ a kvůli limitu 1 karta/tah po zahrání monstra skončí → **skoro vždy hraj
 - ✅ **Arény opraveny dle popisků**: frakční buffy (synth aréna buffuje jen synth — OBĚ strany), buff_all dává ATK i DEF, bonus se aplikuje i na později vyložená monstra (_applyArenaToMonster, pravidlo z CLAUDE.md)
 - ✅ **Audit popisků**: 17 karet lhalo (čísla, +corruption, „obě strany", mirror/entropy chování) → popisky srovnány s reálným chováním
 
+## 3c. QA + release (2026-07-10)
+- ✅ **Simulátor konců** (`tools/sim_endings.py`) — všech 9 konců (A–F + 3 early) ověřeno dosažitelných
+- ✅ **QA tester průchodu** (`tools/qa_playthrough.py`) — 313 nodů, 0 chyb; opraveny: flagy konců (chose_*_path vs chosen_*_end), effect→effects (41 míst!), corruptionMin 70→5, osiřelý act3 řetěz (Voit first!), speakeři s diakritikou
+- ✅ **Safari fix** — sfx ogg→m4a (Safari/iOS ogg nehraje)
+- 🔜 **EN lokalizace** — infrastruktura + překlad dat (campaign/cards/enemies) přes OpenAI
+- ⬜ **STEAM packaging** (rozhodnuto 2026-07-10): Electron/Tauri wrapper + Steamworks, až po EN a balancingu
+
 ## 4. Balancing
 - ⬜ **Corruption tempo** — laditelná konstanta `STORY_CORRUPTION_PER_TIER` + prahy alignmentu
 - ⬜ **Váhy voleb** (akty 4–10 dostaly effects — doladit čísla podle pocitu)
