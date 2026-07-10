@@ -1043,16 +1043,16 @@ const GameState = {
     act10_ending_f:  'assets/audio/bgm/act10_ending_f.mp3',
 
     // ── SFX ──
-    sfx_card_play:    'assets/audio/sfx/card_play.ogg',
-    sfx_fusion:       'assets/audio/sfx/fusion.ogg',
-    sfx_clash:        'assets/audio/sfx/clash.ogg',
-    sfx_damage:       'assets/audio/sfx/damage.ogg',
-    sfx_direct_attack:'assets/audio/sfx/direct_attack.ogg',
-    sfx_spell:        'assets/audio/sfx/spell.ogg',
-    sfx_trap:         'assets/audio/sfx/trap.ogg',
-    sfx_arena:        'assets/audio/sfx/arena.ogg',
-    sfx_victory:      'assets/audio/sfx/victory.ogg',
-    sfx_defeat:       'assets/audio/sfx/defeat.ogg',
+    sfx_card_play:    'assets/audio/sfx/card_play.m4a',
+    sfx_fusion:       'assets/audio/sfx/fusion.m4a',
+    sfx_clash:        'assets/audio/sfx/clash.m4a',
+    sfx_damage:       'assets/audio/sfx/damage.m4a',
+    sfx_direct_attack:'assets/audio/sfx/direct_attack.m4a',
+    sfx_spell:        'assets/audio/sfx/spell.m4a',
+    sfx_trap:         'assets/audio/sfx/trap.m4a',
+    sfx_arena:        'assets/audio/sfx/arena.m4a',
+    sfx_victory:      'assets/audio/sfx/victory.m4a',
+    sfx_defeat:       'assets/audio/sfx/defeat.m4a',
     sfx_letter_done:  'assets/audio/sfx/letter_done.mp3',
 
     // ── STINGERY (syntetizované, tools/gen_stingers.py) ──
