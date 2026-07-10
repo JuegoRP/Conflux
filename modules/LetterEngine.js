@@ -63,13 +63,13 @@ const LetterEngine = {
     el.innerHTML = `
       <div class="letter-scene">
         <div class="letter-device">
-          <img src="assets/images/letter_paper.png" class="letter-device-img" alt="">
+          <img src="assets/images/letter_holo.png" class="letter-device-img" alt="">
           <div class="letter-screen">
             <div class="letter-content" id="letter-content"></div>
-            <div class="letter-controls" id="letter-controls" style="display:none">
-              <button class="letter-btn letter-btn--replay" id="letter-replay">▶ Přečíst znovu</button>
-              <button class="letter-btn letter-btn--end" id="letter-end">✕ Konec</button>
-            </div>
+          </div>
+          <div class="letter-controls" id="letter-controls" style="display:none">
+            <button class="letter-btn letter-btn--replay" id="letter-replay">▶ Přečíst znovu</button>
+            <button class="letter-btn letter-btn--end" id="letter-end">✕ Konec</button>
           </div>
         </div>
       </div>`;
@@ -235,17 +235,25 @@ const LetterEngine = {
 
   getStyles() {
     return `
-      /* ── Letter Scene — holografický terminál ── */
+      /* ── Letter Scene — pokoj z aktu 1 (kruh se uzavírá), ztmavený ── */
       .letter-scene {
         position: fixed;
         inset: 0;
-        background: #04080e;
+        background: #04080e url('assets/images/backgrounds/act1_room.jpg') center / cover no-repeat;
+      }
+      .letter-scene::before {
+        content: '';
+        position: absolute; inset: 0;
+        background: rgba(2, 6, 10, 0.55);
       }
 
-      /* Holo vyplňuje CELÝ displej (full-bleed) — žádná černá kolem */
+      /* Projektor s hologramem — CELÝ objekt uprostřed, pozadí viditelné kolem */
       .letter-device {
         position: absolute;
-        inset: 0;
+        left: 50%; top: 50%;
+        transform: translate(-50%, -50%);
+        height: min(88vh, 92vw);
+        aspect-ratio: 1 / 1;
       }
 
       .letter-device-img {
@@ -253,37 +261,37 @@ const LetterEngine = {
         inset: 0;
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
         display: block;
+        filter: drop-shadow(0 8px 30px rgba(0,0,0,0.5));
       }
 
-      /* Overlay přesně na oblast displeje uvnitř hologramu */
-      /* Hodnoty: top/bottom/left/right jsou % výšky/šířky .letter-device */
+      /* Textová oblast = naměřená vnitřní plocha hologramu (uvnitř světlého rámu) */
       .letter-screen {
         position: absolute;
-        /* holo je full-bleed → text jako čitelný sloupec přímo na hologramu */
-        top: 12%;
-        bottom: 12%;
-        left: 8%;
-        right: 8%;
+        top: 9%;
+        left: 24%;
+        right: 24%;
+        height: 41%;
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        /* žádný barevný podkres — text se píše přímo do hologramu */
         background: transparent;
-        padding: 0.8rem 1.2rem 0.5rem;
       }
 
       .letter-content {
         flex: 1;
         overflow-y: auto;
-        scrollbar-width: none;
-        padding-right: 0.2rem;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(20, 90, 110, 0.55) transparent;
+        padding-right: 0.6rem;
         max-width: 62ch;
         margin: 0 auto;
         width: 100%;
       }
-      .letter-content::-webkit-scrollbar { display: none; }
+      .letter-content::-webkit-scrollbar { width: 5px; }
+      .letter-content::-webkit-scrollbar-track { background: transparent; }
+      .letter-content::-webkit-scrollbar-thumb { background: rgba(20, 90, 110, 0.55); border-radius: 3px; }
 
       /* ── Text — sci-fi terminál, tmavé písmo na jasném hologramu ── */
       .letter-line {
@@ -333,12 +341,13 @@ const LetterEngine = {
 
       /* ── Tlačítka ── */
       .letter-controls {
+        position: absolute;
+        bottom: 2.5%;
+        left: 50%;
+        transform: translateX(-50%);
         display: flex;
         gap: 0.7rem;
-        justify-content: flex-end;
-        padding-top: 0.5rem;
-        margin-top: 0.3rem;
-        border-top: 1px solid rgba(79, 163, 224, 0.2);
+        justify-content: center;
         flex-shrink: 0;
       }
 
