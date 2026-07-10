@@ -67,10 +67,10 @@ const LetterEngine = {
           <div class="letter-screen">
             <div class="letter-content" id="letter-content"></div>
           </div>
-          <div class="letter-controls" id="letter-controls" style="display:none">
-            <button class="letter-btn letter-btn--replay" id="letter-replay">▶ Přečíst znovu</button>
-            <button class="letter-btn letter-btn--end" id="letter-end">✕ Konec</button>
-          </div>
+        </div>
+        <div class="letter-controls" id="letter-controls" style="display:none">
+          <button class="letter-btn letter-btn--replay" id="letter-replay">přečíst znovu</button>
+          <button class="letter-btn letter-btn--end" id="letter-end">konec</button>
         </div>
       </div>`;
 
@@ -342,33 +342,34 @@ const LetterEngine = {
       /* ── Tlačítka ── */
       .letter-controls {
         position: absolute;
-        bottom: 2.5%;
+        bottom: 2.2%;
         left: 50%;
         transform: translateX(-50%);
         display: flex;
-        gap: 0.7rem;
+        gap: 2.4rem;
         justify-content: center;
-        flex-shrink: 0;
+        z-index: 5;
       }
 
       .letter-btn {
-        background: rgba(4, 20, 40, 0.6);
-        border: 1px solid rgba(79, 163, 224, 0.4);
-        color: #4fa3e0;
-        padding: 0.3rem 0.9rem;
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid transparent;
+        color: rgba(178, 208, 222, 0.72);
+        padding: 0.25rem 0.2rem;
         font-family: 'Share Tech Mono', monospace;
-        font-size: clamp(9px, 1.1vw, 12px);
+        font-size: clamp(11px, 1.3vw, 14px);
         cursor: pointer;
-        letter-spacing: 0.06em;
-        transition: background 0.15s, border-color 0.15s;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        transition: color 0.15s, border-color 0.15s;
       }
       .letter-btn:hover {
-        background: rgba(79, 163, 224, 0.12);
-        border-color: rgba(79, 163, 224, 0.7);
+        color: #d8ecf5;
+        border-bottom-color: rgba(140, 210, 220, 0.6);
       }
       .letter-btn--end {
-        border-color: rgba(224, 79, 106, 0.5);
-        color: #e04f6a;
+        color: rgba(216, 150, 160, 0.7);
       }
       .letter-btn--end:hover {
         background: rgba(224, 79, 106, 0.1);
