@@ -13,6 +13,40 @@ import { CARDS_DATA } from '../data/cards.js';
 import { CAMPAIGN_DATA } from '../data/campaign.js';
 import { ENEMIES_DATA } from '../data/enemies.js';
 
+// Statické UI stringy — CZ originál → EN. (Defaultně se zobrazuje CZ; EN jen když je zvolen.)
+const UI_EN = {
+  // Coinflip
+  'klikni na minci — kdo začíná': 'flip the coin — who goes first',
+  'Začínáš ty.': 'You go first.',
+  'Začíná protivník.': 'Opponent goes first.',
+  'načítám karty…': 'loading cards…',
+  // Profil-screen
+  'SYSTÉM · PROFIL KURÝRA': 'SYSTEM · COURIER PROFILE',
+  'Čtu tvůj deck. A tebe.': 'I read your deck. And you.',
+  // Obecné
+  '▶ POKRAČOVAT': '▶ CONTINUE',
+  'POKRAČOVAT →': 'CONTINUE →',
+  ' > POKRAČOVAT': ' > CONTINUE',
+  '← ZPĚT': '← BACK',
+  // Letter
+  'přečíst znovu': 'read again',
+  'konec': 'end',
+  // Mode select
+  'VYBER HERNÍ MÓD': 'CHOOSE GAME MODE',
+  'Nastavíš jen na začátku nové hry.': 'Set only at the start of a new game.',
+  'Volné fúze (archetypy). Přístupnější — většina kombinací něco vytvoří. Doporučeno poprvé.':
+    'Free fusions (archetypes). More forgiving — most combinations make something. Recommended for a first run.',
+  'Jen specifické fúzní recepty. Mnohem složitější, využívá maximum mechanik. Pro znalce.':
+    'Only specific fusion recipes. Much harder, uses every mechanic. For veterans.',
+  // Nastavení
+  'HUDBA': 'MUSIC', 'ZVUKY': 'SOUND', 'RYCHLOST TEXTU': 'TEXT SPEED', 'OBTÍŽNOST AI': 'AI DIFFICULTY',
+  'FULLSCREEN': 'FULLSCREEN', 'KLÁVESNICE': 'KEYBOARD', 'NASTAVENÍ': 'SETTINGS',
+  'POMALÁ': 'SLOW', 'NORMÁLNÍ': 'NORMAL', 'RYCHLÁ': 'FAST', 'OKAMŽITÁ': 'INSTANT',
+  'TĚŽKÁ': 'HARD', 'PERFEKTNÍ': 'PERFECT',
+  // Battle overlay
+  'VÍTĚZSTVÍ': 'VICTORY', 'PORÁŽKA': 'DEFEAT', 'PAUZA': 'PAUSE', 'KAMPAŇ': 'CAMPAIGN', 'TAH': 'TURN',
+};
+
 const Locale = {
   strings: {},   // CZ → EN pro dynamické stringy
 
@@ -29,6 +63,15 @@ const Locale = {
     if(GameState.settings?.language !== 'en') return s;
     return this.strings[s] || s;
   },
+
+  /** Statické UI stringy (tlačítka, hlavičky). V CZ vrací originál, v EN z UI mapy. */
+  ui(s) {
+    if(GameState.settings?.language !== 'en') return s;
+    return UI_EN[s] ?? s;
+  },
+
+  /** Je aktuální jazyk angličtina? */
+  isEN() { return GameState.settings?.language === 'en'; },
 
   async apply() {
     const lang = this.getLang();

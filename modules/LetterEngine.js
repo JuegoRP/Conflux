@@ -1,5 +1,6 @@
 import EventBus   from '../engine/EventBus.js';
 import GameState  from '../engine/GameState.js';
+import Locale     from '../engine/Locale.js';
 import AudioSystem from './AudioSystem.js';
 import Router      from '../engine/Router.js';
 
@@ -69,8 +70,8 @@ const LetterEngine = {
           </div>
         </div>
         <div class="letter-controls" id="letter-controls" style="display:none">
-          <button class="letter-btn letter-btn--replay" id="letter-replay">přečíst znovu</button>
-          <button class="letter-btn letter-btn--end" id="letter-end">konec</button>
+          <button class="letter-btn letter-btn--replay" id="letter-replay">${Locale.ui('přečíst znovu')}</button>
+          <button class="letter-btn letter-btn--end" id="letter-end">${Locale.ui('konec')}</button>
         </div>
       </div>`;
 

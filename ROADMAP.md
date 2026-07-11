@@ -40,7 +40,9 @@ a kvůli limitu 1 karta/tah po zahrání monstra skončí → **skoro vždy hraj
 - ✅ **EN lokalizace v1 (2026-07-11)**: engine/Locale.js (overlay merge při bootu), data/lang/*.json
   (campaign 253 nodů, cards 421, enemies 32, strings 27 — dopis+profil), přepínač JAZYK v nastavení,
   EN menu labely, VoiceOver EN mapa sladěná s dabingem. tools/translate_en.py (idempotentní).
-  ⬜ zbývá: UI drobnosti (battle logy, settings labely, mode-select, coinflip texty) — sepsat a přeložit
+  ✅ UI stringy (2026-07-11): Locale.ui() CZ→EN mapa — coinflip, profil-screen, POKRAČOVAT/ZPĚT,
+     letter tlačítka, mode-select, settings labely+volby, pauza/výsledek. Wired: Battle/Story/Letter/MainMenu.
+  ⬜ zbývá: 138 dynamických battle-log hlášek (interpolované, scrollují — nižší priorita)
 - ⬜ **STEAM packaging** (rozhodnuto 2026-07-10): Electron/Tauri wrapper + Steamworks, až po EN a balancingu
 
 ## 4. Balancing

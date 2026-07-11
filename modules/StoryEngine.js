@@ -3,6 +3,7 @@ import { CAMPAIGN_DATA } from '../data/campaign.js';
 import CorruptionVisuals from './CorruptionVisuals.js';
 import EventBus     from '../engine/EventBus.js';
 import VoiceOver from './VoiceOver.js';
+import Locale from '../engine/Locale.js';
 import GameState    from '../engine/GameState.js';
 import AssetLoader  from '../engine/AssetLoader.js';
 import AudioSystem  from '../modules/AudioSystem.js';
@@ -612,7 +613,7 @@ const StoryEngine = {
           const l = outro[outroIdx++];
           setLine(l.speaker, l.text);
           const isLast = outroIdx === outro.length;
-          showBtn(isLast ? '▶ POKRAČOVAT' : '▶', isLast ? () => this._goToNode(node.next) : nextOutro);
+          showBtn(isLast ? Locale.ui('▶ POKRAČOVAT') : '▶', isLast ? () => this._goToNode(node.next) : nextOutro);
         } else {
           this._goToNode(node.next);
         }
@@ -631,7 +632,7 @@ const StoryEngine = {
     const choicesHtml = node.choices
       ? node.choices.map((c, i) => this._renderChoice(c, i)).join('')
       : node.next
-        ? `<button class="vn-btn" data-next="${node.next}">▶ POKRAČOVAT</button>`
+        ? `<button class="vn-btn" data-next="${node.next}">${Locale.ui('▶ POKRAČOVAT')}</button>`
         : '';
 
     // Zachyť starý background pro cross-fade
@@ -1611,7 +1612,7 @@ const StoryEngine = {
       + '</div>'
       + '<p style="font-family:\'Press Start 2P\',monospace;font-size:6px;color:#1e2535;text-align:center;letter-spacing:2px;margin-bottom:2rem">'
       + 'COURIER TYPE: <span style="color:' + endColor + '">' + ((id.endingType || 'unknown').toUpperCase()) + '</span></p>'
-      + '<button id="btn-profile-continue" style="font-family:\'Press Start 2P\',monospace;font-size:8px;padding:12px 24px;background:transparent;border:2px solid ' + endColor + ';color:' + endColor + ';cursor:pointer;width:100%"> > POKRAČOVAT</button>'
+      + '<button id="btn-profile-continue" style="font-family:\'Press Start 2P\',monospace;font-size:8px;padding:12px 24px;background:transparent;border:2px solid ' + endColor + ';color:' + endColor + ';cursor:pointer;width:100%">' + Locale.ui(' > POKRAČOVAT') + '</button>'
       + '</div></div>';
 
     this._addStyles && this._addStyles();
@@ -1647,7 +1648,7 @@ const StoryEngine = {
           <div style="font-family:'Press Start 2P',monospace;font-size:clamp(10px,2vw,16px);color:${endColor};
             letter-spacing:6px;text-shadow:0 0 30px ${endColor}40;animation:fadeIn 2s ease forwards">${title}</div>
           <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#2a3545;letter-spacing:3px;
-            margin-top:3rem;animation:blink 1.5s ease-in-out infinite">POKRAČOVAT →</div>
+            margin-top:3rem;animation:blink 1.5s ease-in-out infinite">${Locale.ui('POKRAČOVAT →')}</div>
         </div>
       </div>`;
 
@@ -2067,7 +2068,7 @@ const StoryEngine = {
           ${cardHtml}
           ${card ? `<div style="font-family:var(--font-px);font-size:9px;color:#c8d6e5;letter-spacing:2px;margin-top:14px">${card.name || ''}</div>` : ''}
           <div style="font-family:var(--font-vt);font-size:18px;color:#8090a0;margin:16px 8px;line-height:1.6;max-width:520px">${node.message || ''}</div>
-          <button class="vn-btn" id="reward-next" style="margin-top:16px">▶ POKRAČOVAT</button>
+          <button class="vn-btn" id="reward-next" style="margin-top:16px">${Locale.ui('▶ POKRAČOVAT')}</button>
         </div>
       </div>`;
     this._addStyles();

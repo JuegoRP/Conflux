@@ -574,13 +574,13 @@ const MainMenu = {
         <div style="font-family:'VT323',monospace;font-size:16px;line-height:1.35;color:#a8b6c6">${desc}</div>
       </button>`;
     const ov = this._overlay(`
-      <div style="font-family:'Press Start 2P',monospace;font-size:13px;letter-spacing:2px;color:#dfe9f2;margin-bottom:6px">VYBER HERNÍ MÓD</div>
-      <div style="font-family:'VT323',monospace;font-size:15px;color:#7f8ea0;margin-bottom:18px">Nastavíš jen na začátku nové hry.</div>
+      <div style="font-family:'Press Start 2P',monospace;font-size:13px;letter-spacing:2px;color:#dfe9f2;margin-bottom:6px">${Locale.ui('VYBER HERNÍ MÓD')}</div>
+      <div style="font-family:'VT323',monospace;font-size:15px;color:#7f8ea0;margin-bottom:18px">${Locale.ui('Nastavíš jen na začátku nové hry.')}</div>
       <div style="display:flex;gap:14px;flex-wrap:wrap;max-width:660px">
-        ${card('simple','◈','SIMPLE','Volné fúze (archetypy). Přístupnější — většina kombinací něco vytvoří. Doporučeno poprvé.','#4fa3e0')}
-        ${card('hardcore','◆','HARDCORE','Jen specifické fúzní recepty. Mnohem složitější, využívá maximum mechanik. Pro znalce.','#e0c060')}
+        ${card('simple','◈','SIMPLE',Locale.ui('Volné fúze (archetypy). Přístupnější — většina kombinací něco vytvoří. Doporučeno poprvé.'),'#4fa3e0')}
+        ${card('hardcore','◆','HARDCORE',Locale.ui('Jen specifické fúzní recepty. Mnohem složitější, využívá maximum mechanik. Pro znalce.'),'#e0c060')}
       </div>
-      <button class="m-btn m-btn-dim" id="ov-cancel" style="margin-top:16px">← ZPĚT</button>
+      <button class="m-btn m-btn-dim" id="ov-cancel" style="margin-top:16px">${Locale.ui('← ZPĚT')}</button>
     `);
     ov.querySelectorAll('.m-mode-card').forEach(btn => {
       btn.addEventListener('mouseenter', () => { btn.style.background = 'rgba(79,163,224,0.12)'; });
@@ -616,17 +616,17 @@ const MainMenu = {
     ];
 
     const speedBtns = speedOpts.map(o =>
-      `<button class="m-tog m-set-btn${speed===o.val?' m-tog--on':''}" data-speed="${o.val}">${o.label}</button>`
+      `<button class="m-tog m-set-btn${speed===o.val?' m-tog--on':''}" data-speed="${o.val}">${Locale.ui(o.label)}</button>`
     ).join('');
     const diffBtns = diffOpts.map(o =>
-      `<button class="m-tog m-set-btn${diff===o.val?' m-tog--on':''}" data-diff="${o.val}">${o.label}</button>`
+      `<button class="m-tog m-set-btn${diff===o.val?' m-tog--on':''}" data-diff="${o.val}">${Locale.ui(o.label)}</button>`
     ).join('');
 
     const ov = this._overlay(`
       <div class="m-dialog-title">NASTAVENÍ</div>
 
       <div class="m-row">
-        <span class="m-row-label">HUDBA</span>
+        <span class="m-row-label">${Locale.ui('HUDBA')}</span>
         <div class="m-slider-wrap">
           <input type="range" class="m-slider" id="sl-music" min="0" max="100" value="${musicPct}">
           <span class="m-slider-val" id="sl-music-val">${musicPct}%</span>
@@ -634,7 +634,7 @@ const MainMenu = {
       </div>
 
       <div class="m-row">
-        <span class="m-row-label">ZVUKY</span>
+        <span class="m-row-label">${Locale.ui('ZVUKY')}</span>
         <div class="m-slider-wrap">
           <input type="range" class="m-slider" id="sl-sfx" min="0" max="100" value="${sfxPct}">
           <span class="m-slider-val" id="sl-sfx-val">${sfxPct}%</span>
@@ -642,12 +642,12 @@ const MainMenu = {
       </div>
 
       <div class="m-row m-row--col">
-        <span class="m-row-label">RYCHLOST TEXTU</span>
+        <span class="m-row-label">${Locale.ui('RYCHLOST TEXTU')}</span>
         <div class="m-btn-group" id="grp-speed">${speedBtns}</div>
       </div>
 
       <div class="m-row m-row--col">
-        <span class="m-row-label">OBTÍŽNOST AI</span>
+        <span class="m-row-label">${Locale.ui('OBTÍŽNOST AI')}</span>
         <div class="m-btn-group" id="grp-diff">${diffBtns}</div>
       </div>
 
@@ -660,12 +660,12 @@ const MainMenu = {
       </div>
 
       <div class="m-row">
-        <span class="m-row-label">FULLSCREEN</span>
+        <span class="m-row-label">${Locale.ui('FULLSCREEN')}</span>
         <button class="m-tog${fsOn?' m-tog--on':''}" id="tog-fs">${fsOn?'ON':'OFF'}</button>
       </div>
 
       <div class="m-row">
-        <span class="m-row-label">KLÁVESNICE</span>
+        <span class="m-row-label">${Locale.ui('KLÁVESNICE')}</span>
         <button class="m-tog${kbOn?' m-tog--on':''}" id="tog-kb">${kbOn?'ON':'OFF'}</button>
       </div>
       <div class="m-row-hint">Enter · Mezerník · Esc</div>

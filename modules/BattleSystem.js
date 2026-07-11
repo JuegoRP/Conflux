@@ -8,6 +8,7 @@ import GameState   from '../engine/GameState.js';
 import AudioSystem from './AudioSystem.js';
 import VoiceOver  from './VoiceOver.js';
 import AssetLoader from '../engine/AssetLoader.js';
+import Locale      from '../engine/Locale.js';
 import SaveManager from '../engine/SaveManager.js';
 import { renderCardEl as _rcEl, injectCardStyles, showCardZoom } from './CardRenderer.js';
 
@@ -179,7 +180,7 @@ const BattleSystem = {
   // ── COINFLIP OVERLAY ────────────────────────────────────────────────────────
   _showCoinflip(container, onDone) {
     const who = this._state.coinflipResult;
-    const resultText = who === 'player' ? 'Začínáš ty.' : 'Začíná protivník.';
+    const resultText = Locale.ui(who === 'player' ? 'Začínáš ty.' : 'Začíná protivník.');
 
     const style = document.createElement('style');
     style.id = 'cf-style';
@@ -276,7 +277,7 @@ const BattleSystem = {
         <div class="cf-logo-wrap" id="cf-logo-wrap">
           <img class="cf-logo" id="cf-logo" src="assets/images/emblem.png" alt="">
         </div>
-        <div class="cf-hint" id="cf-hint">klikni na minci — kdo začíná</div>
+        <div class="cf-hint" id="cf-hint">${Locale.ui('klikni na minci — kdo začíná')}</div>
         <div class="cf-result" id="cf-result"></div>
       </div>`;
     document.body.appendChild(overlay);
@@ -295,7 +296,7 @@ const BattleSystem = {
     urls.push('assets/images/cards/card_back.jpg');
     let assetsReady = false;
     const hintReady = hint.textContent;
-    hint.textContent = 'načítám karty…';
+    hint.textContent = Locale.ui('načítám karty…');
     AssetLoader.preloadImages(urls).then(() => { assetsReady = true; hint.textContent = hintReady; });
     const result   = overlay.querySelector('#cf-result');
     let spun       = false;
@@ -2664,10 +2665,10 @@ const BattleSystem = {
     overlay.className = 'pause-overlay';
     overlay.innerHTML = `
       <div class="pause-panel">
-        <div class="pause-title">⏸ PAUZA</div>
-        <div class="pause-info">${isFree ? 'FREE BATTLE' : 'KAMPAŇ'} · TAH ${s.turnNumber}</div>
+        <div class="pause-title">⏸ ${Locale.ui('PAUZA')}</div>
+        <div class="pause-info">${isFree ? 'FREE BATTLE' : Locale.ui('KAMPAŇ')} · ${Locale.ui('TAH')} ${s.turnNumber}</div>
         <div class="pause-actions">
-          <button class="pause-btn-action pause-resume" id="pause-resume">▶ POKRAČOVAT</button>
+          <button class="pause-btn-action pause-resume" id="pause-resume">${Locale.ui('▶ POKRAČOVAT')}</button>
           <button class="pause-btn-action pause-menu" id="pause-menu">← HLAVNÍ MENU</button>
         </div>
       </div>
@@ -2785,7 +2786,7 @@ const BattleSystem = {
     if(drop) this._grantDrop(drop);
     const copiesAfter = drop ? copiesBefore + 1 : 0;
     const copyLabel = drop ? (copiesBefore === 0 ? '✓ Nová karta!' : `✓ Přidáno (${copiesAfter}. kopie)`) : '';
-    const headerText  = isVictory ? 'VÍTĚZSTVÍ' : 'PORÁŽKA';
+    const headerText  = Locale.ui(isVictory ? 'VÍTĚZSTVÍ' : 'PORÁŽKA');
     EventBus.emit('sfx:play', isVictory ? 'victory' : 'defeat');
     const headerColor = isVictory ? '#4fa3e0' : '#e04f6a';
     const reasonText  = isVictory
@@ -2843,7 +2844,7 @@ const BattleSystem = {
         </div>` : ''}
 
         <div class="ov-actions">
-          ${(isVictory || this._params.forcedLoss) ? `<button class="ov-btn ov-btn-continue" id="ov-next">▶ POKRAČOVAT</button>` : ''}
+          ${(isVictory || this._params.forcedLoss) ? `<button class="ov-btn ov-btn-continue" id="ov-next">${Locale.ui('▶ POKRAČOVAT')}</button>` : ''}
           ${(isVictory || this._params.forcedLoss) ? `<button class="ov-btn ov-btn-menu" id="ov-menu">← MENU</button>` : `<div class="ov-auto-menu" id="ov-auto-msg">→ menu za 3…</div>`}
         </div>
       </div>
@@ -3268,12 +3269,12 @@ const BattleSystem = {
     ov.className = 'cf-profile';
     ov.innerHTML = `
       <img class="cf-profile-emblem" src="assets/images/emblem_sm.png" alt="">
-      <div class="cf-profile-head">SYSTÉM &middot; PROFIL KURÝRA</div>
-      <div class="cf-profile-sub">Čtu tvůj deck. A tebe.</div>
+      <div class="cf-profile-head">${Locale.ui('SYSTÉM · PROFIL KURÝRA').replace(' · ', ' &middot; ')}</div>
+      <div class="cf-profile-sub">${Locale.ui('Čtu tvůj deck. A tebe.')}</div>
       <div class="cf-profile-list">
         ${lines.map(t => `<div class="cf-profile-line">&rsaquo; ${t}</div>`).join('')}
       </div>
-      <button class="cf-profile-go">▶ POKRAČOVAT</button>`;
+      <button class="cf-profile-go">${Locale.ui('▶ POKRAČOVAT')}</button>`;
     document.body.appendChild(ov);
     requestAnimationFrame(() => ov.classList.add('on'));
     AudioSystem.playEffect('sting_profile');
@@ -3780,7 +3781,7 @@ const BattleSystem = {
     const actRow = document.createElement('div');
     actRow.className = 'act-row';
     actRow.innerHTML = `
-      <button class="btn btn-sm" id="btn-pause">PAUZA</button>
+      <button class="btn btn-sm" id="btn-pause">${Locale.ui('PAUZA')}</button>
       <div class="act-txt" id="act-txt">${this._actText()}</div>
       <div id="act-btn-zone" style="display:contents">${this._renderActionButtons()}</div>
     `;
