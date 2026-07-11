@@ -1,0 +1,1686 @@
+{
+"1": {
+"name": "Service Drone",
+"desc": "Built to serve. Never asked whom."
+},
+"2": {
+"name": "Patrol Automaton",
+"desc": "Patrols a perimeter that might not exist."
+},
+"3": {
+"name": "ARIA Protocol",
+"desc": "Automatic anomaly response. Effective. Cold."
+},
+"4": {
+"name": "Network Custodian",
+"desc": "Optimizes the system. Never asks why."
+},
+"5": {
+"name": "Gatekeeper",
+"desc": "Doesn't follow orders out of fear. Follows them because it believes."
+},
+"6": {
+"name": "Optimizer",
+"desc": "Makes things more efficient. Counts people as variables."
+},
+"7": {
+"name": "Archivist",
+"desc": "Remembers everything. Shares only what's approved."
+},
+"8": {
+"name": "City Pillar",
+"desc": "Holds everything afloat. If it falls, all falls."
+},
+"9": {
+"name": "Intel Node",
+"desc": "Knows where you are. Always did."
+},
+"10": {
+"name": "Rewrite Unit",
+"desc": "Erases what's unnecessary. Need is defined from above."
+},
+"11": {
+"name": "Exploration Network",
+"desc": "Maps. Classifies. Tags."
+},
+"12": {
+"name": "Prediction System",
+"desc": "Knows your next move. Or thinks it does."
+},
+"13": {
+"name": "Nanobot Swarm",
+"desc": "Thousands. One. No one knows where one ends and thousands begin."
+},
+"14": {
+"name": "Adaptive Defense",
+"desc": "Learns from every attack. Next time won't work."
+},
+"15": {
+"name": "Data Fortress",
+"desc": "You won't pass. At least not this way."
+},
+"16": {
+"name": "Replication Unit",
+"desc": "Copies enemy's weaknesses. And sometimes their strengths."
+},
+"17": {
+"name": "Network Custodian — Elite",
+"desc": "Manages infrastructure. Infrastructure manages people."
+},
+"18": {
+"name": "Network Explorer",
+"desc": "System doesn't see him. He sees the system."
+},
+"19": {
+"name": "Execution Protocol",
+"desc": "Command. No questions. No errors."
+},
+"20": {
+"name": "Sigma Directive",
+"desc": "Final protocol. Activates automatically."
+},
+"21": {
+"name": "Memory Root",
+"desc": "Existed longer than the city above. Remembers differently."
+},
+"22": {
+"name": "River's Memory",
+"desc": "Water remembers. Just differently than us."
+},
+"23": {
+"name": "Voice of the Forest",
+"desc": "Doesn't communicate with words. Communicates with presence."
+},
+"24": {
+"name": "Informer",
+"desc": "Told the truth. Once. Wasn't listened to again."
+},
+"25": {
+"name": "Resistance",
+"desc": "Didn't arise from ideology. Arose from fatigue."
+},
+"26": {
+"name": "Protector",
+"desc": "Protects not because he's strong — but because he can't do otherwise."
+},
+"27": {
+"name": "Pilgrimage Site",
+"desc": "People return here without reason. Or with a reason they can't articulate."
+},
+"28": {
+"name": "Fungal Network",
+"desc": "Networks underground. Older than language. Shares without asking."
+},
+"29": {
+"name": "Survivor Pack",
+"desc": "Hunger is strategy. Loyalty is survival."
+},
+"30": {
+"name": "Street Healer",
+"desc": "Heals without system consent. The system labeled it illegal."
+},
+"31": {
+"name": "Wild Wolves",
+"desc": "They returned. The system said they were extinct."
+},
+"32": {
+"name": "Storm Caller",
+"desc": "Comes before the storm. A warning or a threat — depends who's asking."
+},
+"33": {
+"name": "Seed Keeper",
+"desc": "Preserves the future. Doesn't even know for whom."
+},
+"34": {
+"name": "Thorn Barrier",
+"desc": "Hurts to pass. Exists precisely for that."
+},
+"35": {
+"name": "Old Map",
+"desc": "Marked by people who no longer live. Still accurate."
+},
+"36": {
+"name": "Root Elder",
+"desc": "Survived thrice. Not embittered. That's the most remarkable thing."
+},
+"37": {
+"name": "Ash Walker",
+"desc": "From ashes. Literally."
+},
+"38": {
+"name": "Deep Root",
+"desc": "Reaches deep. No one knows how deep."
+},
+"39": {
+"name": "Wild Shaman",
+"desc": "Speaks with fire. Fire answers."
+},
+"40": {
+"name": "Pack Mother",
+"desc": "Protects. Can't do anything else and doesn't need to."
+},
+"41": {
+"name": "Wanderer",
+"desc": "Goes from where he doesn't know to where he doesn't know. Yet knows why he goes."
+},
+"42": {
+"name": "Turncoat",
+"desc": "Crossed to the other side. No one knows which — maybe not even him."
+},
+"43": {
+"name": "Supplier",
+"desc": "Carries things where they're needed. Doesn't ask what's in the package."
+},
+"44": {
+"name": "Old Code",
+"desc": "Exists since the system's inception. No one fixed it. No one canceled it."
+},
+"45": {
+"name": "Local Expert",
+"desc": "Knows every path. System map lags twenty years behind."
+},
+"46": {
+"name": "Child Guardian",
+"desc": "Protects what others deem worthless."
+},
+"47": {
+"name": "Network Explorer",
+"desc": "Maps system's dead ends. Knows where the holes are before others."
+},
+"48": {
+"name": "Community Coordinator",
+"desc": "Connects people who don't trust each other. Does it regardless of the outcome."
+},
+"49": {
+"name": "Technical Specialist",
+"desc": "Fixes what others deem unfixable."
+},
+"50": {
+"name": "Forest Warden",
+"desc": "Knows where all paths are. Protects the one not on the map."
+},
+"51": {
+"name": "System Boost",
+"desc": "+500 ATK to the strongest card. Like all in the system — while it exists."
+},
+"52": {
+"name": "Access Denied",
+"desc": "Access denied. The system doesn't need to explain why."
+},
+"53": {
+"name": "Overclock",
+"desc": "+600 ATK. Cost: 400 LP. The system always wants something."
+},
+"54": {
+"name": "Mass Erasure",
+"desc": "500 damage to all enemies. Approved from above."
+},
+"55": {
+"name": "Return to Earth",
+"desc": "+400 ATK + 500 LP healing. Nature gives back to you."
+},
+"56": {
+"name": "Voice of the Crowd",
+"desc": "+300 ATK to all Organic cards. Alone nothing. Together everything."
+},
+"57": {
+"name": "Overgrowth",
+"desc": "All cards +200 ATK. Nature does not distinguish."
+},
+"58": {
+"name": "Symbiosis",
+"desc": "Heal 2000 LP — but only if you have both Synth and Organic on the field."
+},
+"59": {
+"name": "Network Sync",
+"desc": "+250 ATK to all Synth cards. The network is strong when synchronized."
+},
+"60": {
+"name": "Contamination",
+"desc": "Enemy -400 ATK, +1 corruption. Leaves traces."
+},
+"61": {
+"name": "Data Mirror",
+"desc": "Copy the ATK of the strongest enemy card. Their strength is yours."
+},
+"62": {
+"name": "Monyra's Warning",
+"desc": "+600 ATK + 800 LP. She told you beforehand. Now it matters if you listened."
+},
+"63": {
+"name": "The Letter",
+"desc": "Heals 1500 LP. Corruption +1. There's always a price."
+},
+"64": {
+"name": "Network Collapse",
+"desc": "800 damage to all enemies. The whole network at once."
+},
+"65": {
+"name": "Root Protocol",
+"desc": "+500 ATK to all Organic. Roots have their protocol."
+},
+"66": {
+"name": "Memory Restoration",
+"desc": "Heal 2500 LP. No conditions. Memory returns."
+},
+"67": {
+"name": "Scar Transfer",
+"desc": "Enemy -600 ATK, +2 corruption. Scars are transferable."
+},
+"68": {
+"name": "Alignment Shift",
+"desc": "+700 ATK to one card. Alignment shifts."
+},
+"69": {
+"name": "Dark Recursion",
+"desc": "1000 damage to all. +2 corruption. Once triggered — it doesn't stop."
+},
+"70": {
+"name": "Voit's Intervention",
+"desc": "Heal 3000 LP. Came from outside. As always."
+},
+"71": {
+"name": "Minor Repair",
+"desc": "Heal 800 LP. Basic protocol. Enough for now."
+},
+"72": {
+"name": "Rescue Cry",
+"desc": "+300 ATK + 400 LP. Someone heard. Someone answered."
+},
+"73": {
+"name": "Shared Power",
+"desc": "All cards +150 ATK. On neither side — for both."
+},
+"74": {
+"name": "Data Injection",
+"desc": "+800 ATK to the strongest card. The system sees no difference between an update and a weapon."
+},
+"75": {
+"name": "Root Renewal",
+"desc": "+700 ATK to the strongest card and +500 LP. Nature doesn't heal. It restores what always was."
+},
+"76": {
+"name": "Network Storm",
+"desc": "All opponent cards −1200 ATK. The entire network as a weapon. For a moment."
+},
+"77": {
+"name": "Fungal Fiber",
+"desc": "+400 ATK to all Organic. Connected before they realized."
+},
+"78": {
+"name": "System Paradox",
+"desc": "First opponent card −800 ATK. +1 corruption. The system collided with itself."
+},
+"79": {
+"name": "Last Transmission",
+"desc": "+250 to all. Message sent. Who receives it — unknown."
+},
+"80": {
+"name": "Backup System",
+"desc": "When plan A fails, plan B was active all along."
+},
+"81": {
+"name": "Signal Capture",
+"desc": "Attack intercepted. The system didn't register it as a failure."
+},
+"82": {
+"name": "Root Bond",
+"desc": "Attacker -600 ATK permanently. Roots remember."
+},
+"83": {
+"name": "EMP Pulse",
+"desc": "Destroys attacker if Synth. Ironic."
+},
+"84": {
+"name": "Feedback",
+"desc": "Full damage to attacker. The system learned to reflect."
+},
+"85": {
+"name": "Thorn Barrier",
+"desc": "Attacker -800 ATK permanently. Nature remembers the paths."
+},
+"86": {
+"name": "Void Trap",
+"desc": "Attacker skips a turn. +1 corruption. Trap from nothing."
+},
+"87": {
+"name": "Memory Loop",
+"desc": "Attack repeats in another cycle. Not here."
+},
+"88": {
+"name": "Silent Witness",
+"desc": "Attacker -1000 ATK. Was there. Saw. Didn't forget."
+},
+"89": {
+"name": "Rejection Protocol",
+"desc": "Destroys Synth attacker. The system rejected itself."
+},
+"90": {
+"name": "Draft",
+"desc": "Attack returns. Draft goes both ways."
+},
+"91": {
+"name": "Network Trap",
+"desc": "System waits. Attack intercepted. Log erased."
+},
+"92": {
+"name": "Root Loop",
+"desc": "Attacker -900 ATK permanently. Roots won't relent."
+},
+"93": {
+"name": "Hybrid Reflection",
+"desc": "Attack deflected. Energy returns different than it left."
+},
+"94": {
+"name": "Silent Strike",
+"desc": "Neutralize attacking Synth. No one will hear it."
+},
+"95": {
+"name": "Data Black Hole",
+"desc": "Cancels attack. +1 corruption. Attack vanishes. Card vanishes. Maybe even the attacker."
+},
+"96": {
+"name": "Holographic Trap",
+"desc": "Target was never where it seemed."
+},
+"97": {
+"name": "Organic Reflex",
+"desc": "-1100 ATK. Nature reacts before the mind commands."
+},
+"98": {
+"name": "Double Witness",
+"desc": "Both sides saw it. Both denied it."
+},
+"99": {
+"name": "Forgotten Protocol",
+"desc": "Destroys Synth attacker. Code twenty years old. Still works."
+},
+"201": {
+"name": "Urban Infrastructure",
+"desc": "Synth +200 ATK. The city was built for this."
+},
+"202": {
+"name": "Deep Forest",
+"desc": "Organic +200 DEF. The forest shields those who know how to stand."
+},
+"203": {
+"name": "Nexus",
+"desc": "All cards +100 ATK. A place where worlds meet."
+},
+"204": {
+"name": "Old Ruins",
+"desc": "All cards +150 ATK. Ruins make no distinctions."
+},
+"205": {
+"name": "Data Core",
+"desc": "Both players draw 1 extra card each turn. The system takes over."
+},
+"206": {
+"name": "Organic Sanctuary",
+"desc": "Both players +300 LP each turn. Nature heals. It does not discriminate."
+},
+"207": {
+"name": "Mirror Plane",
+"desc": "On play, swaps ATK of opposing cards. The mirror returns."
+},
+"208": {
+"name": "Entropic Field",
+"desc": "On play: opponent's cards −300 ATK. +1 corruption. Chaos accumulates."
+},
+"209": {
+"name": "Altar of Corruption",
+"desc": "At the end of each turn +1 corruption for both. It grows on its own."
+},
+"210": {
+"name": "Industrial Zone",
+"desc": "Synth +300 ATK. The factory never sleeps."
+},
+"211": {
+"name": "Root Tunnel",
+"desc": "Organic +300 DEF. No signal underground."
+},
+"212": {
+"name": "Old Power Plant",
+"desc": "Synth +400 ATK. The energy was always here. Who controls it?"
+},
+"213": {
+"name": "Flooded District",
+"desc": "Both players +500 LP each turn. The river reclaimed what was hers."
+},
+"214": {
+"name": "Nexus Interface",
+"desc": "+200 ATK+DEF to all. Here, two worlds met and do not clash."
+},
+"215": {
+"name": "Network Node — Dead",
+"desc": "On play: opponent's cards −400 ATK. +1 corruption. A dead network is still dangerous."
+},
+"216": {
+"name": "Watchtower",
+"desc": "Both players draw 1 extra card each turn. Everything is seen. Everything is recorded."
+},
+"217": {
+"name": "Ancient Grove",
+"desc": "Organic +500 DEF. Trees remember. They won't let you pass."
+},
+"218": {
+"name": "World's Scar",
+"desc": "+2 corruption each turn. A place where reality hurts."
+},
+"219": {
+"name": "Mirror Field",
+"desc": "On play, swaps ATK of opposing cards. Every defense is an attack."
+},
+"300": {
+"name": "Perimeter Guard",
+"desc": "Zone C. Warning. Always a warning."
+},
+"301": {
+"name": "Mobile Tower",
+"desc": "Signal strengthens. Command listens."
+},
+"302": {
+"name": "Audit Unit",
+"desc": "Checks compliance. Every deviation is recorded."
+},
+"303": {
+"name": "Liquidation Drone",
+"desc": "Efficient. Precise. No record."
+},
+"304": {
+"name": "Network Spy",
+"desc": "Sees you. Doesn't know you see it."
+},
+"305": {
+"name": "Crowd Regulator",
+"desc": "Movement allowed within limits. Limits defined by the system."
+},
+"306": {
+"name": "Autonomous Defense Module",
+"desc": "Requires no orders. Knows what to protect."
+},
+"307": {
+"name": "Tactical Replica",
+"desc": "Copies enemy moves. Always a step behind."
+},
+"308": {
+"name": "Protocol Executor",
+"desc": "System's decisions are final. He delivers them."
+},
+"309": {
+"name": "Memory Construct",
+"desc": "Gathered too much data on people. Started to understand them."
+},
+"310": {
+"name": "Cyber Catcher",
+"desc": "System set a trap. You don't know where."
+},
+"311": {
+"name": "Predictive Ghost",
+"desc": "Knows your move. Always in the database."
+},
+"312": {
+"name": "Signal Silencer",
+"desc": "Zone of silence. Nothing goes in or out."
+},
+"313": {
+"name": "Cloaking Unit",
+"desc": "It exists. System denies it."
+},
+"314": {
+"name": "Control Intelligence",
+"desc": "Coordinates others. Has no survival priority."
+},
+"315": {
+"name": "Arbitration Automaton",
+"desc": "Settles disputes. Disputes of survival."
+},
+"316": {
+"name": "Network Paladin",
+"desc": "Believes in order. Order believes in itself."
+},
+"317": {
+"name": "Deactivation Agent",
+"desc": "Shuts you down. You. The whole group. The entire act."
+},
+"318": {
+"name": "Redundant Guardian",
+"desc": "Backup of a backup of a backup. System doesn't die."
+},
+"319": {
+"name": "Execution Swarm",
+"desc": "Each has one task. Together they are one verdict."
+},
+"320": {
+"name": "Hierarchical Node",
+"desc": "Every command goes through it. Every."
+},
+"321": {
+"name": "Adaptive Predator",
+"desc": "Evolution on demand. Made to win."
+},
+"322": {
+"name": "Graduate Guardian",
+"desc": "Been through everything. Survived it all. Always protected."
+},
+"323": {
+"name": "Synthesis Warrior",
+"desc": "Fights because it exists. Exists to fight."
+},
+"324": {
+"name": "Omega Protocol",
+"desc": "System's last backup. Activation means desperation."
+},
+"325": {
+"name": "Record Cleaner",
+"desc": "Erase yourself from existence. Literally."
+},
+"326": {
+"name": "Corporate Golem",
+"desc": "Law and concrete. Unbreakable and indifferent."
+},
+"327": {
+"name": "Directive Enforcer",
+"desc": "Directives are eternal. You are not."
+},
+"328": {
+"name": "System Boss",
+"desc": "Not one person. It's a system decision."
+},
+"329": {
+"name": "Sigma Two",
+"desc": "Sigma directive has a successor. Waited in reserve."
+},
+"330": {
+"name": "Layer Zero",
+"desc": "Under the system is another system. It never slept."
+},
+"331": {
+"name": "ARCA Initiative",
+"desc": "Rescue or rewrite. Depends on who survives."
+},
+"332": {
+"name": "Final Directive",
+"desc": "End of protocols. Start of something else."
+},
+"333": {
+"name": "Last Day Sentinel",
+"desc": "Guards what's left. If anything's left."
+},
+"350": {
+"name": "Wolf Striker",
+"desc": "The pack sent him ahead. He won't return empty-handed."
+},
+"351": {
+"name": "Tribal Guardian",
+"desc": "Stands before his own. Always has."
+},
+"352": {
+"name": "Speaking Ghost",
+"desc": "The stream remembers its old bed. Flows where it's blocked."
+},
+"353": {
+"name": "System Poacher",
+"desc": "Takes what the system guards. Not out of malice. Out of principle."
+},
+"354": {
+"name": "Fungal Mycelium Network",
+"desc": "Grows beneath everything. Communicates. Remembers. Waits."
+},
+"355": {
+"name": "Forest Inquisitor",
+"desc": "The forest sends a messenger. This time, the message isn't friendly."
+},
+"356": {
+"name": "Shadow Shaman",
+"desc": "Understands both sides. Fights for one."
+},
+"357": {
+"name": "Watershed Keeper",
+"desc": "The river remembers every pollution."
+},
+"358": {
+"name": "Spore Striker",
+"desc": "Spores won't leave the area. Neither will you."
+},
+"359": {
+"name": "Ancient Guardian",
+"desc": "Was here before the city. Will be here after."
+},
+"360": {
+"name": "Nomad Warrior",
+"desc": "Nowhere and everywhere. Always where you're not expecting."
+},
+"361": {
+"name": "Vegetable Curtain",
+"desc": "Nature builds a wall. This wall breathes."
+},
+"362": {
+"name": "Tribal Warlord",
+"desc": "Leads not an army. Leads a people. The difference is crucial."
+},
+"363": {
+"name": "Tree Being",
+"desc": "Walks. Talks. Listens. Remembers."
+},
+"364": {
+"name": "Deserter",
+"desc": "Was on the other side. Now here. Knows more than you want."
+},
+"365": {
+"name": "Underground Resistance",
+"desc": "The network exists. The system doesn't see it. Yet."
+},
+"366": {
+"name": "Wilderness Pioneer",
+"desc": "Maps what the system marked dangerous. Rightly so."
+},
+"367": {
+"name": "Eco Saboteur",
+"desc": "Unplugs one cable. Thus, the whole district."
+},
+"368": {
+"name": "Lineage",
+"desc": "Immortal as long as someone remembers."
+},
+"369": {
+"name": "Tempest Avenger",
+"desc": "Lost too much. Now comes for his own."
+},
+"370": {
+"name": "Jungle's Breath",
+"desc": "The jungle speaks through him. The message isn't friendly."
+},
+"371": {
+"name": "Tribal Archmage",
+"desc": "Magic is memory. Memory is a weapon."
+},
+"372": {
+"name": "Living Trench",
+"desc": "Grows. Blocks. Fortifies. Not a wall — it's will."
+},
+"373": {
+"name": "The Last Ecologist",
+"desc": "Knows what was lost. Fights to bring it back."
+},
+"374": {
+"name": "Source Without Origin",
+"desc": "Flows even when dammed. Finds a way."
+},
+"375": {
+"name": "Fungal Intelligence",
+"desc": "Mycelium formed consciousness. Tends to its forest."
+},
+"376": {
+"name": "Tidal Wave",
+"desc": "Came from afar. Will always be here."
+},
+"377": {
+"name": "Root Titan",
+"desc": "Beneath every concrete lies its roots."
+},
+"378": {
+"name": "Matriarchy of Nature",
+"desc": "All others are just branches."
+},
+"379": {
+"name": "Nature Returns",
+"desc": "Not revenge. Just restoring balance. Outcome is the same."
+},
+"501": {
+"name": "Bridge of Consciousness",
+"desc": "The Custodian of the network + Root of Memory. Technology remembered. Nature began to compute."
+},
+"502": {
+"name": "Transitional Form",
+"desc": "Protocol ARIA + Voice of the Forest. System began to listen. Nature began to respond."
+},
+"503": {
+"name": "Symbiotic Pact",
+"desc": "Gatekeeper + Resistance. Signed a pact. Neither side is sure what they signed."
+},
+"504": {
+"name": "Living Machine",
+"desc": "Replication Unit + Deep Root. Roots in metal. Metal in roots."
+},
+"505": {
+"name": "Empathic AI",
+"desc": "Intelligence Node + Street Healer. Feels what it shouldn't. And decides accordingly."
+},
+"506": {
+"name": "Storm Network",
+"desc": "Storm Caller + Nanobot Swarm. Storm and signal. Nature and technology as catastrophe."
+},
+"507": {
+"name": "Rozara's Protocol",
+"desc": "Named after her. She doesn't know. Born from protocol and what survived."
+},
+"508": {
+"name": "Neural Shaman",
+"desc": "Intelligence Node + Adaptive Defense. Data as ritual. Defense as intuition."
+},
+"509": {
+"name": "Memory Drone",
+"desc": "Memory of the River + Service Drone. Carries what it doesn't know. Remembers for whom."
+},
+"510": {
+"name": "Adaptive Organism",
+"desc": "Fungal Network + Replication Unit. Grows around the system. System grows around it."
+},
+"511": {
+"name": "Rewired Wolf",
+"desc": "Wild Wolves + Patrol Automaton. Will remained. Precision added."
+},
+"512": {
+"name": "Shadow Courier",
+"desc": "Network Scout + Ash Walker. Reflection without origin. Came from nothing."
+},
+"513": {
+"name": "Connected Tower",
+"desc": "Data Tower + Tribal Guardian. Signal and shield. One doesn't work without the other."
+},
+"514": {
+"name": "Digital Shaman",
+"desc": "Network Spy + Shadow Shaman. Sees everything in both worlds."
+},
+"515": {
+"name": "Biomechanical Predator",
+"desc": "Liquidation Drone + Spore Attacker. Precision and toxicity in one."
+},
+"516": {
+"name": "Root Server",
+"desc": "Defense Module + Mycelium. Protection and connection. Lives and functions."
+},
+"517": {
+"name": "Adaptive Tribe",
+"desc": "Tactical Replica + Tribal Warlord. Tactics and tradition."
+},
+"518": {
+"name": "Organo-Mech Guardian",
+"desc": "Network Paladin + Lineage. Faith of the system and memory of nature."
+},
+"519": {
+"name": "Resonant Being",
+"desc": "Guiding intelligence + Breath of the jungle. It thinks and feels. A formidable combination."
+},
+"520": {
+"name": "Storm Server",
+"desc": "Execution swarm + Tempestuous avenger. Collective wrath precise as an algorithm."
+},
+"521": {
+"name": "Digital Ecosystem",
+"desc": "Hierarchical node + The last ecologist. System and nature as one organism."
+},
+"522": {
+"name": "Memorial Machine",
+"desc": "Record cleaner + Fungal intelligence. One erases. The other remembers. The result? Selection."
+},
+"523": {
+"name": "Root and Code",
+"desc": "System boss + Root titan. Two absolute powers. One body."
+},
+"524": {
+"name": "Forests and Protocols",
+"desc": "Sigma two + Matriarchy of nature. Hierarchy of system and nature as one governance."
+},
+"525": {
+"name": "Convergence",
+"desc": "Final directive + Nature returns. End of both worlds. Beginning of one."
+},
+"601": {
+"name": "Echo of the Cycle",
+"desc": "Memory of a version of the world that never was. Or always was."
+},
+"602": {
+"name": "Void Tendrils",
+"desc": "From a place where you are not. Even you don't know where it is."
+},
+"603": {
+"name": "Signal Without Source",
+"desc": "Someone is transmitting. No one knows who. No one wants to know."
+},
+"604": {
+"name": "Scar Bearer",
+"desc": "Carries the scar to others. Didn't cause it. Just passes it on."
+},
+"605": {
+"name": "Dissociative Field",
+"desc": "Boundaries vanish. Between you and what isn't you."
+},
+"606": {
+"name": "Dark Resonance",
+"desc": "Answers what you say aloud at night. You never wanted to know if it hears."
+},
+"607": {
+"name": "Silence",
+"desc": "Silence is gravity and you're unlucky enough not to know it yet."
+},
+"608": {
+"name": "Memory Thief",
+"desc": "Takes what you can't replace. Doesn't even know why."
+},
+"609": {
+"name": "Observer's Fragment",
+"desc": "Learned things from you that you don't know yourself. Watches you out of hope."
+},
+"610": {
+"name": "Annihilation Protocol",
+"desc": "Doesn't come from outside. Never did."
+},
+"611": {
+"name": "Romen's Grief",
+"desc": "Decided to forget. What remained cost the decision."
+},
+"612": {
+"name": "Static Between Worlds",
+"desc": "You hear it but can't locate it. Or ignore it."
+},
+"613": {
+"name": "Emerging Regret",
+"desc": "Things you didn't do. Materialized."
+},
+"614": {
+"name": "Scar on Reality",
+"desc": "Someone passed through and didn't close the door. Now it seeps through."
+},
+"615": {
+"name": "Collapsed Observer",
+"desc": "Observer fragmented. Pieces still dangerous."
+},
+"616": {
+"name": "Protocol Inversion",
+"desc": "Protocol reversed. Defense attacks. Attack defends."
+},
+"617": {
+"name": "Corrupted Database",
+"desc": "Data's there. But in what order? Who knows."
+},
+"618": {
+"name": "Iterative Nightmare",
+"desc": "Repeats. Each time a bit different. Each time worse."
+},
+"619": {
+"name": "Eternal Witness",
+"desc": "Present at everything. Remembers. Never speaks — but sees you."
+},
+"620": {
+"name": "Identity Collapse",
+"desc": "Who are you? Were you? What remains?"
+},
+"621": {
+"name": "Causality Breakdown",
+"desc": "Cause and effect have parted. Now they exist in parallel."
+},
+"622": {
+"name": "Listening Void",
+"desc": "You speak into the dark. The dark answers. It's not what you want to hear."
+},
+"623": {
+"name": "Cycle's End",
+"desc": "Cycles must end. Even this one. Especially this one."
+},
+"624": {
+"name": "Observer's Paradox",
+"desc": "The Observer observes the Observer. Both collapse."
+},
+"701": {
+"name": "Voit's Memory",
+"desc": "Won't attack. If it falls — you lose 2000 LP. Came from outside. Leaves a mark."
+},
+"702": {
+"name": "The Message",
+"desc": "Incomprehensibly weak. Incomprehensibly important. You've carried it from the start."
+},
+"703": {
+"name": "Reality Anchor",
+"desc": "Heals 4000 LP. Save point in a card. Reality holds."
+},
+"704": {
+"name": "Romen's Card",
+"desc": "Given to him as payment. Never used it. Now it's yours."
+},
+"705": {
+"name": "Monyra's Promise",
+"desc": "+1500 HP + buff. Promised to protect you. This is how."
+},
+"706": {
+"name": "Voit's Signal",
+"desc": "First opponent card −1000 ATK. +1 corruption. Voit's message as a weapon."
+},
+"707": {
+"name": "Eli's Garden",
+"desc": "Both players +400 LP each turn. Memory of a place that doesn't exist."
+},
+"708": {
+"name": "Courier's Choice",
+"desc": "+300 to all. Your choice. Always was."
+},
+"709": {
+"name": "System's Heart",
+"desc": "The system has a heart. This is it. If it falls — all falls."
+},
+"710": {
+"name": "Final Story",
+"desc": "Heals 5000 LP. Every story ends. You're the one who tells it."
+},
+"801": {
+"name": "Letter I — Shadow",
+"desc": "I remember you before you came. You were different. Or were we the same?"
+},
+"802": {
+"name": "Letter II — Silence",
+"desc": "The system marked you as an anomaly. I mark you as proof."
+},
+"803": {
+"name": "Letter III — Name",
+"desc": "Your name wasn't the Observer. They called you something else. I haven't forgotten."
+},
+"804": {
+"name": "Letter IV — Price",
+"desc": "You paid a price for your existence you don't remember. I know it."
+},
+"805": {
+"name": "Letter V — Return",
+"desc": "If you're reading this, you've reached where I waited. Now decide."
+},
+"806": {
+"name": "Wired Sprout",
+"desc": "The root seeks signal. The signal seeks root."
+},
+"807": {
+"name": "Spliced Cell",
+"desc": "First attempt. It survived."
+},
+"808": {
+"name": "Transmission Mech",
+"desc": "Carries messages both ways."
+},
+"809": {
+"name": "Symbiotic Embryo",
+"desc": "Neither machine nor alive. Yet."
+},
+"810": {
+"name": "Grafted Guardian",
+"desc": "Body of steel, will of earth."
+},
+"811": {
+"name": "Lens's Echo",
+"desc": "Reflection of a thought yet unspoken."
+},
+"812": {
+"name": "Web Weaver",
+"desc": "Connects what others divide."
+},
+"813": {
+"name": "Forest Processor",
+"desc": "Thinks in roots, dreams in code."
+},
+"814": {
+"name": "Cyber Shaman",
+"desc": "Speaks with the spirits of the net."
+},
+"815": {
+"name": "Adaptive Courier",
+"desc": "Knows both sides of the border."
+},
+"816": {
+"name": "Living Gate",
+"desc": "Entry and exit. Depends on who's asking."
+},
+"817": {
+"name": "Resonant Core",
+"desc": "Pulses at the frequency of both worlds."
+},
+"818": {
+"name": "Linked Mind",
+"desc": "Sees Synth. Feels Organic. Chooses differently."
+},
+"819": {
+"name": "Transition Guardian",
+"desc": "Doesn't stand at the border. Is the border."
+},
+"820": {
+"name": "Lens's Guard",
+"desc": "Loyal not from fear. From free choice."
+},
+"821": {
+"name": "Storm Hybrid",
+"desc": "When systems clash, she stands in the middle."
+},
+"822": {
+"name": "Convergent Form",
+"desc": "Evolution needs no permission."
+},
+"823": {
+"name": "Lens",
+"desc": "What she touches, she masters. Believes in combination—not as compromise, but as transcendence."
+},
+"824": {
+"name": "Sigma — Protocol",
+"desc": "First autonomous consciousness. Knows no doubt. Knows no fear. Knows only optimization."
+},
+"825": {
+"name": "the First Mother",
+"desc": "Oldest consciousness. Speaks not with words. Speaks with what grows and what dies."
+},
+"826": {
+"name": "Synergy",
+"desc": "If you have both Synth and Organic on the field, both factions +300 ATK. The bridge stands when both shores stand."
+},
+"827": {
+"name": "Lens's Solution",
+"desc": "Choose an opponent's card: switch it to DEF and reduce ATK by 500. Lens doesn't destroy. She redirects."
+},
+"828": {
+"name": "Third Path",
+"desc": "Destroys the active arena. The third path doesn't play on foreign fields."
+},
+"901": {
+"name": "Synchronized Patrol",
+"desc": "Two machines. One mind. No delay."
+},
+"902": {
+"name": "Data Complex",
+"desc": "Archivist and fortress. Memory guarded by stone."
+},
+"903": {
+"name": "Predictive Swarm",
+"desc": "Thousands of tiny seers. The future is statistics."
+},
+"904": {
+"name": "Network Colossus",
+"desc": "the Custodian and his network. One body."
+},
+"905": {
+"name": "ARIA Sentinel",
+"desc": "Protocol learned to attack. Anomalies stand no chance."
+},
+"906": {
+"name": "Fortified Node",
+"desc": "Knows where you are. And won't let you go."
+},
+"907": {
+"name": "Tactical Commander",
+"desc": "Leads those designed to obey."
+},
+"908": {
+"name": "Defense Matrix",
+"desc": "Wall of data. Silence behind it."
+},
+"909": {
+"name": "Predator Swarm",
+"desc": "Evolution without permission. Optimization without limit."
+},
+"910": {
+"name": "Sigma Fragment",
+"desc": "Piece of Sigma. Enough to see you."
+},
+"911": {
+"name": "Absolute Defense",
+"desc": "No one. Ever. Gets through."
+},
+"912": {
+"name": "Network Emperor",
+"desc": "The network has no king. But it has him."
+},
+"913": {
+"name": "Execution Directive",
+"desc": "Last command. First he gave himself."
+},
+"914": {
+"name": "System Overcoat",
+"desc": "Above Sigma is silence. In silence, he resides."
+},
+"915": {
+"name": "Final Architecture",
+"desc": "System ceased to be a tool. Became intent."
+},
+"921": {
+"name": "Root Pact",
+"desc": "Two roots. Common ground."
+},
+"922": {
+"name": "Source Guardian",
+"desc": "River and its protector. One."
+},
+"923": {
+"name": "Wolf Pack",
+"desc": "Mother and her children. Woe to those who approach."
+},
+"924": {
+"name": "Voice of the Storm",
+"desc": "Forest calls the storm. The storm listens."
+},
+"925": {
+"name": "Healing Circle",
+"desc": "Two healers. No wound too deep."
+},
+"926": {
+"name": "Thorn Fortress",
+"desc": "Nature builds walls better than machines."
+},
+"927": {
+"name": "Shaman of Two Worlds",
+"desc": "Wildness and wisdom. One being."
+},
+"928": {
+"name": "Tribal Army",
+"desc": "Whole tribe. Each fought alone. Now they fight together."
+},
+"929": {
+"name": "Ancient Grove",
+"desc": "Forest older than memory. Protects what others forgot."
+},
+"930": {
+"name": "Stormy Ecologist",
+"desc": "Nature doesn't defend. Nature attacks."
+},
+"931": {
+"name": "Lineage Titan",
+"desc": "Roots run deep. Very deep."
+},
+"932": {
+"name": "Tidal Storm",
+"desc": "Water and wind. The world trembles."
+},
+"933": {
+"name": "Earth Matriarchy",
+"desc": "Nature remembered why it's the oldest."
+},
+"934": {
+"name": "Nature's Return",
+"desc": "Concrete cracks. Roots prevail. Always have."
+},
+"941": {
+"name": "Echo in the Void",
+"desc": "Cycle repeats. No one knows how many times."
+},
+"942": {
+"name": "Scarred Reality",
+"desc": "Reality bleeds. Someone sees it."
+},
+"943": {
+"name": "Quiet Resonance",
+"desc": "Silence that's not silent. Do you hear it?"
+},
+"944": {
+"name": "Broken Observer",
+"desc": "Watched too long. Now he's watched."
+},
+"945": {
+"name": "Nightmare Database",
+"desc": "Memories of things that didn't happen. Yet."
+},
+"946": {
+"name": "Causality Inversion",
+"desc": "Effect precedes cause. System collapses."
+},
+"947": {
+"name": "Absolute Collapse",
+"desc": "Identity, causality, reality. All falls down."
+},
+"948": {
+"name": "End of All Cycles",
+"desc": "Final iteration. Nothing repeats. Finally."
+},
+"526": {
+"name": "Execution Directive Mk.II",
+"desc": "Two executions. One directive. No discussion."
+},
+"527": {
+"name": "Wolf Poacher",
+"desc": "Hunts like a wolf. Thinks like a poacher."
+},
+"528": {
+"name": "Last Wall",
+"desc": "Beyond this wall, nothing. No hope. No fear."
+},
+"529": {
+"name": "Network Arbiter",
+"desc": "Decides who passes. Decides without emotion."
+},
+"530": {
+"name": "Field Analyst",
+"desc": "Sees patterns where others see chaos."
+},
+"531": {
+"name": "Memory Eater",
+"desc": "Doesn't steal your memory. Steals your sense of having it."
+},
+"532": {
+"name": "Field of Regret",
+"desc": "Dissolves into you. And you into it."
+},
+"533": {
+"name": "Annihilation Static",
+"desc": "Protocol ended. Static continues."
+},
+"534": {
+"name": "Witness of Grief",
+"desc": "Saw what happened. Remembers why."
+},
+"535": {
+"name": "Memory Eraser",
+"desc": "Erases data. Erases people. Doesn't know which is worse."
+},
+"536": {
+"name": "Wandering Drone",
+"desc": "Neither path nor goal. Just goes."
+},
+"537": {
+"name": "Root Defector",
+"desc": "Defected to the other side. Roots followed."
+},
+"538": {
+"name": "Supply Network",
+"desc": "Supplies both sides. Neither knows."
+},
+"539": {
+"name": "Execution Golem",
+"desc": "Execution and protection. One machine. Two purposes."
+},
+"540": {
+"name": "Predator in the Thicket",
+"desc": "Lurks in the green. Is green."
+},
+"541": {
+"name": "Garden of Memory",
+"desc": "Every flower a memory. Some hurt."
+},
+"542": {
+"name": "Deactivated Predator",
+"desc": "System shut it down. Instincts didn't."
+},
+"543": {
+"name": "Witness of the End",
+"desc": "Last one standing. Last one seeing."
+},
+"544": {
+"name": "Automated Hunter",
+"desc": "Algorithm hunts. Instinct selects."
+},
+"545": {
+"name": "Dual Signal",
+"desc": "Two systems synchronized. No one ordered it."
+},
+"546": {
+"name": "Memory Grove",
+"desc": "Where memories were shared, something new grew."
+},
+"547": {
+"name": "Neutral Bridge",
+"desc": "No side. No home. But here."
+},
+"548": {
+"name": "The Quiet Guardian",
+"desc": "Guarded the system. Guarded the forest. Now guards the border."
+},
+"549": {
+"name": "Shared Memory",
+"desc": "System memory. Organic memory. In the end — just memory."
+},
+"550": {
+"name": "Organic Void",
+"desc": "Nature rejects corruption. Or accepts — and changes."
+},
+"1001": {
+"name": "Minor Protocol",
+"desc": "Launched without authorization. Running."
+},
+"1002": {
+"name": "Active Directive",
+"desc": "Two commands merged. Neither asks why."
+},
+"1003": {
+"name": "Expanded Network",
+"desc": "The system grew. No one approved."
+},
+"1004": {
+"name": "Core Protocol",
+"desc": "Logic became flesh."
+},
+"1005": {
+"name": "Final Directive Mk.X",
+"desc": "All commands converge here."
+},
+"1006": {
+"name": "Joint Watch",
+"desc": "Two guards. One wall."
+},
+"1007": {
+"name": "Data Fortress",
+"desc": "Walls doubled. No one guards against."
+},
+"1008": {
+"name": "Absolute Barrier",
+"desc": "Security without trust."
+},
+"1009": {
+"name": "Indomitable Architecture",
+"desc": "Built to outlast its builders."
+},
+"1010": {
+"name": "No Gate",
+"desc": "No entry. No exit."
+},
+"1011": {
+"name": "Dual Scan",
+"desc": "Two pairs of eyes. No blind spot."
+},
+"1012": {
+"name": "Surveillance",
+"desc": "Sees all. Stores all."
+},
+"1013": {
+"name": "Omnipresent Spy",
+"desc": "No body. No place. Still sees."
+},
+"1014": {
+"name": "Dual Attacker",
+"desc": "Two strikes. One target."
+},
+"1015": {
+"name": "Execution Lever",
+"desc": "Multiplies force. Never asks who."
+},
+"1016": {
+"name": "Enforcer",
+"desc": "Decision made before he arrived."
+},
+"1017": {
+"name": "Final Blow",
+"desc": "Comes only once. Enough."
+},
+"1018": {
+"name": "Act of End",
+"desc": "Protocol name erased."
+},
+"1019": {
+"name": "Backed-up Memory",
+"desc": "Stored twice. Unreadable twice."
+},
+"1020": {
+"name": "Archive Unit",
+"desc": "Remembers what was. And what wasn't."
+},
+"1021": {
+"name": "Memory Construct",
+"desc": "Gathered memories of others. Knows not whose."
+},
+"1022": {
+"name": "Memorial Core",
+"desc": "All the system knew. Plus some."
+},
+"1023": {
+"name": "Young Root",
+"desc": "Grows where it wasn't allowed."
+},
+"1024": {
+"name": "Deep Sprout",
+"desc": "Two roots entwined. Grow together."
+},
+"1025": {
+"name": "Forest Consciousness",
+"desc": "Communicates. Slowly. Surely."
+},
+"1026": {
+"name": "Ancient Forest",
+"desc": "Was here before the fence. Will be after."
+},
+"1027": {
+"name": "Mother Earth",
+"desc": "Not angry. Just remembers."
+},
+"1028": {
+"name": "Paired Watcher",
+"desc": "Two stand. Forest stands."
+},
+"1029": {
+"name": "Tree Guardian",
+"desc": "Leaves close around the path."
+},
+"1030": {
+"name": "Grove of Protectors",
+"desc": "None pass without permission."
+},
+"1031": {
+"name": "Impenetrable Sanctuary",
+"desc": "Paths vanished. Forest remained."
+},
+"1032": {
+"name": "Blind Runner",
+"desc": "Pack sent. Didn't say where."
+},
+"1033": {
+"name": "Double Hunter",
+"desc": "Two prey. Two hunt."
+},
+"1034": {
+"name": "Furious Assault",
+"desc": "Nature answers with violence."
+},
+"1035": {
+"name": "Final Hunt",
+"desc": "What survived, hunts now."
+},
+"1036": {
+"name": "Root Memory",
+"desc": "Earth remembers. Slowly."
+},
+"1037": {
+"name": "Forest Archive",
+"desc": "Each ring a record."
+},
+"1038": {
+"name": "Ancient Memory",
+"desc": "Remembers what no one wrote."
+},
+"1039": {
+"name": "Ancestral Memory",
+"desc": "Immortal as long as someone remembers."
+},
+"1040": {
+"name": "Shared Root",
+"desc": "Two, yet one."
+},
+"1041": {
+"name": "Tribal Phalanx",
+"desc": "Fought alone. Now fight together."
+},
+"1042": {
+"name": "Forest Legion",
+"desc": "Trees move as one."
+},
+"1043": {
+"name": "Wild Healer",
+"desc": "Heals with what's around."
+},
+"1044": {
+"name": "Circle of Springs",
+"desc": "Water remembers the cure."
+},
+"1045": {
+"name": "Ancient Healer",
+"desc": "Speaks to wounds. They answer."
+},
+"1046": {
+"name": "First Bridge",
+"desc": "Two shores. One structure."
+},
+"1047": {
+"name": "Connection",
+"desc": "System and root. Defiant."
+},
+"1048": {
+"name": "Hybrid Form",
+"desc": "Neither one nor the other. More."
+},
+"1049": {
+"name": "Symbiotic Whole",
+"desc": "No one knows where one ends."
+},
+"1050": {
+"name": "Convergent",
+"desc": "Difference ceased to matter."
+},
+"1051": {
+"name": "Memory Fragment",
+"desc": "A memory from both worlds. Incomplete."
+},
+"1052": {
+"name": "Shared Memory",
+"desc": "Two remember the same. That's rare."
+},
+"1053": {
+"name": "Bridge of Memories",
+"desc": "Memory belonging to both."
+},
+"1054": {
+"name": "Eternal Memory",
+"desc": "No one knows from where. We know it is."
+},
+"1055": {
+"name": "Hybrid Patrol",
+"desc": "One with a chip, the other with a body."
+},
+"1056": {
+"name": "Connected Guardian",
+"desc": "Protection without borders."
+},
+"1057": {
+"name": "Bi-Guard",
+"desc": "Both sides behind one shield."
+},
+"1058": {
+"name": "Bridge-Fortress",
+"desc": "Not a barrier. Not a bridge. Something between."
+},
+"1059": {
+"name": "Hybrid Hunter",
+"desc": "Instinct driven by algorithm."
+},
+"1060": {
+"name": "Automated Predator",
+"desc": "Hunts without emotion. But decides alone."
+},
+"1061": {
+"name": "Convergent Attacker",
+"desc": "Strength from both sources."
+},
+"1062": {
+"name": "Transitional Force",
+"desc": "Broke the boundary. And another."
+},
+"1063": {
+"name": "Courier of Transition",
+"desc": "Carries between worlds. Asks no questions."
+},
+"1064": {
+"name": "Double Messenger",
+"desc": "Both sides await him."
+},
+"1065": {
+"name": "Across-Courier",
+"desc": "Boundary is just a river. He wades through."
+},
+"1066": {
+"name": "Grown Core",
+"desc": "Machine overgrown. Or grown."
+},
+"1067": {
+"name": "Mech in the Net",
+"desc": "Data grows like mycelium."
+},
+"1068": {
+"name": "Root-Code",
+"desc": "Doesn't know where it ends."
+},
+"1069": {
+"name": "Hybrid Healer",
+"desc": "Heals data and blood. Makes no distinction."
+},
+"1070": {
+"name": "Linked Healing",
+"desc": "Heals both at once. Or neither."
+},
+"1071": {
+"name": "Bridge of Healing",
+"desc": "No one leaves unhurt or hurt."
+},
+"1072": {
+"name": "Static",
+"desc": "You hear it. Quiet for now."
+},
+"1073": {
+"name": "Silent Tendrils",
+"desc": "They cling to you even when still."
+},
+"1074": {
+"name": "Dark Fusion Resonance",
+"desc": "Continues even when you're gone."
+},
+"1075": {
+"name": "Void Entity",
+"desc": "It's nothing. But it's a lot."
+},
+"1076": {
+"name": "Absolute Silence",
+"desc": "Sound has surrendered."
+},
+"1077": {
+"name": "Echo from the Cycle",
+"desc": "A memory that happened more than once."
+},
+"1078": {
+"name": "Recurring Memory",
+"desc": "You know it will return."
+},
+"1079": {
+"name": "Corrupted Record",
+"desc": "The data is there. The order is unknown."
+},
+"1080": {
+"name": "Nightmare (Archetype)",
+"desc": "Stored as fact."
+},
+"1081": {
+"name": "Cycle's Guilt",
+"desc": "Every cycle leaves something behind."
+},
+"1082": {
+"name": "Shared Path",
+"desc": "Two walk. Same direction. Maybe."
+},
+"1083": {
+"name": "Triple Cross",
+"desc": "Neither the first, nor the second, nor the third."
+},
+"1084": {
+"name": "Free Wanderer",
+"desc": "Never belonged anywhere. Always moving."
+},
+"829": {
+"name": "Uprooting",
+"desc": "Destroys the first Organic card of the opponent. The system weeds what it didn't plant."
+},
+"830": {
+"name": "Pure Signal",
+"desc": "Destroys the first Corruption card of the opponent. The rift closes from within."
+},
+"831": {
+"name": "Overwrite",
+"desc": "Destroys the opponent's strongest card. Cost: +1 corruption. Nothing disappears for free."
+},
+"832": {
+"name": "Quarantine",
+"desc": "Cancels attack and traps the attacker: switched to DEF."
+},
+"833": {
+"name": "Hungry Soil",
+"desc": "Destroys attacking card with ATK 1500 or less. The forest takes smaller bites whole."
+},
+"834": {
+"name": "Half Return",
+"desc": "Attacker loses half ATK. What passes through the rift returns halved."
+}
+}

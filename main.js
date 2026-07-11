@@ -14,6 +14,7 @@
 
 import EventBus    from './engine/EventBus.js';
 import GameState   from './engine/GameState.js';
+import Locale      from './engine/Locale.js';
 import Router      from './engine/Router.js';
 import SaveManager from './engine/SaveManager.js';
 import AssetManager from './engine/AssetManager.js';
@@ -50,6 +51,9 @@ if(!root) {
 // ── Boot sekvence ─────────────────────────────────────────────────────────────
 async function boot() {
   _showBootScreen('Načítám…');
+
+  // 0. Jazyk (EN overlay MUTUJE data — musí běžet před loadCards)
+  await Locale.apply();
 
   // 1. Načti karty (cards.json) — musí být první, vše ostatní závisí
   const cardsOk = await GameState.loadCards();

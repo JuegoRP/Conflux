@@ -33,6 +33,29 @@ const MAP = {
   'ZAZNAMENÁNO. PROFIL AKTUALIZOVÁN.': 'sigma_updated',
   'PROFIL ARCHIVOVÁN.': 'sigma_archived',
   'NEDOSTATEČNÉ.': 'sigma_insufficient',
+
+  // ── EN vrstva (texty přesně dle data/lang overlayů a gen_voice.py) ──
+  "Don't open it.": 'intro_letter',
+  'COURIER. IDENTIFICATION OK. PARCEL DETECTED.': 'checkpoint_ok',
+  'IDENTIFICATION FAILED. SUBJECT DOES NOT EXIST.': 'checkpoint_fail',
+  'COURIER WITHOUT REGISTRATION. PASSAGE ALLOWED. MONITORING ACTIVE.': 'synth_monitored',
+  'You attack first. Every time. Predictable.': 'p_atk',
+  'You wait. You build walls. I know that pattern.': 'p_def',
+  'Synth. I see it in every card you play.': 'p_synth',
+  'Organic. You cling to memory. That can be used.': 'p_org',
+  'You mix sides. Rare. Dangerous for the protocol.': 'p_hyb',
+  'You risk fusions. The system took note.': 'p_fuse',
+  "Traps. You don't trust open combat. Or yourself.": 'p_traps',
+  'You go straight for the life points. Impatient.': 'p_direct',
+  "You rush. You don't read. That says more about you than your deck.": 'p_rush',
+  'You hesitate. You read. You think. It slows you down.': 'p_slow',
+  'Your choices lean toward order. Statistically.': 'p_order',
+  'Your choices lean toward the edges. Toward loss.': 'p_edge',
+  'You let cards fall. You got used to loss.': 'p_loss',
+  'RECORDED.': 'sigma_recorded',
+  'RECORDED. PROFILE UPDATED.': 'sigma_updated',
+  'PROFILE ARCHIVED.': 'sigma_archived',
+  'INSUFFICIENT.': 'sigma_insufficient',
 };
 
 const VoiceOver = {

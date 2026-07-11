@@ -37,7 +37,10 @@ a kvůli limitu 1 karta/tah po zahrání monstra skončí → **skoro vždy hraj
 - ✅ **Simulátor konců** (`tools/sim_endings.py`) — všech 9 konců (A–F + 3 early) ověřeno dosažitelných
 - ✅ **QA tester průchodu** (`tools/qa_playthrough.py`) — 313 nodů, 0 chyb; opraveny: flagy konců (chose_*_path vs chosen_*_end), effect→effects (41 míst!), corruptionMin 70→5, osiřelý act3 řetěz (Voit first!), speakeři s diakritikou
 - ✅ **Safari fix** — sfx ogg→m4a (Safari/iOS ogg nehraje)
-- 🔜 **EN lokalizace** — infrastruktura + překlad dat (campaign/cards/enemies) přes OpenAI
+- ✅ **EN lokalizace v1 (2026-07-11)**: engine/Locale.js (overlay merge při bootu), data/lang/*.json
+  (campaign 253 nodů, cards 421, enemies 32, strings 27 — dopis+profil), přepínač JAZYK v nastavení,
+  EN menu labely, VoiceOver EN mapa sladěná s dabingem. tools/translate_en.py (idempotentní).
+  ⬜ zbývá: UI drobnosti (battle logy, settings labely, mode-select, coinflip texty) — sepsat a přeložit
 - ⬜ **STEAM packaging** (rozhodnuto 2026-07-10): Electron/Tauri wrapper + Steamworks, až po EN a balancingu
 
 ## 4. Balancing

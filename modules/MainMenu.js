@@ -1,5 +1,6 @@
 import Router      from '../engine/Router.js';
 import SaveManager  from '../engine/SaveManager.js';
+import Locale from '../engine/Locale.js';
 import GameState    from '../engine/GameState.js';
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -29,6 +30,7 @@ const MainMenu = {
     const hasSave   = SaveManager.hasSave() || !!localStorage.getItem('conflux_save');
     const alignment = GameState.player?.alignment ?? 0;
     const accentColor = alignment > 30  ? '#4fa3e0'
+    const EN = (GameState.settings?.language === 'en');
                       : alignment < -30 ? '#e04f6a'
                       :                   '#607080';
 
@@ -65,28 +67,28 @@ const MainMenu = {
           <!-- Navigace -->
           <nav class="m-nav" role="navigation">
             <button class="m-btn" id="btn-campaign" data-accent="${accentColor}">
-              <span class="m-btn-cur">▶</span><span class="m-btn-label">NOVÁ HRA</span>
+              <span class="m-btn-cur">▶</span><span class="m-btn-label">${EN ? 'NEW GAME' : 'NOVÁ HRA'}</span>
             </button>
             ${hasSave ? `<button class="m-btn" id="btn-continue" data-accent="${accentColor}">
-              <span class="m-btn-cur">▶</span><span class="m-btn-label">POKRAČOVAT</span>
+              <span class="m-btn-cur">▶</span><span class="m-btn-label">${EN ? 'CONTINUE' : 'POKRAČOVAT'}</span>
             </button>` : ''}
             <button class="m-btn" id="btn-free" data-accent="${accentColor}">
-              <span class="m-btn-cur">▶</span><span class="m-btn-label">VOLNÝ SOUBOJ</span>
+              <span class="m-btn-cur">▶</span><span class="m-btn-label">${EN ? 'FREE BATTLE' : 'VOLNÝ SOUBOJ'}</span>
             </button>
             <button class="m-btn" id="btn-deck" data-accent="${accentColor}">
-              <span class="m-btn-cur">▶</span><span class="m-btn-label">KOLEKCE</span>
+              <span class="m-btn-cur">▶</span><span class="m-btn-label">${EN ? 'COLLECTION' : 'KOLEKCE'}</span>
             </button>
             <button class="m-btn" id="btn-deckbuilder" data-accent="${accentColor}">
               <span class="m-btn-cur">▶</span><span class="m-btn-label">DECK BUILDER</span>
             </button>
             <button class="m-btn m-btn-dim" id="btn-save" data-accent="#3d4a5c">
-              <span class="m-btn-cur">·</span><span class="m-btn-label">ULOŽIT</span>
+              <span class="m-btn-cur">·</span><span class="m-btn-label">${EN ? 'SAVE' : 'ULOŽIT'}</span>
             </button>
             <button class="m-btn m-btn-dim" id="btn-load" data-accent="#3d4a5c">
-              <span class="m-btn-cur">·</span><span class="m-btn-label">NAČÍST</span>
+              <span class="m-btn-cur">·</span><span class="m-btn-label">${EN ? 'LOAD' : 'NAČÍST'}</span>
             </button>
             <button class="m-btn m-btn-dim" id="btn-settings" data-accent="#3d4a5c">
-              <span class="m-btn-cur">·</span><span class="m-btn-label">NASTAVENÍ</span>
+              <span class="m-btn-cur">·</span><span class="m-btn-label">${EN ? 'SETTINGS' : 'NASTAVENÍ'}</span>
             </button>
             <button class="m-btn m-btn-dev" id="btn-dev" data-accent="#b570e0" title="Dev menu">
               <span class="m-btn-cur">◈</span><span class="m-btn-label">DEV</span>
@@ -649,6 +651,14 @@ const MainMenu = {
         <div class="m-btn-group" id="grp-diff">${diffBtns}</div>
       </div>
 
+      <div class="m-row m-row--col">
+        <span class="m-row-label">JAZYK / LANGUAGE</span>
+        <div class="m-btn-group" id="grp-lang">
+          <button class="m-tog m-set-btn${Locale.getLang()==='cs' ? ' m-tog--on' : ''}" data-lang="cs">ČESKY</button>
+          <button class="m-tog m-set-btn${Locale.getLang()==='en' ? ' m-tog--on' : ''}" data-lang="en">ENGLISH</button>
+        </div>
+      </div>
+
       <div class="m-row">
         <span class="m-row-label">FULLSCREEN</span>
         <button class="m-tog${fsOn?' m-tog--on':''}" id="tog-fs">${fsOn?'ON':'OFF'}</button>
@@ -698,6 +708,14 @@ const MainMenu = {
     });
 
     // Difficulty group
+    ov.querySelector('#grp-lang')?.addEventListener('click', e => {
+      const btn = e.target.closest('[data-lang]');
+      if(!btn) return;
+      const lang = btn.dataset.lang;
+      if(lang === Locale.getLang()) return;
+      Locale.setLang(lang);
+      location.reload(); // data overlay se aplikuje při bootu
+    });
     ov.querySelector('#grp-diff')?.addEventListener('click', e => {
       const btn = e.target.closest('[data-diff]');
       if(!btn) return;

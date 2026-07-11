@@ -620,7 +620,8 @@ const GameState = {
     else if(co > cs && co >= 2) push(co, 'Tvé volby táhnou k okrajům. Ke ztrátě.');
     if((p.acceptedCardLoss || 0) >= 2) push(2, 'Necháváš karty padnout. Zvykl sis na ztrátu.');
     obs.sort((a, b) => b.weight - a.weight);
-    return obs.map(o => o.text);
+    const t = (x) => this._locale ? this._locale.t(x) : x;
+    return obs.map(o => t(o.text));
   },
 
   // ── SCARS ────────────────────────────────────────────────────────────────
@@ -966,6 +967,8 @@ const GameState = {
     };
     lines.push({ type: 'signature', text: signatures[endingType] || '— Pozorovatel' });
 
+    const _t = (x) => this._locale ? this._locale.t(x) : x;
+    lines.forEach(l => { if(l.text) l.text = _t(l.text); });
     return lines;
   },
 

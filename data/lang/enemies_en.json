@@ -1,0 +1,561 @@
+{
+"act1_01": {
+"name": "Patrol System",
+"preBattleDialog": [
+"MOTION DETECTED. ZONE: RESTRICTED ACCESS.",
+"INITIATING DETENTION PROTOCOL."
+],
+"barks": {
+"start": [
+"IDENTIFYING. COURIER WITHOUT EXTENDED AUTHORIZATION."
+],
+"midfight": [
+"Not playing against you. Just executing.",
+"DEVIATION RECORDED."
+],
+"lowHP": [
+"SWITCHING TO BACKUP PROTOCOL."
+]
+}
+},
+"act1_02": {
+"name": "Zone Custodian Kellner",
+"preBattleDialog": [
+"Passage requires registration. You have no registration.",
+"...",
+"Understood. We'll do it differently."
+],
+"barks": {
+"start": [
+"I record every move. Like everything else."
+],
+"midfight": [
+"A secret is just unrecorded information."
+],
+"lowHP": [
+"Someone will read this. Not me."
+]
+}
+},
+"act1_03": {
+"name": "Forest Guard — The Trio",
+"preBattleDialog": [
+"Where you go, you don't go.",
+"I carry the letter. I need to pass.",
+"Everyone carries something. It doesn't mean the right to pass."
+],
+"barks": {}
+},
+"act1_04": {
+"name": "Network Operator",
+"preBattleDialog": [
+"Courier without authorization. Flagged.",
+"Not initiating conversation. Initiating detention."
+],
+"barks": {}
+},
+"act1_boss": {
+"name": "the Executor",
+"preBattleDialog": [
+"I know what you carry.",
+"Then you know I need to pass.",
+"That's why you can't.",
+"He believes what he says. That's what makes him dangerous."
+],
+"barks": {
+"start": [
+"A sealed letter is a flaw. I remove flaws."
+],
+"midfight": [
+"He believes it. That makes him worse than a guard.",
+"Even if you pass, I'll report it."
+],
+"lowHP": [
+"The system sees even what I lose."
+]
+}
+},
+"act2_01": {
+"name": "Border Guard Řeka",
+"preBattleDialog": [
+"This is the demarcation line. The Organic side is beyond it.",
+"I need to get to the other side.",
+"That's what everyone says. Few make it through."
+],
+"barks": {
+"start": [
+"No passing without papers. But you move on."
+],
+"midfight": [
+"I'll record you. Then the system won't lose you."
+],
+"lowHP": [
+"Someone wants you in the records. I don't know why."
+]
+}
+},
+"act2_02": {
+"name": "Forest Council — the Elders",
+"preBattleDialog": [
+"Courier from the Synth zone. What do you want from us?",
+"Information. And passage.",
+"We have information. Passage must be earned."
+],
+"barks": {
+"start": [
+"You went through their network. I can feel it on you."
+],
+"midfight": [
+"We remember what they erase. It hurts."
+],
+"lowHP": [
+"That letter isn't for us. Yet you carry it."
+]
+}
+},
+"act2_03": {
+"name": "System Agent Vaněk",
+"preBattleDialog": [
+"I've seen your record. It's interesting.",
+"What record.",
+"Exactly. How do you know about a record that doesn't exist?"
+],
+"barks": {
+"start": [
+"The network wants you. First, prove you can endure."
+],
+"midfight": [
+"Nothing personal. Just a check."
+],
+"lowHP": [
+"The system's interest is worse than its forgetfulness."
+]
+}
+},
+"act2_04": {
+"name": "Community Watcher — Marta",
+"preBattleDialog": [
+"Who do you carry the letter for?",
+"I can't say.",
+"I know. That's why I ask."
+],
+"barks": {
+"start": [
+"Stranger. Show who you are. Words won't do."
+],
+"midfight": [
+"I don't forget faces. Not even yours."
+],
+"lowHP": [
+"I protect those who can't defend themselves. Even against you."
+]
+}
+},
+"act2_boss": {
+"name": "Gate Custodian — the Quiet One",
+"preBattleDialog": [
+"This isn't about sides.",
+"Then what's it about?",
+"About what you carry. And why.",
+"He's right. But you can't tell him."
+],
+"barks": {
+"start": [
+"This isn't about sides. About what you carry."
+],
+"midfight": [
+"Every Courier passes. Few remember the route."
+],
+"lowHP": [
+"Remember where the letter came from."
+]
+}
+},
+"act3_01": {
+"name": "Temporary Guardian",
+"preBattleDialog": [
+"I see what you are. A Courier without a side.",
+"And you?",
+"I'm a bridge. Bridges get walked on."
+],
+"barks": {
+"start": [
+"Courier without a side. You'll cross the bridge, not around."
+],
+"midfight": [
+"Doesn't want to stop you. Wants to see if you belong on both sides."
+],
+"lowHP": [
+"Find Lens. I can't say more."
+]
+}
+},
+"act3_02": {
+"name": "Fusion Duelist Hana",
+"preBattleDialog": [
+"Have you ever fought something you didn't see coming?",
+"A few times.",
+"Then try again now."
+],
+"barks": {
+"start": [
+"Fought what you didn't expect? Then again."
+],
+"midfight": [
+"Fusion isn't about strength. About what belongs together."
+],
+"lowHP": [
+"Lens says it differently. Thinks the same."
+]
+}
+},
+"act3_03": {
+"name": "Syndicate Fighter",
+"preBattleDialog": [
+"Nothing personal.",
+"I understand.",
+"Good. Then you understand this too."
+],
+"barks": {}
+},
+"act3_04": {
+"name": "Forest Shaman Bořek",
+"preBattleDialog": [
+"The letter you carry is older than you think.",
+"What do you mean?",
+"Nothing. Or everything. Play."
+],
+"barks": {}
+},
+"act3_boss": {
+"name": "Duelist — Nameless",
+"preBattleDialog": [
+"I don't strike first.",
+"Why?",
+"I want to see how you start.",
+"I react to your style. Be aware of what you do."
+],
+"barks": {
+"start": [
+"I don't strike first. I want to see how you start."
+],
+"midfight": [
+"I mirror you. I know you faster than you know yourself."
+],
+"lowHP": [
+"Different than I expected. Lens is looking for you."
+]
+}
+},
+"monyra_tutorial": {
+"name": "Monyra",
+"preBattleDialog": [
+"Wait. Before you go further — you need to know a few things.",
+"I'm in a hurry.",
+"I know. That's why I'll be brief. Listen."
+],
+"barks": {}
+},
+"act4_01": {
+"name": "Nexus Tester — Dragon",
+"preBattleDialog": [
+"Pass.",
+"I don't have a pass.",
+"I know. That's why you're here.",
+"This is a test. The Syndicate wants to know if you can pass without papers. Fight."
+],
+"barks": {
+"start": [
+"Passage cost. This is the payment. Nothing personal."
+],
+"midfight": [
+"Everyone does their job. Question is what that job blocks."
+],
+"lowHP": [
+"That card's bugged. They know where you're going."
+]
+}
+},
+"act4_marta": {
+"name": "Marta",
+"preBattleDialog": [
+"I don't know you. But I know the people who sent you.",
+"No one sent me.",
+"Always someone sends. Always.",
+"She's right and you know it."
+],
+"barks": {
+"start": [
+"I protect those who didn't choose. Even against you."
+],
+"midfight": [
+"I don't forget faces. Not even yours."
+],
+"lowHP": [
+"You'll pass. I'll be here again tomorrow."
+]
+}
+},
+"act4_02": {
+"name": "Syndicate Enforcer — Steel",
+"preBattleDialog": [
+"You refused the job.",
+"I refused.",
+"That's all I need to know."
+],
+"barks": {
+"start": [
+"You refused. Refusal has a price."
+],
+"midfight": [
+"The Syndicate invested. Wants it back."
+],
+"lowHP": [
+"I'm not the last. Just cheaper."
+]
+}
+},
+"act4_03": {
+"name": "Syndicate Enforcer — Second",
+"preBattleDialog": [
+"Steel said you're good. I want to see it.",
+"This isn't punishment. It's reconnaissance.",
+"The guide has sense. Shame."
+],
+"barks": {
+"start": [
+"You're holding the letter. That's why I'm here."
+],
+"midfight": [
+"Refusals are data too."
+],
+"lowHP": [
+"The Creditor will accept you all the same."
+]
+}
+},
+"act4_veritel": {
+"name": "Syndicate Creditor",
+"preBattleDialog": [
+"I won't seat you. This isn't a negotiation.",
+"What is this?",
+"Valuation. We duel so I know your worth.",
+"Don't win too quickly. It wants to know how you think.",
+"The Guide speaks the truth. For the first time since act three."
+],
+"barks": {
+"start": [
+"I don't fight to win. I fight to know what you are."
+],
+"midfight": [
+"An undelivered message is an eternal debt. That's the essence."
+],
+"lowHP": [
+"Debt isn't repaid. It shifts."
+]
+}
+},
+"act5_eli": {
+"name": "Eli",
+"preBattleDialog": [
+"I won't try to win.",
+"And me?",
+"You will try. That's why you'll lose."
+],
+"barks": {
+"start": [
+"I won't try to win. You will. And yet you'll lose."
+],
+"midfight": [
+"Seers read faces. I read decks."
+],
+"lowHP": [
+"Losing to Eli is part of the route. Always."
+]
+}
+},
+"act6_01": {
+"name": "System Agent — the Quiet One",
+"preBattleDialog": [
+"You'll stop.",
+"No.",
+"Then I'll stop you.",
+"Fight. Don't wait."
+],
+"barks": {
+"start": [
+"I'm not after you. I'm after that conversation."
+],
+"midfight": [
+"If you lose, that conversation never happened."
+],
+"lowHP": [
+"The system sends another. Always."
+]
+}
+},
+"act7_01": {
+"name": "Recalibration Agent",
+"preBattleDialog": [
+"I'm not an enemy. I'm a correction.",
+"The same.",
+"For you, maybe."
+],
+"barks": {
+"start": [
+"Don't fight the rewrite. The rewrite is a fix. The error is you."
+],
+"midfight": [
+"I play with your cards. The more you are you, the harder it is to beat me."
+],
+"lowHP": [
+"RECORDED. PROFILE UPDATED."
+]
+}
+},
+"act7_boss": {
+"name": "the Custodian of the Rewrite",
+"preBattleDialog": [
+"This profile resets every five cycles.",
+"Glad to have met you.",
+"Fight."
+],
+"barks": {
+"start": [
+"I've watched you from the start. The Syndicate. Eli. Voit. I know everything."
+],
+"midfight": [
+"I know your deck better than you. Not what you are now — what you were."
+],
+"lowHP": [
+"The rewrite of your identity is halted. Temporarily."
+]
+}
+},
+"act8_veritel": {
+"name": "the Syndicate Creditor",
+"preBattleDialog": [
+"I'll let Rozara go if you defeat me.",
+"He's lying.",
+"Maybe not this time."
+],
+"barks": {
+"start": [
+"I promised a return. Not for you this time. For Rozara."
+],
+"midfight": [
+"I've waited long. Prepared."
+],
+"lowHP": [
+"You win — Rozara leaves. That's how the Syndicate works."
+]
+}
+},
+"act9_pozorovatel": {
+"name": "the Observer of the Transition",
+"preBattleDialog": [
+"The deck says what you are. The conversation says what you want to say.",
+"That's why we fight."
+],
+"barks": {
+"start": [
+"The conversation says what you want. The deck says what you are."
+],
+"midfight": [
+"Every Courier thinks they're the exception."
+],
+"lowHP": [
+"I hope that fourth outcome — will be you."
+]
+}
+},
+"act10_sigma": {
+"name": "Sigma — the Protocol",
+"preBattleDialog": [
+"Courier with a synthetic profile.",
+"We'll check if the profile matches the intent."
+],
+"barks": {
+"start": [
+"PROFILE VERIFIED. INTENT CONFIRMED. WE'LL VERIFY PERFORMANCE."
+],
+"midfight": [
+"Victory — you become the protocol. Consciously. Not a correction, an intent."
+],
+"lowHP": [
+"Recording is not acceptance. One remains."
+]
+}
+},
+"act10_pramati": {
+"name": "First Mother",
+"preBattleDialog": [
+"You've come.",
+"I sense the route on you.",
+"Fight. Let me know what you are."
+],
+"barks": {
+"start": [
+"The system takes and returns rewritten. I take and return as the root."
+],
+"midfight": [
+"Fight. Let me know what you are. Before I accept you."
+],
+"lowHP": [
+"The root does not reject the weary. It accepts differently."
+]
+}
+},
+"act10_paradox": {
+"name": "Paradox of the Observer",
+"preBattleDialog": [
+"Do you see me?",
+"I am you. Without the guide. Without forgiveness. Without hesitation."
+],
+"barks": {
+"start": [
+"I am you. Without the guide. Without forgiveness. Without hesitation."
+],
+"midfight": [
+"Defeat me — remain yourself. Lose — we merge."
+],
+"lowHP": [
+"The guide is optimistic. Nice."
+]
+}
+},
+"act10_protokol_core": {
+"name": "Rewrite Core",
+"preBattleDialog": [
+"G u i d e  d e t e c t e d.",
+"D e v i a t i o n  c o n f i r m e d.",
+"I know. I came intentionally."
+],
+"barks": {
+"start": [
+"GUIDE OUTSIDE PROTOCOL. ANOMALY. CORRECTING."
+],
+"midfight": [
+"The protocol expects us to surrender. Therefore, we won't."
+],
+"lowHP": [
+"DEVIATION... CANNOT... RECORD."
+]
+}
+},
+"act10_lens": {
+"name": "Lens — Convergence",
+"preBattleDialog": [],
+"barks": {
+"start": [
+"Beyond the gate of Convergence. Synth and Organic at once. Both are afraid."
+],
+"midfight": [
+"You're not to guard it. You're to open it."
+],
+"lowHP": [
+"The bridge is built more than once."
+]
+}
+}
+}

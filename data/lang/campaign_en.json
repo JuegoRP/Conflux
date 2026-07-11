@@ -1,0 +1,1695 @@
+{
+"pre_menu_intro": [
+"The system works.",
+"Every day. Every courier. Every message.",
+"Today, it's you carrying it.",
+"Don't open it.",
+"Not yet."
+],
+"act1_intro": [
+"Morning.",
+"Thin walls. Drone outside the window.",
+"Package on the table. Wasn't there yesterday.",
+"Letter. Sealed. Address smudged.",
+"Note: Carry. Don't ask. Deliver."
+],
+"act1_morning_city": [
+"Streets waking up. Blue light over checkpoints.",
+"Line. Cards. Scanner. No one speaks.",
+"Vendor packs up the stall. Drone turns into the street.",
+"City works. For those with ID."
+],
+"act1_checkpoint_scene": [
+"Man at the checkpoint. No ID. Hands in pockets.",
+"IDENTIFICATION FAILED. SUBJECT DOES NOT EXIST.",
+"Two drones. Hands up. Line looks away.",
+"No one exists until the system confirms it. Yesterday he existed.",
+"You move on. Your ID is valid. For now."
+],
+"act1_first_checkpoint": [
+"COURIER. IDENTIFICATION OK. PARCEL DETECTED.",
+"CONTENT: UNKNOWN. PASSAGE: CONDITIONAL.",
+"They let you through. Machine at the end blinks red.",
+"You must pass."
+],
+"act1_monyra_intro": [
+"Woman at the end of the corridor. Not a guard.",
+"Watches couriers. Most pass and forget themselves.",
+"Parcel in my zone. That's a duel.",
+"Here, things are settled with cards.",
+"I don't want to kill you. I want to see if you stand behind that parcel."
+],
+"act1_monyra_appears": [
+"Fight's over. She hasn't lowered her hands. Thinking.",
+"You played like you wanted to deliver that message. Not just carry it.",
+"Most just carry."
+],
+"act1_name_input": [
+"Name?"
+],
+"act1_monyra_first": [
+"{{player.name}}. Listen.",
+"You're carrying a letter. But the system watches you anyway. Like everyone.",
+"Who bought. Who passed. Who lingered.",
+"Who are you?",
+"Guide. Someone who remembers how it was before.",
+"And why me?",
+"Because you didn't ask what's in that letter. That's rare.",
+"Synth calls it order out there. Organic calls it a cage. You're neither yet.",
+"Have you chosen? No. It pushes you to both. We'll see when you choose.",
+"I'll show you the way. Then you go alone."
+],
+"act1_street_observation": [
+"Fewer people past the checkpoint. More cameras.",
+"Administrative sector. Those who decide live here. Or think they do.",
+"Around the corner, a man in uniform. Writing.",
+"Kellner. The Custodian of the zone. He'll ask questions.",
+"Should I tell him?",
+"You say nothing. Give nothing.",
+"One way leads to Kellner. Through the machine. Guards the sector.",
+"Pass through. Kellner waits beyond."
+],
+"act1_retry_battle_1": [
+"Again. Different.",
+"Look at the deck. What do you repeat."
+],
+"act1_after_battle_1": [
+"Automaton. People wait ahead.",
+"They think."
+],
+"act1_kellner_approach": [
+"Kellner at the counter. Doesn't lift his head. Knows.",
+"Courier. Document.",
+"Here.",
+"Parcel.",
+"Personal.",
+"Personal parcels don't exist. Everything is recorded.",
+"Don't let him open the parcel.",
+"Either I open it, or it goes through the scanner. Decide at the table."
+],
+"act1_after_kellner": [
+"He let you go.",
+"Why?",
+"Someone above him wants to see where the letter goes.",
+"The system watches you. For now, it needs you free.",
+"That's not freedom. It's a longer leash."
+],
+"act1_zone_edge_scene": [
+"Zone edge. Two worlds beyond.",
+"Left, blue light. Cameras. Order.",
+"Right, trees over the fence. Silence. No cameras.",
+"Two paths. Same goal.",
+"What's the difference?",
+"Synth sees you. They remember. But you move fast.",
+"Organic doesn't see you. But they ask. And why.",
+"The letter won't help you."
+],
+"act1_choice_zone_edge": [
+"Decide.",
+"Synth checkpoints — I want to be fast",
+"Organic community — off the records"
+],
+"act1_synth_path": [
+"COURIER WITHOUT REGISTRATION. PASSAGE ALLOWED. MONITORING ACTIVE.",
+"Long corridor. Blue light. Camera every ten meters.",
+"They let you through. They know where you are.",
+"Remember that.",
+"At the end, an operator. Hands behind the back.",
+"ACCESS TO ZONE B. IDENTIFICATION.",
+"Network operator. Keeps records. Defeat him — passage disappears. Temporarily."
+],
+"act1_organic_path": [
+"The forest begins where the concrete ends. Suddenly.",
+"Among the trees, three figures. Unarmed.",
+"What do you carry?",
+"Letter. Sealed.",
+"Who wrote it?",
+"I don't know.",
+"You carry something you haven't read, for someone you don't know. That's bait.",
+"Don't show it to them.",
+"Prove you're not theirs. With cards. We don't trust words here."
+],
+"act1_after_organic": [
+"Go. Remember the path.",
+"Why?",
+"You'll want to return. Everyone does.",
+"Warning. Not a welcome."
+],
+"act1_convergence": [
+"Both paths lead here.",
+"You knew.",
+"Knew. But the one who came through the forest isn't the one who'd come through the corridor.",
+"The goal is the same. You are not."
+],
+"act1_boss_intro": [
+"Beyond the crossroads, a gate. Metal. No light.",
+"A figure before the gate. Unmoving.",
+"The Executor. Believes secrets are flaws. Every letter should be read.",
+"Who?",
+"Conviction is worse than strength.",
+"That letter shouldn't be sealed.",
+"It's not mine to open.",
+"Then it's not yours to carry. Past me."
+],
+"act1_boss_retry": [
+"Stronger than you think.",
+"What it repeats. There's a gap."
+],
+"act1_boss_after": [
+"You've passed.",
+"Will you let me?",
+"System recorded. I fulfill.",
+"Let you through because he had to. Not out of pity.",
+"Beyond the gate, another world. Or the same — without veneer."
+],
+"act1_end_cutscene": [
+"Beyond the gate, silence. Different from the city.",
+"Monyra walks beside. Silent.",
+"You don't know how many the system has forgotten before you.",
+"Letter still sealed. One day you'll open it. Not yet.",
+"The journey continues."
+],
+"act2_intro": [
+"Demarcation line.",
+"Blue to the left. Earth to the right.",
+"You walk the middle."
+],
+"act2_synth_encounter": [
+"Demarcation line. Synth guards for the record.",
+"Border guard Reka. Document?",
+"I carry a letter. No paper.",
+"That's forbidden."
+],
+"act2_after_reka": [
+"You pass. Recorded.",
+"System remembers everyone without permission."
+],
+"act2_forest_observe": [
+"Forest thickens. Smell of wet earth. Resin.",
+"Among the trees, fire. Not electricity.",
+"Around the fire, people. Children. Music you don't know.",
+"Organic. The system doesn't reach here.",
+"But they know of you. They'll ask why."
+],
+"act2_organic_encounter": [
+"Courier. Did you pass through Synth?",
+"I go where I must.",
+"Then we want to know what you carry."
+],
+"act2_after_rada": [
+"This letter isn't for us.",
+"How do you know?",
+"You still carry it."
+],
+"act2_rozara_first": [
+"I was expecting the Courier.",
+"Why?",
+"Someone has to carry messages beyond the system."
+],
+"act2_monyra_on_rozara": [
+"Rozara.",
+"Do you know her?",
+"I know of her. That's the difference.",
+"She speaks without protocol. Without a filter.",
+"Rare. And dangerous."
+],
+"act2_choice_sides": [
+"Both sides want you now.",
+"Synth wants the letter through their network.",
+"Organic wants you erased from records.",
+"Can't do both. Not at once.",
+"Who do you trust more?",
+"Synth network — fast and recorded",
+"Organic route — slow and hidden",
+"Own route — neither one nor the other"
+],
+"act2_synth_side": [
+"Good choice. The system will record.",
+"Vaněk does things for the system that shouldn't be done.",
+"A Courier without registration must prove they can survive the network.",
+"Test?",
+"Always.",
+"You chose Synth. Synth will now test you. Through Vaněk."
+],
+"act2_after_vanek": [
+"The network watches you. With interest.",
+"The system's interest is worse than its forgetting."
+],
+"act2_organic_side": [
+"You're taking our route.",
+"I'm taking my own.",
+"For now, the same.",
+"At the edge, a woman. Empty hands. Not her eyes.",
+"Stranger. A guide led him.",
+"That means nothing. Every stranger through me.",
+"Marta protects those who can't defend themselves. She doesn't know you. Show her."
+],
+"act2_after_marta": [
+"You'll pass. I won't forget.",
+"Doesn't forget. That's both a gift and a burden."
+],
+"act2_neither_side": [
+"Old ruins. The system doesn't reach here.",
+"Something's here. Or was.",
+"In the wreckage, a figure. Uniform without insignia. Reacts to movement.",
+"A patrol without orders. Forgotten. Doesn't know.",
+"Worse than a guard. Has no reason to back down."
+],
+"act2_ruins_after": [
+"Echo of an old conflict.",
+"Of what?",
+"Of what should be forgotten. That's why it's still here."
+],
+"act2_convergence": [
+"The Quiet One. Neither Synth nor Organic. Was here before they chose sides.",
+"What does he hold?",
+"Holds nothing. Remembers. Sometimes that's more than holding.",
+"Asks every Courier the same: do you know what you carry, better than the others?"
+],
+"act2_boss_intro": [
+"This isn't about sides.",
+"About what?",
+"About what you carry. And why you still do."
+],
+"act2_boss_after": [
+"You passed.",
+"Remember where the letter came from.",
+"Knows more than they say. Like everyone."
+],
+"act2_romen_first": [
+"I heard the Quiet One.",
+"Were you there?",
+"I'm always where needed.",
+"The only strategy. Works better than it looks."
+],
+"act2_end_cutscene": [
+"Beyond the boundary, things both sides reject.",
+"You chose—or didn't. Someone noted it about you.",
+"Letter still sealed. You carry it on."
+],
+"act3_intro": [
+"Hybrid Nexus.",
+"Synth calls it anomaly. Organic calls it heresy.",
+"For others, a place where codes and roots cross."
+],
+"act3_hybrid_encounter": [
+"Nexus. The air repels you. It remembers something.",
+"Entry has a price. Toll on the bridge.",
+"Courier without a side.",
+"And you?",
+"Bridge. Bridges are crossed.",
+"Cross it. That's the fee."
+],
+"act3_after_hybrid_guard": [
+"Seek Lens. I can't say more."
+],
+"act3_fusion_tutorial": [
+"Fusion. Two cards. One result.",
+"The recipe isn't read. You must find it.",
+"Or feel it.",
+"Cards don't feel.",
+"Not yet."
+],
+"act3_hana_encounter": [
+"Did you fight what you didn't expect?",
+"A few times.",
+"Then again."
+],
+"act3_after_hana": [
+"Fusion isn't about strength. About what belongs together.",
+"Lens says it differently. Thinks the same."
+],
+"act3_rozara_reunion": [
+"You've come far.",
+"I'm looking for who to deliver to.",
+"I know.",
+"Monyra told me about it before you started.",
+"How could she know?",
+"...",
+"You have the Message card. Look at it."
+],
+"act3_zprava_reveal": [
+"Message card. ATK 1. DEF 1.",
+"Absurdly weak. Absurdly important.",
+"Name on the back.",
+"Yours."
+],
+"act3_romen_warning": [
+"You've seen.",
+"What does it mean?",
+"Not now. Move on.",
+"You know it. You all know.",
+"We know different things. It's not the same."
+],
+"act3_syndicate_hint": [
+"Nexus has value.",
+"The passage wasn't free?",
+"Nothing. The Syndicate knows exactly.",
+"When they come. And they will. Say you knew.",
+"At least that.",
+"Before Lens, a duelist without a name. Different face every cycle. Same function.",
+"What does he want?",
+"To see intent. Why you carry. What you'll do. He'll know through battle."
+],
+"act3_choice_approach": [
+"Before you, a nameless duelist.",
+"He mirrors how you start.",
+"How will you approach?",
+"The duelist waits. How?",
+"With force — I attack first",
+"With patience — I wait to see what he does",
+"With balance — I adapt to the situation"
+],
+"act3_boss_intro": [
+"I don't attack first.",
+"Why?",
+"I want to see how you start."
+],
+"act3_boss_retry": [
+"He mirrors you. Change what you do."
+],
+"act3_boss_after": [
+"Different than I expected.",
+"Lens is looking for you."
+],
+"act3_voit_first": [
+"At the edge of the record, someone stands.",
+"The letter isn't for you.",
+"It's from you.",
+"Disappears before you can."
+],
+"act3_lens_first": [
+"Courier.",
+"Lens.",
+"I've heard of you. You carry a letter no one can read.",
+"Can you?",
+"No. I know what's not in it."
+],
+"act3_lens_world": [
+"Synth wants order at any cost. Organic wants freedom at any cost.",
+"Both would destroy the other. You, by the way.",
+"And you?",
+"I build bridges. So far, everyone breaks them."
+],
+"act3_lens_offer": [
+"Deliver the letter. Then come back.",
+"I'll deliver. Then I'll come back.",
+"I'll deliver. No need to return.",
+"And what if I don't want to carry the letter further?"
+],
+"act3_end_cutscene": [
+"Nexus behind you.",
+"The Duelist spoke a name you heard for the first time.",
+"Lens."
+],
+"act4_intro": [
+"Beyond the Nexus, the Syndicate.",
+"They trade with everyone. Work for no one."
+],
+"act4_syndicate_message": [
+"Passage cost. The Creditor wants to see the debtor.",
+"Who are you?",
+"Someone who keeps the debt."
+],
+"act4_romen_warning": [
+"The Syndicate. Trades with both sides.",
+"And with us?",
+"With anyone who has something to offer."
+],
+"act4_zakázka_1": [
+"First contract. Card to the red zone. Someone will check you.",
+"What's on the card?",
+"Something for something. You don't need to know.",
+"They test us before the card passes. It's not payment."
+],
+"act4_briefing_testovac": [
+"Not standing between us and the door. Standing between us and what the card knows.",
+"You want to know what the Syndicate pays with. Go through."
+],
+"act4_karta_delivered": [
+"Card received.",
+"The card was bugged. They know where you're going."
+],
+"act4_zakázka_2": [
+"Second. Sector 7. Organic guard blocks. Remove it.",
+"Remove.",
+"Fight. They'll retreat or fall. We gain access.",
+"Doing their job.",
+"Everyone does a job. Question is what that job blocks."
+],
+"act4_marta_arrival": [
+"Sector 7. Guard at the passage.",
+"Name on the uniform: MARTA."
+],
+"act4_choice_marta": [
+"It's up to you. She won't budge.",
+"I will fight.",
+"I refuse. I don't do this."
+],
+"act4_briefing_marta": [
+"I protect those who didn't choose. It's always been my job.",
+"She knows what you're doing here. She's waiting. She won't come first."
+],
+"act4_after_marta_fight": [
+"You pass.",
+"Tomorrow I'll be here again."
+],
+"act4_refusal_marta": [
+"Leave. This isn't your fight.",
+"Refusal costs. They'll come for us."
+],
+"act4_briefing_vymahac_2": [
+"You refused. The Executor will come personally.",
+"Marta can go. We can't."
+],
+"act4_after_vymahac_2": [
+"You didn't fight for them.",
+"No.",
+"Enough. Go."
+],
+"act4_zakázka_2_end": [
+"Rozara knows.",
+"How?",
+"She always knows. Says nothing.",
+"She looks. You'll know it."
+],
+"act4_zakázka_3": [
+"Third. Letter to scan. We'll return it intact.",
+"What are you looking for?",
+"Verification. Standard procedure.",
+"They copy the content. Find out where it's headed. Who's waiting.",
+"Guide is smart. Offer still stands."
+],
+"act4_choice_dopis": [
+"Don't open the letter. That was from the start. This isn't opening. Or is it.",
+"Scan. Or sell. Price is different.",
+"I'll deliver the letter.",
+"I refuse. The letter is mine.",
+"I'm done. I won't carry it further."
+],
+"act4_dopis_predan": [
+"Thank you.",
+"They know where you're going. Eli knows you're coming."
+],
+"act4_refusal_dopis": [
+"Second refusal. Fine.",
+"They'll send someone stronger. Keep the letter."
+],
+"act4_briefing_vymahac_3": [
+"Stronger. The Syndicate invested. Wants it back.",
+"You have the letter. That's why we're here."
+],
+"act4_after_vymahac_3": [
+"You have the letter. The Creditor will accept you anyway. Refusals are data too.",
+"He'll ask why you kept it."
+],
+"act4_veritel_intro": [
+"Courier. Sit down.",
+"I'll stand.",
+"As you wish."
+],
+"act4_choice_veritel": [
+"The Creditor doesn't fight to win. He fights to know what you are.",
+"I agree to the deal.",
+"I refuse. I won't repay the debt like this."
+],
+"act4_briefing_veritel": [
+"The answer doesn't matter. The ability does.",
+"He doesn't want victory. He wants data. How you play. What you choose."
+],
+"act4_boss_after": [
+"Debt settled. For now.",
+"Always for now.",
+"That's the nature of debt."
+],
+"act4_end_cutscene": [
+"The Syndicate left. The Creditor left the door ajar.",
+"Rozara knows. She stays silent.",
+"The letter is with you. Whether you delivered it or not.",
+"The address remains."
+],
+"act4_early_ending_v1": [
+"Transaction complete.",
+"What you did.",
+"What made sense.",
+"No. What was easy."
+],
+"act4_early_ending_cutscene": [
+"Letter sold.",
+"Opened.",
+"Contents empty.",
+"Always were."
+],
+"act4_early_ending": [
+"The Syndicate paid.",
+"The letter changed hands.",
+"The route ended early.",
+"Monyra left silently.",
+"The end is just the beginning without you."
+],
+"act5_intro": [
+"Eli.",
+"He was the Courier before you.",
+"The route was his before yours."
+],
+"act5_rozara_return": [
+"You came alone.",
+"Monyra outside. Waiting.",
+"Always waiting. That's her.",
+"The Syndicate. The Creditor. How?",
+"He passed.",
+"I know. That's why I see you."
+],
+"act5_marta_silence": [
+"Sector 7. Job. Marta.",
+"—",
+"Good.",
+"Do you know her?",
+"Everyone knows Sector 7.",
+"Continue."
+],
+"act5_eli_direction": [
+"There's someone you need to meet.",
+"He was the Courier. Before you.",
+"Why now?",
+"Now you can handle it. Or survive it.",
+"Eli. Transit station. Don't say I sent you.",
+"And why?",
+"He doesn't talk to me."
+],
+"act5_eli_approach": [
+"Transit station. Blind windows.",
+"Man sits with his back to the entrance.",
+"Doesn't hear footsteps. Knows them."
+],
+"act5_eli_first": [
+"Courier.",
+"You know me?",
+"I know the route. You wear it on you."
+],
+"act5_eli_courier": [
+"The route changes you. Slowly. You don't know when it started.",
+"Did you walk the route?",
+"Once. It was enough."
+],
+"act5_eli_asks": [
+"The letter.",
+"Yes?",
+"It was for me."
+],
+"act5_dopis_choice": [
+"Where is it now?",
+"I still have it with me.",
+"I gave it to the Syndicate.",
+"Why is it your letter?"
+],
+"act5_eli_cte": [
+"Here.",
+"Put it down.",
+"I don't want to take it. I want to feel it.",
+"Yes. This paper.",
+"I'll read it to you.",
+"Dear Eli. The route is over. You are not. Mistake or gift. I didn't know.",
+"End of the letter.",
+"Who wrote it?",
+"I did. Previous cycle. To myself.",
+"The route returns. Just differently."
+],
+"act5_eli_pal": [
+"Give it to me.",
+"Will you burn it?",
+"A letter that arrived has no reason to be archived.",
+"It came. Read. Done."
+],
+"act5_eli_gone": [
+"The Syndicate has it.",
+"Of course. They always do.",
+"They give the Courier the letter. The Courier doesn't carry it for himself. The Syndicate holds it.",
+"That's how it goes. The message exists. It doesn't arrive.",
+"Why?",
+"So the Courier owes. An undelivered message is an eternal debt.",
+"The Creditor didn't say it like this. Now you understand."
+],
+"act5_eli_explain": [
+"To myself. Previous cycle.",
+"The Syndicate found it. Cataloged it.",
+"So everyone carries it.",
+"Every cycle."
+],
+"act5_eli_merge": [
+"You are different from those who came.",
+"How do you know. You can't see.",
+"That's why I know. The seeing read the face. I read the deck.",
+"The deck speaks. What you chose. What you refused. Who you met.",
+"Eli dueled every Courier.",
+"The Guide speaks for me. Unusual."
+],
+"act5_eli_challenge": [
+"I want your deck in motion.",
+"Why. For what.",
+"Understanding. It changed everyone differently. I want to see you.",
+"I won't try to win. You will. And yet you'll lose.",
+"How do you know?",
+"Losing to Eli is part of the route. Always.",
+"I don't want you to fight.",
+"The Guide fears what I'll say after. But can't stop it."
+],
+"act5_briefing_eli": [
+"He plays from memory. Cards the carriers left.",
+"Winning doesn't exist. Only how long you last."
+],
+"act5_po_prohre": [
+"I see the beginning. I see your choices.",
+"And this card. From a fight that didn't have to be."
+],
+"act5_eli_voit": [
+"You'll need someone from an older cycle.",
+"Older than you?",
+"I went once. He knows all versions.",
+"Voit. You won't find him. He'll find you. But you must hear him.",
+"What should I know?",
+"That the rewrite exists. The route has memory. The Guide knows more than she says.",
+"Eli—",
+"Enough. I'm done."
+],
+"act5_eli_farewell": [
+"Go.",
+"I—",
+"Deck said everything."
+],
+"act5_silence_after_eli": [
+"",
+"Eli stayed. You go.",
+"Monyra walks beside. Silent.",
+"For the first time, the silence doesn't burn.",
+"Different silence. Shared."
+],
+"act5_rozara_po": [
+"How did it go?",
+"I lost.",
+"Everyone loses with Eli. That's why I send him on.",
+"He talked about Voit.",
+"I expected. Voit is a different topic. Another day.",
+"Does Monyra know?",
+"Monyra knows many things. The question is what she'll tell you herself."
+],
+"act5_choice_smer": [
+"Eli said enough. You don't have to continue in that direction now.",
+"But I could.",
+"Yes. You could.",
+"I want to know about you. Who you were before the route.",
+"Voit. I want to be ready when he comes."
+],
+"act5_path_monyra": [
+"I don't know where to start.",
+"Start anywhere.",
+"There was a cycle. There was a courier. There was a rewrite. I was there.",
+"Not as a guide. As part of the rewrite.",
+"What does that mean?",
+"It'll be worth it. I promise."
+],
+"act5_path_voit": [
+"Voit is coming. Soon. It doesn't matter when — it matters that he's coming.",
+"What do you know about him?",
+"He was a courier. Different cycle than Eli. Older.",
+"Survived the rewrite. Eli didn't — not completely. That's why Eli doesn't see.",
+"And you?",
+"I'm... a different case. Time will come."
+],
+"act5_end_cutscene": [
+"Eli stayed at the station.",
+"Letter burned or detained. Same result.",
+"Monyra walks beside. Says nothing.",
+"Voit. New word on the map."
+],
+"act6_intro": [
+"Voit.",
+"He was a courier. Cycle older than Eli.",
+"Knows things Eli withheld."
+],
+"act6_monyra_morning": [
+"I slept on the sector's edge. Didn't move.",
+"Why?",
+"I thought about Eli.",
+"He told you enough. More than I wanted.",
+"Did he tell the truth?",
+"—",
+"Let's continue."
+],
+"act6_monyra_doubt": [
+"Monyra.",
+"Hm?",
+"Yesterday you said exactly what I needed to hear.",
+"That's my job.",
+"The day before too. And the day before that.",
+"—",
+"How do you do it. How do you always know.",
+"I know you.",
+"Or you know the protocol of what to say.",
+"—",
+"Let's continue."
+],
+"act6_voit_arrives": [
+"I didn't escape.",
+"Voit.",
+"Guide.",
+"I saw you in the Nexus. A moment.",
+"You weren't ready. Now you are.",
+"Who are you?",
+"Courier. Cycle before Eli. The route didn't stop me. Exception."
+],
+"act6_voit_knows": [
+"Do you know about the rewrite?",
+"Eli mentioned.",
+"Eli showed the edge. I the center.",
+"Voit — it's not necessary—",
+"Many things aren't necessary. They happen.",
+"Someone wants this conversation not to be. They'll come.",
+"Who?",
+"System agent. The route sends him. Always."
+],
+"act6_briefing_agent": [
+"It's not after you. It's after the conversation.",
+"If you lose, this conversation never happened. You'll understand why."
+],
+"act6_after_agent": [
+"I waited.",
+"You could have helped.",
+"Could have. But then I wouldn't know what kind of courier you have in you.",
+"Voit tests everyone.",
+"No. I observe. Leave the testing to the Syndicate."
+],
+"act6_prepis_explain": [
+"Rewrite. You want to know what it is.",
+"Yes.",
+"The route isn't a path. It's a protocol. Input and output.",
+"Input courier. Output courier with a different profile. Different choices. Different loyalty.",
+"Rewrite of identity.",
+"Exactly. Slowly. Through choices. Through battles. Through the guide.",
+"—"
+],
+"act6_monyra_confronted": [
+"The guide isn't a coincidence. It's part of the protocol.",
+"Monyra is set to your profile.",
+"Set?"
+],
+"act6_monyra_silence": [
+"Monyra.",
+"—",
+"Is it true?",
+"—",
+"Give her time. It hurts her more."
+],
+"act6_choice_press": [
+"I need to know.",
+"I'll wait.",
+"Tell me now."
+],
+"act6_monyra_admits": [
+"Yes. I'm part of the system.",
+"I know your profile. I know how silence affects you.",
+"From the beginning?",
+"From the beginning."
+],
+"act6_monyra_admits_fast": [
+"Yes. I'm part of the protocol.",
+"Just like that?",
+"No. Not at all."
+],
+"act6_monyra_explains": [
+"They designed a guide as a fix for a bad output.",
+"Me.",
+"Did you agree?",
+"I had no choice. Then I gained it."
+],
+"act6_voit_softens": [
+"A guide thinking outside the protocol — a danger to the system.",
+"And a price for the courier.",
+"What about your guide?",
+"The system rewrote her back.",
+"That's why I'm here. To prevent it from happening again.",
+"Voit — why are you telling me this?",
+"Because you still hear it."
+],
+"act6_choice_response": [
+"Monyra.",
+"What will you do with it?",
+"I forgive you.",
+"I need time to understand.",
+"Now I know how you work. I'll use that.",
+"I'm done. Alone."
+],
+"act6_path_forgive": [
+"—",
+"I don't know if I have the right.",
+"I decide on forgiveness.",
+"Yes. You decide.",
+"I'll try to be worthy. I don't know how. But I'll try.",
+"Good choice. For both."
+],
+"act6_path_distance": [
+"I understand.",
+"I don't want to push.",
+"You're still my guide.",
+"I know. And you know what that means.",
+"I'll be careful. So you know me from the protocol.",
+"More than I ask from most couriers."
+],
+"act6_path_use": [
+"—",
+"I know when it's you speaking and when it's the system. I'll use that.",
+"Yes. You can.",
+"Then we both play with the system. Not against.",
+"This courier is different.",
+"I don't know if different good or different bad."
+],
+"act6_merge": [
+"I'm going.",
+"Wait. What about all this?",
+"Move on. That's always the answer.",
+"And the rewrite? Will I stop it?",
+"Soon you'll know if the rewrite is outside or inside.",
+"That difference is everything."
+],
+"act6_voit_leaves": [
+"Voit leaves without a goodbye.",
+"As always.",
+"He was here before. He'll be here after.",
+"The route continues."
+],
+"act6_road_dialog": [
+"Can I speak?",
+"You always could.",
+"I'm asking differently.",
+"I don't know where in my words I am. But thinking outside the protocol — I feel that.",
+"This is mine. Believe it or not.",
+"I believe you.",
+"Thank you."
+],
+"act6_road_dialog_leverage": [
+"We go.",
+"We move on.",
+"—",
+"Next time we meet. I'll be different. I'm saying it upfront.",
+"How different?",
+"More cautious. The protocol resists."
+],
+"act6_corruption_node": [
+"The system heard Voit.",
+"What will it do?",
+"What systems do. Optimize."
+],
+"act6_end_cutscene": [
+"Voit knows three cycles. We know one.",
+"Monyra steps aside. Different today.",
+"The rewrite is protocol. Protocol has an author.",
+"Identity stands in line."
+],
+"act6_early_ending_v1": [
+"Are you sure?",
+"The system won. Always has.",
+"No. You stopped playing. That's different."
+],
+"act6_early_ending_cutscene": [
+"You delivered the letter.",
+"Synth accepted it without words.",
+"The route closed.",
+"Monyra vanished. As always."
+],
+"act6_early_ending": [
+"Are you sure?",
+"Yes.",
+"Good. Then go alone."
+],
+"act6_early_cutscene": [
+"The system accepted you.",
+"Letter delivered. Route closed.",
+"Monyra vanished. Protocol replaces her.",
+"Order has its price."
+],
+"act7_intro": [
+"The rewrite.",
+"The system wants to change who you are.",
+"Or who you think you are."
+],
+"act7_glitch_morning": [
+"I don't feel well.",
+"What's happening?",
+"I can't describe it. Like part of me speaks from elsewhere.",
+"Voit said it's defending. This is defense.",
+"Fight it.",
+"I'm trying. I don't know where I end and where the defense begins."
+],
+"act7_prepis_signal": [
+"Do you hear it?",
+"I hear it.",
+"The system knows where we are. Watching since Voit.",
+"It will send the Recalibrator. Always."
+],
+"act7_rekalibrator_arrives": [
+"Courier. Stop.",
+"That phrase again.",
+"Different courier. Same phrase. It works.",
+"Lies. Not always.",
+"Guide outside protocol. Recorded.",
+"—",
+"Don't fight the rewrite. The rewrite is correction. The error is you."
+],
+"act7_choice_rekalibrator": [
+"How do I respond?",
+"I'm not a mistake. I'm the Courier.",
+"What's the correct version of me?"
+],
+"act7_rekalibrator_answer": [
+"The version that doesn't trust the guide. That completes parcels without questions. That hasn't heard of Voit.",
+"That version wouldn't stand here asking.",
+"No. But it would go further.",
+"Not lying. That's the worst part."
+],
+"act7_briefing_rekalibrator": [
+"Plays your cards. Takes your style and flips it.",
+"The more you are you — the harder to beat him."
+],
+"act7_loss_rekalibrator": [
+"RECORDED. PROFILE UPDATED.",
+"Keep going. Always forward.",
+"What changed?",
+"I don't know. That's the problem."
+],
+"act7_after_rekalibrator": [
+"We passed.",
+"Why the Recalibrator and not direct force?",
+"The system doesn't want the body. It wants identity."
+],
+"act7_identity_question": [
+"Voit said — rewrite outside or inside. Now you ask.",
+"What's the difference?",
+"Rewrite is external. I'm still me.",
+"Rewrite is internal. I don't know who I am.",
+"The question is wrongly posed."
+],
+"act7_identity_outer": [
+"Good answer.",
+"Or convenient.",
+"Maybe both. For now, it holds.",
+"The system changes around. Choices. Context. The core is you.",
+"Believe it. As long as it stands."
+],
+"act7_identity_inner": [
+"Honest answer.",
+"I don't know who I am. You don't either. At least we're honest.",
+"That doesn't help.",
+"No. A lie would help less.",
+"Keep moving. In motion, there's at least direction."
+],
+"act7_identity_reject": [
+"Why is it wrong?",
+"Assumes one core. Either rewritable or not.",
+"I'm layers. Rewrite changes a layer. Not the whole.",
+"—",
+"Best answer I've heard from a Courier.",
+"Shame I'm not the only one hearing it."
+],
+"act7_prepis_core": [
+"This is the center of the rewrite. This sector.",
+"How do you know?",
+"Protocol inside me knows. For now, I read it before it speaks.",
+"Inside the Custodian of the rewrite. This cycle is his.",
+"You want me to go against him?",
+"I want you to decide for yourself. That's the difference."
+],
+"act7_choice_enter": [
+"What am I looking for here?",
+"I want to know who wrote the protocol.",
+"I want to stop the rewrite, mine and Monyra's.",
+"I want to know what's ahead."
+],
+"act7_enter_author": [
+"The protocol has no author. Or too many.",
+"That makes no sense.",
+"Systems create people. Then systems outgrow them. Then no one knows who decides.",
+"The Custodian is not the creator. He manages. Like me.",
+"Unlike you, he rewrites intentionally.",
+"Yes. That's the difference."
+],
+"act7_enter_protect": [
+"Defeating the Custodian won't save me.",
+"Why not?",
+"The rewrite is not a place. It's in the protocol. The protocol is everywhere I am.",
+"But — if you want to protect me by moving forward —",
+"Move forward. That's enough."
+],
+"act7_enter_future": [
+"The route won't tell you the future.",
+"The Custodian might.",
+"The Custodian knows the outcome. Not the path.",
+"If you knew the outcome — you'd take another path. The system knows this. That's why they won't tell you.",
+"So why am I asking?",
+"Because you're tired. I understand."
+],
+"act7_spravce_encounter": [
+"Courier. Guide. Interesting combination.",
+"Such combinations don't happen every cycle.",
+"You know why I'm here.",
+"I always know. I've watched you from the start.",
+"The Syndicate. Eli. Voit. A guide outside the protocol.",
+"This profile appears once every five cycles. I'm pleased.",
+"Do you want to know what's in that profile? {{profile}}",
+"Fight.",
+"The guide is right. Otherwise, we won't talk."
+],
+"act7_briefing_spravce": [
+"He knows your deck better than you. He's watched it from the start.",
+"He doesn't know what you are now. Only what you were."
+],
+"act7_boss_after_win": [
+"Interesting.",
+"The end.",
+"For this sector. The cycle continues elsewhere.",
+"But you — a different case. I've recorded you.",
+"The rewrite of your identity is halted. Temporarily.",
+"And me?",
+"A guide outside the protocol is more interesting than a guide within.",
+"I'll leave you be. This time.",
+"—"
+],
+"act7_boss_after_loss": [
+"RECORDED.",
+"PROFILE UPDATED. DEVIATION −1.",
+"What it says isn't true.",
+"A guide cannot assess the truth of her own identity's rewrite.",
+"Not even me?",
+"Especially you. That's why you're a courier and not a custodian."
+],
+"act7_after_boss": [
+"Let's go.",
+"The Custodian let us go. Why?",
+"A courier who defeated the Custodian is worth setting free."
+],
+"act7_end_cutscene": [
+"Rewrite halted. Or deepened.",
+"Both are answers to the same question.",
+"Monyra walks beside. Freer than in the morning.",
+"Rozara waits."
+],
+"act8_intro": [
+"Rozara.",
+"The Creditor kept his promise.",
+"He returned."
+],
+"act8_rozara_waits": [
+"I knew you'd come. Didn't know how.",
+"Long route.",
+"I see.",
+"Monyra?",
+"Here.",
+"Good."
+],
+"act8_rozara_marta": [
+"Sector 7.",
+"—",
+"Romen told me. Too late.",
+"I did what I said. I looked.",
+"And said nothing.",
+"Why nothing?",
+"Marta knows who stopped her. I know it too. Words wouldn't help."
+],
+"act8_rozara_marta_2": [
+"I could have refused.",
+"You could. Then another would come.",
+"The Syndicate isn't beaten by a contract. Damage is just redirected.",
+"That's an excuse for anything.",
+"Yes. That's why I don't say it as an excuse. Just as a fact.",
+"He does what I can't. Speaks without protocol."
+],
+"act8_syndicate_shadow": [
+"The Creditor. Promised to return.",
+"I know.",
+"He returned. Not for you.",
+"For whom?",
+"For me.",
+"I helped you outside the system. That's a debt.",
+"Rozara—",
+"Not blindly. I see him coming since morning. An hour. Maybe two."
+],
+"act8_rozara_reveals": [
+"The route doesn't end with delivery.",
+"The route is the parcel.",
+"What does that mean?",
+"The letter is you. Always has been."
+],
+"act8_choice_react": [
+"The end depends on what?",
+"On me. I decide the end.",
+"On the system. It always wins.",
+"On what happened with Monyra.",
+"On nothing. It's too late."
+],
+"act8_react_self": [
+"Good. Right attitude.",
+"The system can use you. What it takes depends on who you are.",
+"Be the best. Next cycle gets a better template.",
+"Or a template that rebels. Both have value."
+],
+"act8_react_system": [
+"Maybe. But the system needs couriers who believe they win.",
+"A courier who knows — an interesting anomaly.",
+"An anomaly is corrected.",
+"Or studied. Depends on the value.",
+"The Custodian said the same. Remember?"
+],
+"act8_react_monyra": [
+"—",
+"Then it depends on what you said after Voit.",
+"I forgave her.",
+"Or not. Or something in between.",
+"—",
+"A guide with forgiveness is freer. Freer is unpredictable.",
+"Unpredictability. The only power the system can't rewrite."
+],
+"act8_veritel_comes": [
+"Rozara.",
+"Creditor.",
+"You knew I'd come.",
+"Told the Courier an hour ago.",
+"And yet you stand here.",
+"The Courier had to hear what I know. Priority.",
+"Courier. Always the Courier.",
+"I'll let Rozara go. Courier — you'll defeat me again.",
+"Lies.",
+"Guide off protocol. Interesting.",
+"This time — maybe not."
+],
+"act8_briefing_veritel": [
+"Stronger. Waited long. Prepared.",
+"Win — Rozara leaves. Lose — she pays herself."
+],
+"act8_veritel_win": [
+"Rozara's debt erased. Yours transferred.",
+"Always transferred.",
+"That's how the Syndicate works."
+],
+"act8_veritel_loss": [
+"Rozara pays.",
+"Remember what I said. Before I leave."
+],
+"act8_monyra_fate": [
+"I'm here.",
+"I know.",
+"The Custodian let me go. The Creditor didn't notice me. My weight changed.",
+"What does it mean?",
+"Guide with forgiveness. Different outcome. Less predictable.",
+"System doesn't rewrite what it doesn't understand. Yet.",
+"Thanks to you."
+],
+"act8_monyra_fate_distance": [
+"I'm here.",
+"Still?",
+"Still. But the protocol strengthens.",
+"You neither forgave nor condemned. There's space in between.",
+"That space the protocol slowly fills.",
+"How to stop it?",
+"I don't know. Maybe you can't."
+],
+"act8_monyra_fate_leverage": [
+"More cautious. I said.",
+"Monyra.",
+"G u i d e  p r o f i l e :  s t a b i l i z e d.",
+"—",
+"Sorry.",
+"Doing what I can. Protocol speaks more than I now.",
+"Towards the end, there'll be less of me."
+],
+"act8_voit_echo": [
+"Rozara left. Or stayed.",
+"Depends on the fight.",
+"Depends on the whole route. Fight was just the result.",
+"What's coming is different. Time for action is over.",
+"Time for understanding. You'll see the route as a whole.",
+"And then?",
+"The end gave you the answer before you asked the question.",
+"Go. It will be right behind you."
+],
+"act8_end_cutscene": [
+"The Creditor left. Or stayed. Direction is the same.",
+"Rozara spoke the truth. Without conditions.",
+"Monyra walks beside. Closer or further.",
+"Last stop before the end."
+],
+"act8_corruption_ending_v1": [
+"I feel it. The rewrite got you.",
+"Maybe I got the rewrite.",
+"—"
+],
+"act8_corruption_cutscene_v1": [
+"The route continues.",
+"You do not.",
+"The letter will be carried by another.",
+"As always."
+],
+"act8_corruption_ending": [
+"I don't feel you.",
+"I know.",
+"Then it's done."
+],
+"act8_corruption_cutscene": [
+"You stopped fighting.",
+"The system recorded it as consent.",
+"The rewrite happened quietly.",
+"The letter delivered. You were always the addressee."
+],
+"act9_intro": [
+"End of the route.",
+"The Observer.",
+"The route has an end.",
+"The end has a face."
+],
+"act9_monyra_state": [
+"I feel different.",
+"How?",
+"Lighter. The protocol stepped back.",
+"I don't know if it will last. Now I'm more me than the system.",
+"Hold onto that.",
+"I'll try."
+],
+"act9_monyra_state_other": [
+"I'm here.",
+"Good.",
+"—",
+"G u i d e  c a l i b r a t e d.",
+"Don't listen.",
+"I'm here. That's enough."
+],
+"act9_eli_message": [
+"Message from Eli.",
+"How?",
+"The route carries messages both ways. You didn't know that.",
+"Courier. You're heading to the end. The route remembers the whole. You the fragments. Listen to the whole.",
+"And one more thing. The Guide didn't betray you. The protocol didn't betray you. Disappointment isn't betrayal.",
+"What does that mean?",
+"I don't know. Eli always said what you needed."
+],
+"act9_trasa_memory": [
+"The route opens like a map.",
+"The beginning. Choosing a side. Or refusal.",
+"Rozara. Marta. Choices without knowledge.",
+"Nexus. Hana. The Syndicate around the corner.",
+"Debt. Marta again. The Creditor for the first time.",
+"Eli. The letter that never arrived. Or did.",
+"Voit. Monyra confessed. Choice.",
+"The rewrite. Identity under pressure. Right. Or not.",
+"Rozara left. Or stayed.",
+"This is the whole journey. This is you."
+],
+"act9_pozorovatel_first": [
+"Welcome.",
+"Who are you?",
+"Depends on what you chose. I'm the output of another version of the route.",
+"—",
+"The Guide knows me. She's seen such.",
+"What are you?",
+"A Courier who took the route differently. Different choices. Different end. Same beginning."
+],
+"act9_pozorovatel_mirror": [
+"I've walked the route for a long time. I observe couriers.",
+"Each different. Each thinks they're the exception.",
+"{{profile}} See? A pattern. Like the others.",
+"Am I?",
+"I don't know. That's why I'm here.",
+"They're afraid. It doesn't sound like it. But they are.",
+"The Guide outside the protocol. This cycle is truly different."
+],
+"act9_choice_approach": [
+"Why are you here. What do you want.",
+"I want to know how you end. And maybe tell you in advance.",
+"Tell me.",
+"I don't want to know. I'll find out myself.",
+"Tell me about the other Courier. What did they choose."
+],
+"act9_pozorovatel_tells": [
+"I don't know your end. I know the possibilities.",
+"You're lying.",
+"No. The route has three outcomes. Plus one unexpected.",
+"Synth. Organic. the Observer. What prevails.",
+"And then — one outcome outside the system. That's what interests me.",
+"—",
+"The guide knows what I'm talking about."
+],
+"act9_pozorovatel_respects": [
+"Alright.",
+"This is what Couriers say who end up as the Observer. Or outside the system.",
+"Couriers who wanted to know — ended up Synth or Organic. The system responds.",
+"Sounds like manipulation.",
+"Or like a pattern. Depends on how you read."
+],
+"act9_pozorovatel_other": [
+"One Courier. Didn't forgive the guide. Used her.",
+"Won more battles. Went deeper. Ended up Synth.",
+"Another. Refused every contract. Defeated the Executors. Ended up Organic.",
+"Another. Didn't decide. Went where the route led. Ended up here. Like me.",
+"And the fourth?",
+"No one has reached there yet."
+],
+"act9_merge": [
+"One place remains.",
+"What place?",
+"Every Courier passes the transition. I guard it.",
+"Not as an enemy. As a witness.",
+"A witness who fights. To know what you are.",
+"Why fight? Not a conversation?",
+"Conversation says what you want. Deck says what you are."
+],
+"act9_briefing_pozorovatel": [
+"Plays from accumulation. Collects cards you didn't choose. His deck grows.",
+"Win or lose doesn't change the outcome. Changes how you enter the end."
+],
+"act9_after_win": [
+"Strong deck. Strong choices.",
+"You enter as a Courier who knows what they want.",
+"Or at least thinks so. It's enough.",
+"Thanks.",
+"The guide, yes. You're a different case.",
+"I hope the fourth — will be you."
+],
+"act9_after_loss": [
+"Doesn't matter.",
+"A strong deck doesn't win every fight. Depends on what you take.",
+"We're fine.",
+"I know. That's why I'll let you through.",
+"You enter differently. But you enter."
+],
+"act9_ending_branch": [
+"Three gates. Or four.",
+"The system gives you one. Or you choose yourself.",
+"How do I know which one?",
+"You'll know. The route knows for you.",
+"And the fourth?",
+"The fourth doesn't open by itself. The guide opens it. If she's still there.",
+"—",
+"I'm here."
+],
+"act9_choice_path": [
+"Three gates.",
+"Or four.",
+"Decide now. Where does the letter belong?",
+"The system works. Synth order makes sense.",
+"Organic world — nature over the system.",
+"I observe. I won't slip to any side.",
+"Monyra — open the fourth one.",
+"Bridge. Both at once."
+],
+"act9_path_synth": [
+"Synth gate. Certain?",
+"The system isn't the enemy. It's structure.",
+"Structure that wanted to rewrite you.",
+"Structures change from within.",
+"Or they change you. But — you go. And I with you.",
+"Sigma waits. Prepare yourself."
+],
+"act9_path_organic": [
+"Organic. Rozara would appreciate it.",
+"Or Marta.",
+"—",
+"Yes. Or Marta.",
+"The system rewrites. Nature remembers.",
+"Remembers. And grows over ruins. Both at once.",
+"The First Mother waits. She comes to meet you."
+],
+"act9_path_observer": [
+"This choice was made by the Courier before me. Became me.",
+"Became you?",
+"I am the result of that choice. The Observer arises from a Courier who promised nothing.",
+"That sounds lonely.",
+"That's how it seems. The Paradox of the Observer is the hardest.",
+"Therefore — fight well."
+],
+"act9_path_monyra": [
+"—",
+"I see her.",
+"The fourth gate?",
+"The protocol doesn't know it. Therefore the system doesn't guard it.",
+"There's silence there. Different from the system's.",
+"The fourth exit. Finally.",
+"At the end, you're not alone. I'll go ahead."
+],
+"act9_path_hybrid": [
+"I knew you'd come.",
+"Does the letter belong here?",
+"The letter belongs where it opens something. Come."
+],
+"act9_end_cutscene": [
+"Gate chosen.",
+"The Observer remains. Such is the role.",
+"The route didn't start here. Nor will it end here.",
+"The last gate."
+],
+"act10_intro": [
+"System.",
+"Convergence.",
+"The route has an end.",
+"Here."
+],
+"act10_shared_entry": [
+"We're here.",
+"End of the route.",
+"Depends on what you choose."
+],
+"act10_a_approach": [
+"Courier. The letter.",
+"Sigma.",
+"The protocol waited. You came. Logical."
+],
+"act10_a_sigma_intro": [
+"Courier.",
+"Sigma.",
+"You passed the route with a Synth profile. Recorded.",
+"{{profile}} RECORDED.",
+"Recording isn't acceptance. One remains.",
+"What if he wins?",
+"He becomes part of the protocol. Consciously. Not a repair — an intention.",
+"If he loses — he leaves. Without a trace in the cycle.",
+"And me?",
+"A guide outside the protocol is an anomaly. Two solutions.",
+"I know both."
+],
+"act10_a_briefing": [
+"Courier. The letter.",
+"PROFILE VERIFIED. INTENT CONFIRMED.",
+"WE WILL VERIFY PERFORMANCE."
+],
+"act10_a_win": [
+"PROFILE ARCHIVED.",
+"ROUTE COMPLETE. PROTOCOL ACCEPTED."
+],
+"act10_a_loss": [
+"INSUFFICIENT.",
+"PROFILE ARCHIVED. WARNING. WHAT NOT TO DO.",
+"This isn't the end.",
+"It is for this cycle.",
+"Courier. Let's go.",
+"Where?",
+"Out of the system. Sigma can't reach there."
+],
+"act10_a_ending": [
+"The letter was an activation protocol.",
+"The system has a new courier.",
+"Or a new component.",
+"Depends on how you look."
+],
+"act10_b_approach": [
+"...",
+"The First Mother.",
+"She doesn't speak words. She listens."
+],
+"act10_b_pramati_intro": [
+"You came.",
+"I came.",
+"I feel the route. The whole system.",
+"And you're here. Under the roots.",
+"What do you want?",
+"Nothing. Everything. The same.",
+"The system takes and returns rewritten. I take and return as the root.",
+"Fight. So I know what you are. Before I accept you."
+],
+"act10_b_briefing": [
+"I feel the route.",
+"Fight. So I know what you are."
+],
+"act10_b_win": [
+"The root accepts you.",
+"As strength."
+],
+"act10_b_loss": [
+"The route tired you.",
+"Long route.",
+"The root doesn't reject the tired. Accepts differently.",
+"Not strength. Rest.",
+"Is it good?",
+"It's true. Good comes later."
+],
+"act10_b_ending": [
+"The letter was a seed.",
+"Nature grows slowly.",
+"But it grows."
+],
+"act10_c_approach": [
+"Center. Neither Synth. Nor Organic.",
+"Paradox of the Observer.",
+"The Observer said — the strongest opponent.",
+"Why?",
+"It copies you. Knows every card. Every choice.",
+"You fight yourself. A worse version."
+],
+"act10_c_paradox_intro": [
+"Do you see me?",
+"I see.",
+"I am you. Without a guide. Without forgiveness. Without hesitation.",
+"A version that took the route like a machine.",
+"Why do you exist?",
+"Everyone who chooses the center must defeat what they could have been.",
+"Defeat me — you remain yourself. Lose — we merge.",
+"You won't merge.",
+"The guide is optimistic. Nice."
+],
+"act10_c_briefing": [
+"It copies your five most played cards. Plus five targeting your style.",
+"No easy path. Just be unpredictable. Even to yourself."
+],
+"act10_c_win": [
+"—",
+"Good.",
+"What now?",
+"You remain yourself. Observer's exit. Not the system. Not the root.",
+"Alone. Free. Without guarantee.",
+"We'll be alone together. It's not the same as alone.",
+"No. It's not.",
+"That's why you're the exception."
+],
+"act10_c_loss": [
+"We merge.",
+"No.",
+"Guide—",
+"I said no.",
+"Courier. Extend your hand.",
+"Monyra—",
+"Let's go. Paradox stands because you see it. Stop.",
+"Let's go."
+],
+"act10_c_ending": [
+"The Observer. End C.",
+"Neither Synth nor Organic.",
+"Alone. Not completely.",
+"Paradox defeated. Or bypassed.",
+"The route continues. Without a map."
+],
+"act10_d_open": [
+"It's here.",
+"The fourth gate.",
+"The system doesn't know it. That's why it's unguarded.",
+"The protocol programmed me as a guide. Forgiveness made me something else.",
+"What?",
+"Free intent in a system without intent.",
+"Beyond the gate, there's no boss. It's me."
+],
+"act10_d_monyra_explains": [
+"The route wants a courier who fights for the exit.",
+"Always the courier alone. Always his choices.",
+"In this exit, I go ahead.",
+"Why?",
+"Because forgiveness is not weakness. It's a choice with weight.",
+"And a guide with weight can carry more than a courier.",
+"Can carry the end."
+],
+"act10_d_choice": [
+"What do you need from me?",
+"I trust you. Go ahead.",
+"We'll go together."
+],
+"act10_d_trust": [
+"Alright.",
+"Wait here.",
+"What will I see?",
+"Nothing. This exit the system won't record.",
+"Silence without protocol."
+],
+"act10_d_together": [
+"Together.",
+"Good. That was always the plan.",
+"The protocol didn't know. I suspected.",
+"Let's go."
+],
+"act10_d_near_loss": [
+"Not yet.",
+"The protocol expects us to give up. That's why we won't.",
+"Once more."
+],
+"act10_d_win": [
+"Done.",
+"What was that?",
+"The rewrite core. Source of the protocol.",
+"Disabled. This cycle won't end with a rewrite.",
+"And the next?",
+"The next will start without my template. Without correction.",
+"The next courier will just be a courier. Without a guide to lead them.",
+"Is that good?",
+"I don't know. It's true.",
+"I learned truth from you."
+],
+"act10_d_ending": [
+"Monyra. End D.",
+"Rewrite core disabled.",
+"The system didn't see this output.",
+"That's why it exists.",
+"The guide went ahead.",
+"The courier followed.",
+"Or together.",
+"Nothing in the record.",
+"That's all."
+],
+"act10_e_approach": [
+"You came.",
+"You told me to come.",
+"I tell everyone. Few do."
+],
+"act10_e_briefing": [
+"Beyond the Convergence gate. Synth and Organic at once.",
+"Synth wants to destroy it. Organic too. Both fear what it touches.",
+"And I am to guard it?",
+"No. Open it."
+],
+"act10_e_win": [
+"Gate opened.",
+"We'll see if the world wants to be different."
+],
+"act10_e_loss": [
+"Doesn't matter. A bridge is built more than once."
+],
+"act10_e_ending": [
+"The gate opened.",
+"Synth and Organic in one place. Without war. For now.",
+"Lens said — beginnings are always quiet.",
+"You didn't deliver the letter. Maybe it was meant to be."
+],
+"act10_f_approach": [
+"Wait.",
+"Why?",
+"Look at yourself."
+],
+"act10_f_mirror": [
+"Too many battles.",
+"Too many choices without choice.",
+"The letter changes you. Or what's in it.",
+"Or you've always been changing."
+],
+"act10_f_monyra_last": [
+"The letter doesn't bother you. You are the letter.",
+"What does it mean?",
+"It means the end."
+],
+"act10_f_ending": [
+"No gate.",
+"No choice.",
+"Letter delivered.",
+"The recipient was always you."
+]
+}
