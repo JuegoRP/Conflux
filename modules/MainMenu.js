@@ -30,9 +30,9 @@ const MainMenu = {
     const hasSave   = SaveManager.hasSave() || !!localStorage.getItem('conflux_save');
     const alignment = GameState.player?.alignment ?? 0;
     const accentColor = alignment > 30  ? '#4fa3e0'
-    const EN = (GameState.settings?.language === 'en');
                       : alignment < -30 ? '#e04f6a'
                       :                   '#607080';
+    const EN = (GameState.settings?.language === 'en');
 
     this._injectStyles();
 
