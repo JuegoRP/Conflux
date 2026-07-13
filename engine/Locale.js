@@ -58,6 +58,11 @@ const Locale = {
     try { localStorage.setItem('conflux_lang', lang); } catch(e) {}
   },
 
+  /** Byl už jazyk někdy zvolen? (false = ukázat uvítací výběr) */
+  hasChosen() {
+    try { return localStorage.getItem('conflux_lang') !== null; } catch(e) { return true; }
+  },
+
   /** Přelož dynamický string (dopis, profil…). Mimo EN nebo bez záznamu vrací originál. */
   t(s) {
     if(GameState.settings?.language !== 'en') return s;

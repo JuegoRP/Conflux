@@ -50,9 +50,14 @@ if(!root) {
 
 // ── Boot sekvence ─────────────────────────────────────────────────────────────
 async function boot() {
+  // 0a. První spuštění → uvítací výběr jazyka (blokuje boot dokud hráč nezvolí)
+  if(!Locale.hasChosen()) {
+    await _showLanguageGate();
+  }
+
   _showBootScreen('Načítám…');
 
-  // 0. Jazyk (EN overlay MUTUJE data — musí běžet před loadCards)
+  // 0b. Jazyk (EN overlay MUTUJE data — musí běžet před loadCards)
   await Locale.apply();
 
   // 1. Načti karty (cards.json) — musí být první, vše ostatní závisí
@@ -259,6 +264,41 @@ function _showBootScreen(message, isError = false) {
       <div class="boot-logo">CONFLUX</div>
       <div class="boot-message">${message}</div>
     </div>`;
+}
+
+// ── Uvítací výběr jazyka (první spuštění) ─────────────────────────────────────
+function _showLanguageGate() {
+  return new Promise(resolve => {
+    root.innerHTML = `
+      <div class="lang-gate">
+        <div class="lang-gate-logo">CONFLUX</div>
+        <div class="lang-gate-sub">Vyber jazyk &middot; Choose language</div>
+        <div class="lang-gate-btns">
+          <button class="lang-gate-btn" data-lang="cs">ČESKY</button>
+          <button class="lang-gate-btn" data-lang="en">ENGLISH</button>
+        </div>
+      </div>
+      <style>
+        .lang-gate{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;
+          justify-content:center;gap:28px;background:#05080c;z-index:9999}
+        .lang-gate-logo{font-family:'Press Start 2P',monospace;font-size:clamp(28px,6vw,52px);
+          letter-spacing:6px;color:#dfe9f2;text-shadow:0 0 24px rgba(79,163,224,0.35)}
+        .lang-gate-sub{font-family:'VT323',monospace;font-size:clamp(15px,2vw,20px);
+          letter-spacing:2px;color:#7f8ea0}
+        .lang-gate-btns{display:flex;gap:20px;flex-wrap:wrap;justify-content:center}
+        .lang-gate-btn{font-family:'Press Start 2P',monospace;font-size:13px;letter-spacing:3px;
+          padding:18px 34px;background:rgba(10,16,24,0.6);color:#cdd8e6;border:1px solid rgba(79,163,224,0.4);
+          border-left:3px solid #4fa3e0;cursor:pointer;transition:all .14s}
+        .lang-gate-btn:hover{background:rgba(79,163,224,0.14);color:#fff;transform:translateY(-2px)}
+      </style>`;
+    root.querySelectorAll('.lang-gate-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        Locale.setLang(btn.dataset.lang);
+        AudioSystem.initContext?.(); // klik = user gesture, odemkni audio
+        resolve();
+      }, { once: true });
+    });
+  });
 }
 
 // ── Start ─────────────────────────────────────────────────────────────────────
