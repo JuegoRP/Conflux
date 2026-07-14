@@ -3173,6 +3173,7 @@ const BattleSystem = {
   // ── LOG ──────────────────────────────────────────────────────────────────
   _log(msg, cls='') {
     if(!this._state) return;
+    msg = Locale.t(msg); // statické hlášky přeloží; interpolované (card names) nechá být
     this._state.log.push({msg, cls, ts: Date.now()});
     if(this._state.log.length > 80) this._state.log.shift();
 
@@ -3365,6 +3366,7 @@ const BattleSystem = {
     // callback: zavolá se po posledním kliku
     const screen = this._container?.querySelector('.battle-screen');
     if(!screen || !lines?.length) { if(callback) callback(); return; }
+    lines = lines.map(l => ({ ...l, text: Locale.t(l.text) })); // tutorial/story komentáře → EN
 
     this._state.busy = true; // pauzni boj
 

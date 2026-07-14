@@ -140,6 +140,16 @@ async function boot() {
     }
   });
 
+  // 7b. EN DOM lokalizace — přeloží zobrazené CZ texty po každém renderu (i re-renderech).
+  //     Jeden observer pokrývá všechny moduly bez editace jejich render kódu.
+  if(Locale.isEN()) {
+    let pending = false;
+    const run = () => { pending = false; try { Locale.localizeDOM(root); } catch(e) {} };
+    const obs = new MutationObserver(() => { if(!pending) { pending = true; requestAnimationFrame(run); } });
+    obs.observe(root, { childList: true, subtree: true, characterData: true });
+    Locale.localizeDOM(root);
+  }
+
   // 8. Hudbu hlavního menu spouští MainMenu.init() sám
 
   // 9. Zobraz menu nebo pokračuj ze save

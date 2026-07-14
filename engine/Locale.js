@@ -78,6 +78,36 @@ const Locale = {
   /** Je aktuální jazyk angličtina? */
   isEN() { return GameState.settings?.language === 'en'; },
 
+  /**
+   * Přeloží zobrazené CZ texty v DOM podstromu na EN (po renderu modulu).
+   * Prochází text-nody + placeholder/title/aria-label; nahrazuje jen CELÝ trimnutý
+   * obsah, který je klíčem ve strings/UI_EN → bezpečné (částečné shody se netrefí).
+   * V CZ režimu no-op. Idempotentní (EN hodnoty nejsou klíče).
+   */
+  localizeDOM(root) {
+    if(!root || GameState.settings?.language !== 'en') return;
+    const dict = this.strings;
+    // text nody
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+    const nodes = [];
+    let node;
+    while((node = walker.nextNode())) nodes.push(node);
+    for(const tn of nodes) {
+      const raw = tn.nodeValue;
+      const key = raw.trim();
+      if(!key) continue;
+      const en = dict[key] || UI_EN[key];
+      if(en) tn.nodeValue = raw.replace(key, en);
+    }
+    // atributy
+    for(const el of root.querySelectorAll('[placeholder],[title],[aria-label]')) {
+      for(const attr of ['placeholder', 'title', 'aria-label']) {
+        const v = el.getAttribute(attr);
+        if(v && (dict[v.trim()] || UI_EN[v.trim()])) el.setAttribute(attr, dict[v.trim()] || UI_EN[v.trim()]);
+      }
+    }
+  },
+
   async apply() {
     const lang = this.getLang();
     GameState.settings.language = lang;
