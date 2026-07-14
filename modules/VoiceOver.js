@@ -67,8 +67,14 @@ const VoiceOver = {
     const lang = GameState.settings?.language === 'en' ? 'en' : 'cs';
     try {
       if(this._current) { this._current.pause(); this._current = null; }
-      const a = new Audio(`assets/audio/voice/${lang}/${key}.mp3`);
+      // Robotizované soubory jsou .m4a; původní .mp3 jako fallback.
+      const base = `assets/audio/voice/${lang}/${key}`;
+      const a = new Audio(`${base}.m4a`);
       a.volume = Math.min(1, GameState.settings?.sfxVolume ?? 0.8);
+      a.addEventListener('error', () => {
+        const b = new Audio(`${base}.mp3`);
+        b.volume = a.volume; b.play().catch(() => {}); this._current = b;
+      }, { once: true });
       a.play().catch(() => {}); // autoplay policy — tiše ignoruj
       this._current = a;
     } catch(e) { /* voice je bonus, nikdy neshodí hru */ }
