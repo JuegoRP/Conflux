@@ -269,6 +269,14 @@ function _showBootScreen(message, isError = false) {
     root.innerHTML = '';
     return;
   }
+  // Boot běží před EN DOM observerem → přelož přímo dle zvoleného jazyka
+  if(Locale.getLang() === 'en') {
+    message = {
+      'Načítám…': 'Loading…',
+      'Chyba: nepodařilo se načíst karty.': 'Error: failed to load cards.',
+      'Kritická chyba. Obnovte stránku.': 'Critical error. Please reload.',
+    }[message] || message;
+  }
   root.innerHTML = `
     <div class="boot-screen ${isError ? 'boot-screen--error' : ''}">
       <div class="boot-logo">CONFLUX</div>
