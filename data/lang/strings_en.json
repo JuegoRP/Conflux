@@ -190,5 +190,14 @@
 "◀ Nepřítel vyložil kartu lícem dolů.": "◀ Enemy played a card face down.",
 "◀ Nepřítel váhá...": "◀ Enemy hesitates...",
 "◈ Karta uložena lícem dolů.": "◈ Card placed face down.",
-"Číst dopis →": "Read the letter →"
+"Číst dopis →": "Read the letter →",
+"Enter · Mezerník · Esc": "Enter · Space · Esc",
+"NOVÝ CYKLUS": "NEW CYCLE",
+"Začátek aktu (intro)": "Act start (intro)",
+"přepsat": "overwrite",
+"tvá kolekce vs tvá kolekce": "your collection vs your collection",
+"◈ DEV — PŘESKOČIT NA BITVU": "◈ DEV — SKIP TO BATTLE",
+"⚔ VOLNÝ SOUBOJ": "⚔ FREE BATTLE",
+"✕  ZAVŘÍT": "✕  CLOSE",
+"✕  ZRUŠIT": "✕  CANCEL"
 }
