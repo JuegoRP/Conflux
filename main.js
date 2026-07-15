@@ -152,15 +152,10 @@ async function boot() {
 
   // 8. Hudbu hlavního menu spouští MainMenu.init() sám
 
-  // 9. Zobraz menu nebo pokračuj ze save
+  // 9. Vždy hlavní menu. Uloženou hru nabízí tlačítko "Pokračovat" v menu —
+  //    NEskákat rovnou do příběhu (dřív hasCheckpoint auto-resume → hráč nikdy neviděl menu).
   _showBootScreen('');
-
-  if(GameState.hasCheckpoint()) {
-    // Existuje uložený checkpoint → rovnou pokračuj v příběhu od uloženého uzlu
-    Router.goto('story', { nodeId: GameState.checkpoint.nodeId });
-  } else {
-    Router.goto('menu');
-  }
+  Router.goto('menu');
 }
 
 // ── EventBus listener — bitva skončila ────────────────────────────────────────
