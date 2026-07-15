@@ -1659,6 +1659,19 @@ const BattleSystem = {
     const s = this._state;
     // V prvním tahu (nesmí útočit) neodhaluj ani nepřepínej do ATK — zbytečné prozrazení
     if(!s.canAttack) return;
+
+    // VOLNÝ ÚTOK: když má hráč prázdné pole, VŠECHNY styly (i defensive) přepnou do ATK
+    // a jdou přímo na LP — nechat monstra stát nečinně u otevřeného pole je hloupé.
+    const pFieldEmpty = !s.pMonsters.some(Boolean);
+    if(pFieldEmpty) {
+      s.eMonsters.forEach(m => {
+        if(!m || m.hasAttacked) return;
+        if(!m.revealed) { m.revealed = true; m.justRevealed = true; }
+        m.mode = 'atk';
+      });
+      return;
+    }
+
     // Kolik monster chceme přepnout do ATK závisí na stylu
     const wantAttack = !['defensive'].includes(style);
     if(!wantAttack) return;
@@ -2174,7 +2187,16 @@ const BattleSystem = {
     const forceDef          = findMatch('force_def', pMaxAtk >= 1200 && pMaxAtk > eMaxAtk);
     const arenaBreak        = findMatch('arena_break', !!s.activeArena);
     const buffSynergy       = findMatch('buff_synergy', eHasSynth && eHasOrganic);
-    const universalPick = destroyStrongest || destroyCorruption || destroyOrganic || forceDef || arenaBreak || buffSynergy;
+    // Taktický buff — když by posílení TVÉHO monstra proměnilo prohraný/nerozhodný
+    // souboj ve vítězný (eMaxAtk ≤ pMaxAtk, ale eMaxAtk+value > pMaxAtk), použij ho.
+    // (řeší "AI málo používá spelly pro vlastní vylepšení")
+    const buffTactical = (() => {
+      if(!eActive.length || pMaxAtk === 0 || eMaxAtk > pMaxAtk) return null;
+      const cand = spells.find(sp => ['buff_atk', 'buff_all', 'buff_atk_cost'].includes(sp.effect));
+      if(!cand) return null;
+      return (eMaxAtk + (cand.value || 0) > pMaxAtk) ? cand : null;
+    })();
+    const universalPick = buffTactical || destroyStrongest || destroyCorruption || destroyOrganic || forceDef || arenaBreak || buffSynergy;
     if(universalPick) return universalPick;
 
     // Defensive/reactive — spell jen pokud nemůže hrát monstrum
@@ -2286,21 +2308,26 @@ const BattleSystem = {
         this._resolveMonsterBattle('e',atkSlot,even[0].i);
         s.aiStalemateTurns = 0;
       } else {
-        // Nemůže vyhrát žádný souboj — útočí na nejslabší nebo čeká
-        const weakest = targets.reduce((a,b) => {
-          const aVal = a.m.mode==='atk' ? a.m.card.atk : a.m.card.def;
-          const bVal = b.m.mode==='atk' ? b.m.card.atk : b.m.card.def;
-          return aVal < bVal ? a : b;
-        });
-        // Agresivní styly útočí i do nevýhodného souboje
+        // Nemůže vyhrát žádný souboj. NEskákat slepě na silnější kartu.
+        // Ohodnoť prohrané cíle: náraz na DEF udrží monstrum (jen overflow LP),
+        // útok na silnější ATK monstrum ho ZABIJE + LP ztráta → dělat jen když se to vyplatí.
         const aiStyle = this._enemy?.aiStyle || 'balanced';
-        const forceAttack = ['aggressive','perfect','rewrite'].includes(aiStyle);
-        // Stalemate guard — po 3 pasivních tazích AI zaútočí vždy
         const staleForce = s.aiStalemateTurns >= 3;
-        if(forceAttack || staleForce) {
+        const scored = targets.map(t => {
+          const inDef = t.m.mode === 'def';
+          const dv = inDef ? t.m.card.def : t.m.card.atk;
+          return { t, lpLoss: Math.max(0, dv - eAtk), keepsMonster: inDef };
+        });
+        scored.sort((a,b) => (b.keepsMonster - a.keepsMonster) || (a.lpLoss - b.lpLoss));
+        const best = scored[0];
+        const aggressive = ['aggressive','rewrite'].includes(aiStyle); // 'perfect' NIKDY nesebevraždí
+        const worthIt = (best.keepsMonster && best.lpLoss <= 1500)   // náraz na zeď, monstrum přežije
+                     || (aggressive && best.lpLoss <= 800)           // agresivní risk s malou ztrátou
+                     || staleForce;                                   // po 3 pasivních tazích už jdi
+        if(worthIt) {
           if(staleForce) this._log(`◀ [${attacker.card.name}] ztrácí trpělivost!`,'warn');
-          else this._log(`◀ [${attacker.card.name}] útočí na [${weakest.m.card.name}]!`,'warn');
-          this._resolveMonsterBattle('e',atkSlot,weakest.i);
+          else this._log(`◀ [${attacker.card.name}] útočí na [${best.t.m.card.name}]!`,'warn');
+          this._resolveMonsterBattle('e',atkSlot,best.t.i);
           s.aiStalemateTurns = 0;
         } else {
           this._log(`◀ [${attacker.card.name}] čeká.`,'warn');

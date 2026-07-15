@@ -19,7 +19,12 @@ a kvůli limitu 1 karta/tah po zahrání monstra skončí → **skoro vždy hraj
 - ✅ **Mirror/profiler nepřátelé HOTOVO:** do decku vmícháno ~12 karet z hráčova decku → hrají TEBOU (TVOJE KARTA se reálně ukazuje)
 - ✅ **Fér fix:** kdo začíná nesmí v 1. tahu útočit (platilo jen pro hráče; AI útočila = nefér) — `_aiAttack`/`_aiPrepareAttackers` respektují `canAttack`
 - ✅ **Útočná logika ověřena** — útočí na nejsilnější poražitelný cíl, vyhýbá se sebevraždě, přímý jen na čisté pole, respektuje pasti. Hraje jako kompetentní hráč.
-- ⬜ Jemné doladění per-`aiStyle` (až podle playtest pozorování — co konkrétně dělá špatně)
+- ✅ **Doladění per playtest (2026-07-15):** 3 konkrétní Romanovy nálezy opraveny:
+  (1) sebevražedné útoky na silnější VIDITELNOU kartu → else-větev preferuje udržet monstrum (náraz na DEF)
+  + minimální LP ztrátu; 'perfect' už NIKDY nesebevraždí (2) málo buffů na sebe → taktický buff: když by
+  posílení proměnilo prohraný souboj ve vítězný, AI ho použije (3) neútočí do prázdného pole → i defensive
+  styl teď při prázdném poli hráče přepne vše do ATK a jde přímo na LP
+- ⬜ Další ladění dle playtestu
 
 ## 3. Dva herni mody — ZAKLAD HOTOVY
 - ✅ **Vyber modu na startu nove kampane** (MainMenu._showModeSelect) + setting `gameMode`
