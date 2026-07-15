@@ -1,4 +1,5 @@
 import Router      from '../engine/Router.js';
+import { DEMO, DEMO_LAST_ACT, BUY_URL } from '../engine/Config.js';
 import { CAMPAIGN_DATA } from '../data/campaign.js';
 import CorruptionVisuals from './CorruptionVisuals.js';
 import EventBus     from '../engine/EventBus.js';
@@ -374,8 +375,54 @@ const StoryEngine = {
     this._unsubscribers.push(unsub);
   },
 
+  // ── DEMO paywall ──────────────────────────────────────────────────────────
+  _showDemoEnd() {
+    try { AudioSystem?.stopMusic?.(800); } catch(e) {}
+    const EN = Locale.isEN();
+    const ov = document.createElement('div');
+    ov.className = 'demo-end';
+    ov.innerHTML = `
+      <div class="demo-end-inner">
+        <div class="demo-end-logo">CONFLUX</div>
+        <div class="demo-end-title">${EN ? 'END OF DEMO' : 'KONEC DEMA'}</div>
+        <div class="demo-end-text">${EN
+          ? 'You reached the end of the free demo. The route continues — eight more acts, five endings, and a system that keeps reading you.'
+          : 'Došel jsi na konec bezplatného dema. Trasa pokračuje — dalších osm aktů, pět konců a systém, který tě čte dál.'}</div>
+        <div class="demo-end-btns">
+          <a class="demo-end-btn demo-end-btn--buy" href="${BUY_URL}" target="_blank" rel="noopener">${EN ? '▶ GET THE FULL GAME' : '▶ KOUPIT PLNOU VERZI'}</a>
+          <button class="demo-end-btn" id="demo-end-menu">${EN ? '← MAIN MENU' : '← HLAVNÍ MENU'}</button>
+        </div>
+      </div>
+      <style>
+        .demo-end{position:fixed;inset:0;z-index:9998;display:flex;align-items:center;justify-content:center;
+          background:radial-gradient(circle at 50% 40%,#0a1420,#05080c);animation:demoFade .6s ease}
+        @keyframes demoFade{from{opacity:0}to{opacity:1}}
+        .demo-end-inner{max-width:560px;text-align:center;padding:0 28px;display:flex;flex-direction:column;gap:20px;align-items:center}
+        .demo-end-logo{font-family:'Press Start 2P',monospace;font-size:clamp(26px,5vw,44px);letter-spacing:6px;
+          color:#dfe9f2;text-shadow:0 0 24px rgba(79,163,224,0.35)}
+        .demo-end-title{font-family:'Press Start 2P',monospace;font-size:13px;letter-spacing:4px;color:#4fa3e0}
+        .demo-end-text{font-family:'VT323',monospace;font-size:clamp(17px,2.2vw,21px);line-height:1.4;color:#a8b6c6}
+        .demo-end-btns{display:flex;flex-direction:column;gap:12px;width:100%;max-width:320px;margin-top:8px}
+        .demo-end-btn{font-family:'Press Start 2P',monospace;font-size:11px;letter-spacing:2px;padding:16px 20px;
+          text-decoration:none;text-align:center;cursor:pointer;transition:all .14s;
+          background:rgba(10,16,24,0.6);color:#cdd8e6;border:1px solid rgba(79,163,224,0.4)}
+        .demo-end-btn--buy{border-color:#4fa3e0;border-left:3px solid #4fa3e0;color:#dff0ff}
+        .demo-end-btn:hover{background:rgba(79,163,224,0.16);color:#fff}
+      </style>`;
+    document.body.appendChild(ov);
+    ov.querySelector('#demo-end-menu')?.addEventListener('click', () => {
+      ov.remove();
+      Router.goto('menu');
+    });
+  },
+
   // ── NODE PROCESSING ───────────────────────────────────────────────────────
   _goToNode(nodeId, auto = false) {
+    // DEMO paywall — cílový akt > poslední demo akt → zamkni a nabídni plnou verzi
+    if(DEMO && nodeId) {
+      const m = /^act(\d+)_/.exec(nodeId);
+      if(m && parseInt(m[1]) > DEMO_LAST_ACT) { this._showDemoEnd(); return; }
+    }
     // Guard proti rychlému dvojkliku — jen pro manuální volání (klik hráče)
     if(!auto) {
       const now = Date.now();
