@@ -1655,6 +1655,12 @@ const BattleSystem = {
   },
 
   // AI příprava útočníků — odhal face-down, přepni DEF→ATK
+  // Fog-of-war: hodnota ATK hráčova monstra, jak ji AI SMÍ vidět. Face-down = neznámé
+  // → odhad 1200 (stejně jako při volbě cíle útoku). Bez toho AI "podvádí" — rozhoduje
+  // se podle reálných hodnot skrytých karet, ale útočí naslepo. (Romanův nález o viditelnosti.)
+  _pVisAtk(m) { return m ? (m.faceDown ? 1200 : (m.card.atk || 0)) : 0; },
+  _pVisMaxAtk(s) { return Math.max(0, ...s.pMonsters.filter(Boolean).map(m => this._pVisAtk(m))); },
+
   _aiPrepareAttackers(style) {
     const s = this._state;
     // V prvním tahu (nesmí útočit) neodhaluj ani nepřepínej do ATK — zbytečné prozrazení
@@ -1688,11 +1694,11 @@ const BattleSystem = {
       if(m.mode === 'def') {
         // Defensive AI nechá v DEF; reactive přepne jen pokud má dost síly
         if(style === 'reactive') {
-          const pMaxAtk = Math.max(0, ...s.pMonsters.filter(Boolean).map(pm => pm.card.atk || 0));
+          const pMaxAtk = this._pVisMaxAtk(s);
           if((m.card.atk || 0) > pMaxAtk) m.mode = 'atk';
         } else if(style === 'strategic' || style === 'balanced') {
           // Přepni jen pokud má šanci vyhrát souboj
-          const pMaxAtk = Math.max(0, ...s.pMonsters.filter(Boolean).map(pm => pm.card.atk || 0));
+          const pMaxAtk = this._pVisMaxAtk(s);
           if((m.card.atk || 0) >= pMaxAtk || !s.pMonsters.some(Boolean)) m.mode = 'atk';
         } else {
           // Aggressive, perfect, rewrite, growth, corruption — vždy ATK
@@ -2103,7 +2109,7 @@ const BattleSystem = {
     if(!pActive.length) return traps[0];
 
     const pHasSynth = pActive.some(m => m?.card?.faction === 'synth');
-    const pMaxAtk = Math.max(0, ...pActive.map(m => m.card.atk || 0));
+    const pMaxAtk = this._pVisMaxAtk(s);
     const pMinAtk = Math.min(...pActive.map(m => m.card.atk || 0));
     const pStrong = pMaxAtk >= 1800;
 
@@ -2150,7 +2156,7 @@ const BattleSystem = {
     const pActive = s.pMonsters.filter(Boolean);
     const pHasSynth = pActive.some(m => m?.card?.faction === 'synth');
     const pCount = pActive.length;
-    const pMaxAtk = pActive.length ? Math.max(...pActive.map(m => m.card.atk || 0)) : 0;
+    const pMaxAtk = this._pVisMaxAtk(s); // fog-of-war: face-down = odhad
     const eActive = s.eMonsters.filter(Boolean);
     const eMaxAtk = eActive.length ? Math.max(...eActive.map(m => m.card.atk || 0)) : 0;
     const eHasSynth = eActive.some(m => m?.card?.faction === 'synth');

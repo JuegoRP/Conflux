@@ -24,6 +24,9 @@ a kvůli limitu 1 karta/tah po zahrání monstra skončí → **skoro vždy hraj
   + minimální LP ztrátu; 'perfect' už NIKDY nesebevraždí (2) málo buffů na sebe → taktický buff: když by
   posílení proměnilo prohraný souboj ve vítězný, AI ho použije (3) neútočí do prázdného pole → i defensive
   styl teď při prázdném poli hráče přepne vše do ATK a jde přímo na LP
+- ✅ **Fog-of-war fix (2026-07-15):** AI rozhodování (pMaxAtk) čte skrz face-down karty hráče reálné ATK,
+  ale útok maskuje na odhad → nekonzistence (AI "podvádí" v rozhodování, útočí naslepo). Sjednoceno
+  helperem _pVisMaxAtk (face-down = odhad 1200 všude). Fér + konzistentní.
 - ⬜ Další ladění dle playtestu
 
 ## 3. Dva herni mody — ZAKLAD HOTOVY
