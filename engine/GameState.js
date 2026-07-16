@@ -911,8 +911,10 @@ const GameState = {
       lines.push({ type: 'body', text: `${lost} karet zmizelo. Systém si to pamatuje i když ty ne.` });
     }
 
-    // ── Corruption ───────────────────────────────────────────────────────────
-    if(corrLevel >= 3) {
+    // ── Corruption (zrcadlo přepisu — čím vyšší, tím víc systém vlastní) ──────
+    if(corrLevel >= 4) {
+      lines.push({ type: 'body', text: `Z tebe už zbývá málo. Systém tě zná líp než ty sám — protože většinu tebe teď píše on.` });
+    } else if(corrLevel >= 3) {
       lines.push({ type: 'body', text: `Přepis zanechal hluboké stopy. Nepřepisuješ ty systém — systém přepisuje tebe.` });
     } else if(corrLevel > 0) {
       lines.push({ type: 'body', text: 'Přepis zanechal stopy. Zatím mělké. Zatím.' });

@@ -61,8 +61,9 @@ const LetterEngine = {
     this._addStyles();
     const el = this._container;
 
+    const corr = Math.min(3, GameState.corruption?.level || 0); // dopis se sám korumpuje dle hráče
     el.innerHTML = `
-      <div class="letter-scene">
+      <div class="letter-scene${corr > 0 ? ' letter-corr letter-corr-' + corr : ''}">
         <div class="letter-device">
           <img src="assets/images/letter_holo.png" class="letter-device-img" alt="">
           <div class="letter-screen">
@@ -85,14 +86,17 @@ const LetterEngine = {
         controls.style.display = 'flex';
         AudioSystem.playEffect('sfx_letter_done');
       }, 800);
+      this._startLetterGlitch(content);
     });
 
     // Tlačítka
     el.querySelector('#letter-replay').addEventListener('click', () => {
       controls.style.display = 'none';
       content.innerHTML = '';
+      clearInterval(this._letterGlitchTimer);
       this._writeLines(content, this._lines, () => {
         setTimeout(() => { controls.style.display = 'flex'; }, 800);
+        this._startLetterGlitch(content);
       });
     });
 
@@ -201,8 +205,34 @@ const LetterEngine = {
   // KONEC HRY
   // ═══════════════════════════════════════════════════════════════
 
+  // Dopis se sám přepisuje — při vysoké korupci systém přepisuje i tuhle finální zprávu o tobě.
+  _startLetterGlitch(container) {
+    clearInterval(this._letterGlitchTimer);
+    const corr = Math.min(3, GameState.corruption?.level || 0);
+    if(corr < 2 || !container) return; // přepis textu jen při vysoké korupci (CSS glitch běží i níž)
+    const GL = '░▒▓█▪◈×±§';
+    const period = corr >= 3 ? 850 : 1600;
+    const n = corr >= 3 ? 3 : 2;
+    this._letterGlitchTimer = setInterval(() => {
+      if(this._destroyed) { clearInterval(this._letterGlitchTimer); return; }
+      const lines = container.querySelectorAll('.letter-line--body');
+      if(!lines.length) return;
+      const el = lines[Math.floor(Math.random() * lines.length)];
+      const orig = el._origText || (el._origText = el.textContent);
+      if(!orig || orig.length < 4) return;
+      const chars = orig.split('');
+      for(let k = 0; k < n; k++) {
+        const idx = Math.floor(Math.random() * chars.length);
+        if(chars[idx].trim()) chars[idx] = GL[Math.floor(Math.random() * GL.length)];
+      }
+      el.textContent = chars.join('');
+      setTimeout(() => { if(!this._destroyed && el.isConnected) el.textContent = orig; }, corr >= 3 ? 220 : 140);
+    }, period);
+  },
+
   destroy() {
     this._destroyed = true;
+    clearInterval(this._letterGlitchTimer);
     if (this._container) {
       this._container.innerHTML = '';
       this._container = null;
@@ -293,6 +323,15 @@ const LetterEngine = {
       .letter-content::-webkit-scrollbar { width: 5px; }
       .letter-content::-webkit-scrollbar-track { background: transparent; }
       .letter-content::-webkit-scrollbar-thumb { background: rgba(20, 90, 110, 0.55); border-radius: 3px; }
+
+      /* ── Korupce dopisu — systém přepisuje i tvou finální zprávu (eskaluje s levelem) ── */
+      @keyframes letter-corr-flicker { 0%,97%,100%{opacity:1} 98%{opacity:0.82} 99%{opacity:0.9} }
+      @keyframes letter-corr-shift { 0%,100%{transform:translate(0,0)} 50%{transform:translate(0.4px,-0.3px)} }
+      .letter-corr-1 .letter-content { animation: letter-corr-flicker 5s steps(1) infinite; }
+      .letter-corr-2 .letter-content { animation: letter-corr-flicker 3s steps(1) infinite, letter-corr-shift 0.9s ease-in-out infinite; }
+      .letter-corr-2 .letter-line { text-shadow: 0.6px 0 rgba(224,79,106,0.35), -0.6px 0 rgba(79,163,224,0.35); }
+      .letter-corr-3 .letter-content { animation: letter-corr-flicker 1.8s steps(1) infinite, letter-corr-shift 0.5s ease-in-out infinite; }
+      .letter-corr-3 .letter-line { text-shadow: 1px 0 rgba(224,79,106,0.5), -1px 0 rgba(79,163,224,0.5); letter-spacing: 0.3px; }
 
       /* ── Text — sci-fi terminál, tmavé písmo na jasném hologramu ── */
       .letter-line {
