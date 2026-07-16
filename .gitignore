@@ -12,3 +12,12 @@ _UKAZKA_*
 tools/edit_done.txt
 tools/*_run.log
 tools/gen_log.jsonl
+
+# Bezpečnostní pojistka — nikdy necommitovat klíče/tajemství (public repo)
+*.key
+*.pem
+*.pat
+*.env
+*_secret*
+*credentials*
+id_rsa*
