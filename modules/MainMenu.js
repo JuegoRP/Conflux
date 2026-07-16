@@ -99,7 +99,7 @@ const MainMenu = {
           </nav>
 
           <div class="m-status-bar" id="m-status-bar"></div>
-          <div class="m-version">CONFLUX  v2095</div>
+          <div class="m-version">3R STUDIO${DEV ? ' · build 2095' : ''}</div>
         </div>
 
         <!-- Alignment indikátor -->
