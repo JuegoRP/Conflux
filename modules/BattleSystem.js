@@ -1380,6 +1380,19 @@ const BattleSystem = {
     }
   },
 
+  // Zobrazovací bonus aktivní arény pro kartu (i v ruce). Vrací {atk,def} nebo null.
+  // Jen buff-arény a jen odpovídající frakce. NEMUTUJE kartu — použij na klon pro render.
+  _arenaBonusFor(card) {
+    const a = this._state?.activeArena;
+    if(!a || !card || card.kind !== 'monster') return null;
+    const fits = (a.faction==='synth'||a.faction==='organic') ? card.faction===a.faction : true;
+    if(!fits) return null;
+    if(a.effect==='arena_buff_atk') return { atk:a.value, def:0 };
+    if(a.effect==='arena_buff_def') return { atk:0, def:a.value };
+    if(a.effect==='arena_buff_all') return { atk:a.value, def:a.value };
+    return null;
+  },
+
 // ── AKTIVACE SPELLU ───────────────────────────────────────────────────────
   _activateSpell(card, who) {
     const s = this._state;
@@ -3861,11 +3874,15 @@ const BattleSystem = {
       const scarData = GameState.getScarData?.(card.id);
 
       const canDiscard = s.isPlayerTurn && !s.busy && !s.over && card.kind !== 'letter';
+      // Aktivní aréna → ukaž už v ruce zvýšená čísla (jen zobrazení, klon; při změně/zrušení arény se překreslí)
+      const aBonus = this._arenaBonusFor(card);
+      const dispCard = aBonus ? {...card, atk:(card.atk||0)+aBonus.atk, def:(card.def||0)+aBonus.def} : card;
       return `<div class="h-sl ${isSelected ? 'sel' : ''} ${inFuseSel ? 'multi-sel' : ''} ${inFuseMode && !inFuseSel ? 'fuse-dim' : ''}" data-hand="${i}">
-        ${_rcEl(card, 'md', {
+        ${_rcEl(dispCard, 'md', {
           selected: isSelected,
           inFuse: inFuseSel,
           scarCount: scarData?.scars || 0,
+          arenaBoosted: !!aBonus,
         })}
         ${canDiscard ? `<button class="hand-discard-btn" data-discard="${i}" title="Zahodit">✕</button>` : ''}
       </div>`;

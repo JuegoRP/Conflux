@@ -160,7 +160,7 @@ export function renderCardEl(card, size = 'md', opts = {}) {
     const statsBottom = opts.hideStats
       ? ''
       : isMonster
-      ? `<div class="cx-sm-stats">
+      ? `<div class="cx-sm-stats${opts.arenaBoosted ? ' cx-arena-boost' : ''}">
            <span class="cx-sm-atk">${card.atk || 0}</span>
            <span class="cx-sm-sep">/</span>
            <span class="cx-sm-def">${card.def || 0}</span>
@@ -464,6 +464,8 @@ export function injectCardStyles() {
     .cx-target{animation:cx-pulse .6s ease infinite alternate;}
     @keyframes cx-pulse{from{box-shadow:0 0 0 2px #e04f6a,0 0 8px rgba(224,79,106,0.3)}to{box-shadow:0 0 0 2px #e04f6a,0 0 20px rgba(224,79,106,0.7)}}
     .cx-def{transform:rotate(6deg) translateY(2px);}
+    /* Arénou zvýšené staty (i v ruce) — tyrkysová = změna prostředí */
+    .cx-arena-boost .cx-sm-atk, .cx-arena-boost .cx-sm-def{color:#50e0b8;text-shadow:0 0 6px rgba(80,224,184,0.6);}
     .cx-used{opacity:0.45;filter:saturate(0.3);}
     .cx-reveal{animation:cx-flip .4s ease;}
     @keyframes cx-flip{0%{transform:rotateY(0)}49%{transform:rotateY(90deg)}51%{transform:rotateY(-90deg)}100%{transform:rotateY(0)}}
