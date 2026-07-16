@@ -71,14 +71,15 @@ const subcatColors = {
 };
 
 // ── Scar fáze ────────────────────────────────────────────────────────────────
-// 0–2 jizvy: karta vypadá čistá, neutrální. Hráč nemá indicii.
-// 3–5: první scar form. Mírné praskliny, lehká frakční patina.
-// 6–9: druhý scar form. Víc prasklin, silnější patina, tlumená saturace.
+// Vizuál nese info MÍSTO čísla (číslo ◈N odstraněno — vadilo v kolekci).
+// 1–4 jizvy: první scar form. Jemná prasklina, lehká frakční patina.
+// 5–9: druhý scar form. Víc prasklin, silnější patina, tlumená saturace.
 // 10+: třetí scar form ("nameFull"). Přes karty jdou praskliny, rámeček ohnutý.
 function scarPhase(scarCount) {
+  // Vizuál nese info místo čísla → viditelné už od 1. scaru (jemné praskliny)
   if (scarCount >= 10) return 3;
-  if (scarCount >= 6)  return 2;
-  if (scarCount >= 3)  return 1;
+  if (scarCount >= 5)  return 2;
+  if (scarCount >= 1)  return 1;
   return 0;
 }
 
@@ -170,7 +171,7 @@ export function renderCardEl(card, size = 'md', opts = {}) {
     const badges = [
       opts.inFuse ? '<div class="cx-badge cx-badge-fuse">✦</div>' : '',
       card.corruptionValue ? `<div class="cx-badge cx-badge-corr">◈${card.corruptionValue}</div>` : '',
-      showScarCount && scarCount > 0 ? `<div class="cx-badge cx-badge-scar">◈${scarCount}</div>` : '',
+      '', // scar číslo odstraněno — místo něj nese informaci vizuál (praskliny/patina)
       (opts.owned > 1) ? `<div class="cx-badge cx-badge-owned">×${opts.owned}</div>` : '',
       (opts.inDeck > 0) ? `<div class="cx-badge cx-badge-deck">D</div>` : '',
       opts.used ? '<div class="cx-used-overlay"></div>' : '',
@@ -219,7 +220,7 @@ export function renderCardEl(card, size = 'md', opts = {}) {
   const badges = [
     opts.inFuse ? '<div class="cx-badge cx-badge-fuse">✦</div>' : '',
     card.corruptionValue ? `<div class="cx-badge cx-badge-corr">◈${card.corruptionValue}</div>` : '',
-    showScarCount && scarCount > 0 ? `<div class="cx-badge cx-badge-scar">◈${scarCount}</div>` : '',
+    '', // scar číslo odstraněno — místo něj nese informaci vizuál (praskliny/patina)
     (opts.owned > 1) ? `<div class="cx-badge cx-badge-owned">×${opts.owned}</div>` : '',
     (opts.inDeck > 0) ? `<div class="cx-badge cx-badge-deck">D</div>` : '',
     opts.used ? '<div class="cx-used-overlay"></div>' : '',
