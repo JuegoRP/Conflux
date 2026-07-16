@@ -37,6 +37,9 @@ const LetterEngine = {
     // Sestav dopis z GameState
     this._lines = GameState.buildLetter();
 
+    // Konec běhu → systém si tě zapíše (paměť napříč cykly)
+    GameState.recordCycle?.();
+
     AudioSystem.stopMusic(800);
     this._render();
   },

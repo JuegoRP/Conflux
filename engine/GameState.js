@@ -752,6 +752,38 @@ const GameState = {
     this.checkpoint = { exists: false, nodeId: null, nodeNumber: 0, savedAt: null, narrativeText: '' };
   },
 
+  // ── PAMĚŤ CYKLŮ — systém si tě pamatuje napříč běhy (jádro "systém tě zná") ──
+  recordCycle() {
+    try {
+      const p = this.player, ps = this.playstyle || {};
+      const rec = {
+        n: 0, // doplní se níž
+        name: p.name || 'Kurýr',
+        ending: this.identity?.endingType || this.campaign?.endingId || 'observer',
+        alignment: p.alignment || 0,
+        corruption: this.corruption?.level || 0,
+        faction: (ps.synthCardsPlayed||0) > (ps.organicCardsPlayed||0) ? 'synth'
+               : (ps.organicCardsPlayed||0) > (ps.synthCardsPlayed||0) ? 'organic' : 'neutral',
+        aggro: (ps.attackedFirst||0) >= (ps.builtDefenseFirst||0),
+        ts: Date.now(),
+      };
+      const all = JSON.parse(localStorage.getItem('conflux_cycles') || '[]');
+      rec.n = all.length + 1;
+      all.push(rec);
+      localStorage.setItem('conflux_cycles', JSON.stringify(all.slice(-10))); // drž posledních 10
+    } catch(e) {}
+  },
+
+  priorCycle() {
+    try {
+      const all = JSON.parse(localStorage.getItem('conflux_cycles') || '[]');
+      return all.length ? all[all.length - 1] : null;
+    } catch(e) { return null; }
+  },
+  cycleCount() {
+    try { return JSON.parse(localStorage.getItem('conflux_cycles') || '[]').length; } catch(e) { return 0; }
+  },
+
   buildIdentityProfile() {
     const p = this.playstyle, id = this.identity;
     const kept = this.getFlag('memories_kept') || 0;

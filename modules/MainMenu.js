@@ -2,6 +2,7 @@ import Router      from '../engine/Router.js';
 import SaveManager  from '../engine/SaveManager.js';
 import Locale from '../engine/Locale.js';
 import AudioSystem from './AudioSystem.js';
+import VoiceOver   from './VoiceOver.js';
 import GameState    from '../engine/GameState.js';
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -492,9 +493,12 @@ const MainMenu = {
     });
 
     on('btn-campaign', () => this._showModeSelect(mode => this._clickGo(() => {
+      const prior = GameState.priorCycle?.();
       GameState.reset();
       GameState.settings.gameMode = mode;
-      Router.goto('story', { nodeId: 'act1_intro' });
+      const startStory = () => Router.goto('story', { nodeId: 'act1_intro' });
+      if(prior) this._showCycleMemory(prior, startStory); // systém si tě pamatuje z minula
+      else startStory();
     })));
 
     on('btn-continue', () => {
@@ -593,6 +597,53 @@ const MainMenu = {
         cb(mode);
       });
     });
+  },
+
+  // Systém si tě pamatuje z minulého běhu — uvítací beat před novou hrou
+  _showCycleMemory(prior, cb) {
+    const EN = Locale.isEN();
+    const n = (GameState.cycleCount?.() || 1) + 1;
+    const lean = prior.faction === 'synth' ? (EN ? 'toward order' : 'k řádu')
+               : prior.faction === 'organic' ? (EN ? 'toward the edges' : 'k okrajům')
+               : (EN ? 'to neither side' : 'ani na jednu stranu');
+    const rewrite = prior.corruption >= 4 ? (EN ? 'And I rewrote almost all of you.' : 'A přepsal jsem tě skoro celého.')
+                  : prior.corruption >= 2 ? (EN ? 'And you let me rewrite part of you.' : 'A nechal ses zčásti přepsat.')
+                  : (EN ? 'And you kept your shape. Mostly.' : 'A udržel sis tvar. Většinou.');
+    const line = EN
+      ? `Last cycle you leaned ${lean}. ${rewrite} Let's see if it repeats.`
+      : `Minulý cyklus ses klonil ${lean}. ${rewrite} Uvidíme, jestli se to zopakuje.`;
+    const ov = document.createElement('div');
+    ov.className = 'cycle-mem';
+    ov.innerHTML = `
+      <div class="cycle-mem-inner">
+        <div class="cycle-mem-tag">${EN ? 'SYSTEM' : 'SYSTÉM'} · ${EN ? 'CYCLE' : 'CYKLUS'} ${n}</div>
+        <div class="cycle-mem-line" id="cycle-mem-line"></div>
+        <button class="cycle-mem-go" id="cycle-mem-go">${EN ? '▶ CONTINUE' : '▶ POKRAČOVAT'}</button>
+      </div>
+      <style>
+        .cycle-mem{position:fixed;inset:0;z-index:9997;display:flex;align-items:center;justify-content:center;
+          background:radial-gradient(circle at 50% 45%,#0a1018,#05080c);animation:cmFade .5s ease}
+        @keyframes cmFade{from{opacity:0}to{opacity:1}}
+        .cycle-mem-inner{max-width:600px;text-align:center;padding:0 30px;display:flex;flex-direction:column;gap:26px;align-items:center}
+        .cycle-mem-tag{font-family:'Press Start 2P',monospace;font-size:11px;letter-spacing:4px;color:#4fa3e0;opacity:.85}
+        .cycle-mem-line{font-family:'VT323',monospace;font-size:clamp(20px,3vw,28px);line-height:1.4;color:#cdd8e6;min-height:2em}
+        .cycle-mem-go{font-family:'Press Start 2P',monospace;font-size:11px;letter-spacing:2px;padding:14px 26px;
+          background:transparent;color:#8fb8d8;border:1px solid rgba(79,163,224,0.4);border-left:3px solid #4fa3e0;
+          cursor:pointer;opacity:0;transition:opacity .4s,background .14s}
+        .cycle-mem-go:hover{background:rgba(79,163,224,0.14);color:#fff}
+      </style>`;
+    (this._container || document.body).appendChild(ov);
+    try { AudioSystem?.playEffect?.('sting_profile'); } catch(e) {}
+    try { VoiceOver?.say?.('profile_found'); } catch(e) {}
+    // typewriter linky
+    const el = ov.querySelector('#cycle-mem-line'); const go = ov.querySelector('#cycle-mem-go');
+    let i = 0;
+    const type = () => {
+      if(i <= line.length) { el.textContent = line.slice(0, i++); setTimeout(type, 28); }
+      else { go.style.opacity = '1'; }
+    };
+    setTimeout(type, 500);
+    go.addEventListener('click', () => { ov.remove(); cb(); }, { once: true });
   },
 
   _showSettings() {
