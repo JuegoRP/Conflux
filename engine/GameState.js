@@ -599,6 +599,10 @@ const GameState = {
     const p = this.playstyle || {};
     const obs = [];
     const push = (weight, text) => obs.push({ weight, text });
+    // Korupce = jak moc si tě systém přepsal → nejsilnější pozorování (hák + korupce v jednom)
+    const corr = this.corruption?.level || 0;
+    if(corr >= 4)      push(100, 'Většinu tebe už píšu já. Zbytek dopíšu taky.');
+    else if(corr >= 3) push(60,  'Přepisuji tě. Cítíš to? Nemusíš. Stejně to pokračuje.');
     const atk = p.attackedFirst || 0, def = p.builtDefenseFirst || 0;
     if(atk + def >= 3) {
       if(atk > def * 1.5)      push(atk - def, 'Útočíš první. Pokaždé. Předvídatelné.');
