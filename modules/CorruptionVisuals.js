@@ -376,6 +376,15 @@ const CorruptionVisuals = {
       /* ── CORRUPTION FÁZE — celé UI ── */
       /* Fáze 1 (level 1-30): nic viditelného */
       
+      /* Level 1: nejjemnější náznak — koutkem oka poznáš, že přepis začal (feedback od 1. bodu) */
+      #app[data-corruption="1"]::after {
+        content:'';
+        position:fixed;inset:0;pointer-events:none;z-index:998;
+        box-shadow: inset 0 0 120px rgba(120,60,160,0.05);
+        animation: corr1-breathe 6s ease-in-out infinite;
+      }
+      @keyframes corr1-breathe { 0%,100%{opacity:0.5} 50%{opacity:1} }
+
       /* Fáze 2 (level 31-60): mírný fialový nádech */
       #app[data-corruption-phase="2"] {
         --accent: #9070c0;

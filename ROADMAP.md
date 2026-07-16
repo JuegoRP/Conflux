@@ -53,6 +53,14 @@ a kvůli limitu 1 karta/tah po zahrání monstra skončí → **skoro vždy hraj
   ⬜ zbývá: 138 dynamických battle-log hlášek (interpolované, scrollují — nižší priorita)
 - ⬜ **STEAM packaging** (rozhodnuto 2026-07-10): Electron/Tauri wrapper + Steamworks, až po EN a balancingu
 
+## 3d. Korupce rozvedena VŠUDE (2026-07-16) — mechanické tělo hlavního motivu
+- ✅ Opraveny mrtvé prahy (škála 0-5, ne 70/50): StoryEngine corrLevel>=4, act8 requireCorruption 3, act10 F corruptionMin 4
+- ✅ **Letter = zrcadlo** (1/5): dopis o tobě se sám koroduje — CSS glitch + přepis znaků při korupci ≥2; nová linka lvl≥4
+- ✅ **Hratelnost** (2/5): korupce ≥3 → systém přepíše tvou zahranou kartu (−ATK, 15/25/35%); korupce = reálná cena
+- ✅ **Hák** (4/5): profileBarks korupčně-vědomé → propíše se do bojových barků, profil-screenu i {{profile}} tokenu
+- ✅ **Zpětná vazba** (5/5): jemný indikátor už od levelu 1 (dřív vizuál až od 3)
+- ⬜ Budoucí: hlubší story dark-branche (corruptionCheck) — narativní obsah na autora
+
 ## 4. Balancing
 - ⬜ **Corruption tempo** — laditelná konstanta `STORY_CORRUPTION_PER_TIER` + prahy alignmentu
 - ⬜ **Váhy voleb** (akty 4–10 dostaly effects — doladit čísla podle pocitu)
