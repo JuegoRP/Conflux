@@ -707,6 +707,7 @@ const BattleSystem = {
         scarCount: GameState.getScarData?.(card.id)?.scars || 0,
       };
       this._applyArenaToMonster(s.pMonsters[slot]);
+      this._maybeCorruptPlayed(s.pMonsters[slot], 'p'); // vysoká korupce → systém přepíše kartu
       setTimeout(()=>{ if(s.pMonsters[slot]) s.pMonsters[slot].justPlaced=false; }, 600);
       setTimeout(() => this._animatePlayFromHand(slot), 50);
       if(faceDown) {
@@ -1378,6 +1379,21 @@ const BattleSystem = {
     if(newCard && ['arena_buff_atk','arena_buff_def','arena_buff_all'].includes(newCard.effect)) {
       [...(s.pMonsters||[]), ...(s.eMonsters||[])].forEach(m => this._applyArenaToMonster(m));
     }
+  },
+
+  // KORUPCE V BOJI: při vysoké korupci systém občas "přepíše" tvou zahranou kartu (sníží ATK).
+  // Fér — korupci sis způsobil vlastními volbami; systém teď vlastní část tvých nástrojů.
+  _maybeCorruptPlayed(entry, who) {
+    if(who === 'e' || !entry?.card) return; // jen hráčovy karty (soupeř = systém sám)
+    const lvl = GameState.corruption?.level || 0;
+    if(lvl < 3) return;
+    const chance = lvl >= 5 ? 0.35 : lvl >= 4 ? 0.25 : 0.15;
+    if(Math.random() > chance) return;
+    const drop = 100 + Math.floor(Math.random() * (lvl >= 5 ? 350 : lvl >= 4 ? 250 : 150));
+    const before = entry.card.atk || 0;
+    entry.card.atk = Math.max(0, before - drop);
+    this._log(`◈ SYSTÉM PŘEPSAL [${entry.card.name}]: ATK ${before} → ${entry.card.atk}.`, 'entropy');
+    try { this._bark?.('system', 'Přepsáno. Patřilo to nám.'); } catch(e) {}
   },
 
   // Zobrazovací bonus aktivní arény pro kartu (i v ruce). Vrací {atk,def} nebo null.
