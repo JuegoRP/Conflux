@@ -1348,14 +1348,36 @@ const BattleSystem = {
 
 // Aplikuje bonus aktivní arény na jedno nově vyložené monstrum (frakčně-vědomé).
   // Arény platí OBĚMA stranám i pro karty zahrané po aktivaci (pravidlo z CLAUDE.md).
+  // Aplikuje buff aktivní arény na JEDNO monstrum a ZAPÍŠE, kolik dala (_arenaAtk/_arenaDef),
+  // aby to šlo vrátit, až aréna zmizí. Aréna = trvalá vrstva, ne jednorázové přičtení.
   _applyArenaToMonster(m) {
     const a = this._state?.activeArena;
-    if(!a || !m) return;
+    if(!a || !m || m._arenaAtk || m._arenaDef) return; // už má arénu aplikovanou
     const fits = (a.faction==='synth'||a.faction==='organic') ? m.card.faction===a.faction : true;
     if(!fits) return;
-    if(a.effect==='arena_buff_atk') m.card.atk += a.value;
-    else if(a.effect==='arena_buff_def') m.card.def = (m.card.def||0)+a.value;
-    else if(a.effect==='arena_buff_all') { m.card.atk += a.value; m.card.def = (m.card.def||0)+a.value; }
+    let da = 0, dd = 0;
+    if(a.effect==='arena_buff_atk') da = a.value;
+    else if(a.effect==='arena_buff_def') dd = a.value;
+    else if(a.effect==='arena_buff_all') { da = a.value; dd = a.value; }
+    else return;
+    m.card.atk = (m.card.atk||0) + da;
+    m.card.def = (m.card.def||0) + dd;
+    m._arenaAtk = da; m._arenaDef = dd;
+  },
+
+  // Změna prostředí: vrať starý arénový buff VŠEM (obě strany), nastav novou arénu,
+  // aplikuj nový buff všem odpovídajícím. Volat při položení arény i při jejím zmizení (null).
+  _setArena(newCard) {
+    const s = this._state;
+    [...(s.pMonsters||[]), ...(s.eMonsters||[])].forEach(m => {
+      if(!m) return;
+      if(m._arenaAtk) { m.card.atk = (m.card.atk||0) - m._arenaAtk; m._arenaAtk = 0; }
+      if(m._arenaDef) { m.card.def = (m.card.def||0) - m._arenaDef; m._arenaDef = 0; }
+    });
+    s.activeArena = newCard || null;
+    if(newCard && ['arena_buff_atk','arena_buff_def','arena_buff_all'].includes(newCard.effect)) {
+      [...(s.pMonsters||[]), ...(s.eMonsters||[])].forEach(m => this._applyArenaToMonster(m));
+    }
   },
 
 // ── AKTIVACE SPELLU ───────────────────────────────────────────────────────
@@ -1495,7 +1517,8 @@ const BattleSystem = {
       case 'arena_break': {
         if(s.activeArena) {
           const name = s.activeArena.name;
-          s.activeArena = null;
+          this._setArena(null);   // vrátí arénový buff všem monstrům
+
           // Odstraň arénu ze spell slotů (obou stran) → do hřbitova majitele
           [['p',s.pSpells,s.pGY],['e',s.eSpells,s.eGY]].forEach(([sd,slots,gy])=>{
             slots.forEach((sp,i)=>{ if(sp && sp.card?.kind==='arena'){ gy.push(sp.card); slots[i]=null; } });
@@ -1539,16 +1562,10 @@ const BattleSystem = {
       case 'arena_buff_atk':
       case 'arena_buff_def':
       case 'arena_buff_all': {
-        // Frakční aréna buffuje jen svou frakci (obě strany!); hybrid/neutral všem
-        const fitsF = m => (card.faction==='synth'||card.faction==='organic') ? m.card.faction===card.faction : true;
-        [...myM, ...oppM].forEach(m=>{
-          if(!m || !fitsF(m)) return;
-          if(card.effect!=='arena_buff_def') m.card.atk += card.value;
-          if(card.effect!=='arena_buff_atk') m.card.def = (m.card.def||0)+card.value;
-        });
+        // Trvalý buff řeší _setArena (aplikace všem + revert při zmizení arény). Tady jen log.
         const lbl = card.faction==='synth' ? 'Synth' : card.faction==='organic' ? 'Organic' : 'všichni';
         const stat = card.effect==='arena_buff_atk' ? 'ATK' : card.effect==='arena_buff_def' ? 'DEF' : 'ATK i DEF';
-        this._log(`🏟 [${card.name}]: ${lbl} +${card.value} ${stat} (obě strany).`,'sys');
+        this._log(`🏟 [${card.name}]: ${lbl} +${card.value} ${stat} (obě strany, dokud aréna leží).`,'sys');
         break;
       }
       case 'arena_draw': {
@@ -1600,7 +1617,7 @@ const BattleSystem = {
 
     // Arena karta — nastav jako aktivní arenu a aplikuj per-turn tracking
     if(card.kind === 'arena') {
-      s.activeArena = { ...card };
+      this._setArena({ ...card });   // nastaví + aplikuje buff všem (obě strany), revertuje starou arénu
       this._log(`🏟 [${card.name}] je nyní aktivní aréna.`,'sys');
       EventBus.emit('sfx:play', 'arena');
     }
