@@ -991,6 +991,7 @@ const BattleSystem = {
     if(fieldSlot !== null) {
       s.pGY.push(s.pMonsters[fieldSlot].card);
       s.pMonsters[fieldSlot] = {card:newCard, mode:s.pMonsters[fieldSlot].mode, hasAttacked:false};
+      this._applyArenaToMonster(s.pMonsters[fieldSlot]); // aréna platí i na fúzi nahrazující kartu
       this._log(`✦ FÚZE! [${result.name}] nahradil kartu na poli.`,'fuse');
     } else {
       const slot = s.pMonsters.findIndex(m=>m===null);

@@ -395,22 +395,6 @@
 "name": "Forgotten Protocol",
 "desc": "Destroys Synth attacker. Code twenty years old. Still works."
 },
-"201": {
-"name": "Urban Infrastructure",
-"desc": "Synth +200 ATK. The city was built for this."
-},
-"202": {
-"name": "Deep Forest",
-"desc": "Organic +200 DEF. The forest shields those who know how to stand."
-},
-"203": {
-"name": "Nexus",
-"desc": "All cards +100 ATK. A place where worlds meet."
-},
-"204": {
-"name": "Old Ruins",
-"desc": "All cards +150 ATK. Ruins make no distinctions."
-},
 "205": {
 "name": "Data Core",
 "desc": "Both players draw 1 extra card each turn. The system takes over."
@@ -431,25 +415,9 @@
 "name": "Altar of Corruption",
 "desc": "At the end of each turn +1 corruption for both. It grows on its own."
 },
-"210": {
-"name": "Industrial Zone",
-"desc": "Synth +300 ATK. The factory never sleeps."
-},
-"211": {
-"name": "Root Tunnel",
-"desc": "Organic +300 DEF. No signal underground."
-},
-"212": {
-"name": "Old Power Plant",
-"desc": "Synth +400 ATK. The energy was always here. Who controls it?"
-},
 "213": {
 "name": "Flooded District",
 "desc": "Both players +500 LP each turn. The river reclaimed what was hers."
-},
-"214": {
-"name": "Nexus Interface",
-"desc": "+200 ATK+DEF to all. Here, two worlds met and do not clash."
 },
 "215": {
 "name": "Network Node — Dead",
@@ -458,10 +426,6 @@
 "216": {
 "name": "Watchtower",
 "desc": "Both players draw 1 extra card each turn. Everything is seen. Everything is recorded."
-},
-"217": {
-"name": "Ancient Grove",
-"desc": "Organic +500 DEF. Trees remember. They won't let you pass."
 },
 "218": {
 "name": "World's Scar",
@@ -1682,5 +1646,41 @@
 "834": {
 "name": "Half Return",
 "desc": "Attacker loses half ATK. What passes through the rift returns halved."
+},
+"201": {
+"name": "Urban Infrastructure",
+"desc": "All Synth cards on the field (both sides) +200 ATK. The city was built for this."
+},
+"202": {
+"name": "Deep Forest",
+"desc": "All Organic cards on the field (both sides) +200 DEF. The forest protects those who know how to stand within it."
+},
+"203": {
+"name": "Nexus",
+"desc": "All cards on the field (both sides) +100 ATK. A place where worlds meet."
+},
+"204": {
+"name": "Old Ruins",
+"desc": "All cards on the field (both sides) +150 ATK. The ruins do not discriminate."
+},
+"210": {
+"name": "Industrial Zone",
+"desc": "All Synth cards on the field (both sides) +300 ATK. The factory never sleeps."
+},
+"211": {
+"name": "Root Tunnel",
+"desc": "All Organic cards on the field (both sides) +300 DEF. No signal underground."
+},
+"212": {
+"name": "Old Power Plant",
+"desc": "All Synth cards on the field (both sides) +400 ATK. The energy was always here. Who controls it?"
+},
+"214": {
+"name": "Nexus Interface",
+"desc": "All cards on the field (both sides) +200 ATK and DEF. Here, two worlds met and do not clash."
+},
+"217": {
+"name": "Ancient Grove",
+"desc": "All Organic cards on the field (both sides) +500 DEF. The trees remember. They won't let you pass."
 }
 }
