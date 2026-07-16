@@ -2005,7 +2005,7 @@ const StoryEngine = {
                           .some(f => GameState.getFlag(f));
       if(!hasFlag) {
         // Corruption má přednost pokud je vysoká
-        if(corrLevel >= 70) {
+        if(corrLevel >= 4) { // korupce má škálu 0-5 (dřív 70 = mrtvé)
           GameState.setFlag?.('chosen_corruption_end');
         } else if(alignment > 40) {
           GameState.setFlag?.('chosen_synth_end');
