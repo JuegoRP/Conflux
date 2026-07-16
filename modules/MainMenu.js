@@ -4,6 +4,7 @@ import Locale from '../engine/Locale.js';
 import AudioSystem from './AudioSystem.js';
 import VoiceOver   from './VoiceOver.js';
 import GameState    from '../engine/GameState.js';
+import { DEV } from '../engine/Config.js';
 
 /* ═══════════════════════════════════════════════════════════════════
    MainMenu — CONFLUX v2036
@@ -92,9 +93,9 @@ const MainMenu = {
             <button class="m-btn m-btn-dim" id="btn-settings" data-accent="#3d4a5c">
               <span class="m-btn-cur">·</span><span class="m-btn-label">${EN ? 'SETTINGS' : 'NASTAVENÍ'}</span>
             </button>
-            <button class="m-btn m-btn-dev" id="btn-dev" data-accent="#b570e0" title="Dev menu">
+            ${DEV ? `<button class="m-btn m-btn-dev" id="btn-dev" data-accent="#b570e0" title="Dev menu">
               <span class="m-btn-cur">◈</span><span class="m-btn-label">DEV</span>
-            </button>
+            </button>` : ''}
           </nav>
 
           <div class="m-status-bar" id="m-status-bar"></div>
