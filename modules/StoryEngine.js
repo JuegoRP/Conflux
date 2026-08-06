@@ -1,5 +1,5 @@
 import Router      from '../engine/Router.js';
-import { DEMO, DEMO_LAST_ACT, BUY_URL } from '../engine/Config.js';
+import { DEMO, DEMO_LAST_ACT, BUY_URL, SUPPORT_URL, FEEDBACK_URL } from '../engine/Config.js';
 import { CAMPAIGN_DATA } from '../data/campaign.js';
 import CorruptionVisuals from './CorruptionVisuals.js';
 import EventBus     from '../engine/EventBus.js';
@@ -386,10 +386,13 @@ const StoryEngine = {
         <div class="demo-end-logo">CONFLUX</div>
         <div class="demo-end-title">${EN ? 'END OF DEMO' : 'KONEC DEMA'}</div>
         <div class="demo-end-text">${EN
-          ? 'You reached the end of the free demo. The route continues — eight more acts, five endings, and a system that keeps reading you.'
-          : 'Došel jsi na konec bezplatného dema. Trasa pokračuje — dalších osm aktů, pět konců a systém, který tě čte dál.'}</div>
+          ? 'This is where the demo ends — the route continues in the full game (eight more acts, five endings, a system that keeps rewriting you).<br><br>' +
+            'I make CONFLUX <b>solo</b>. If you enjoyed it, I\'d hugely appreciate your support — and above all your <b>feedback</b>. It means the world and it directly shapes what I fix and finish next. Thank you for playing.'
+          : 'Tady demo končí — trasa pokračuje v plné verzi (dalších osm aktů, pět konců, systém, který tě přepisuje dál).<br><br>' +
+            'CONFLUX dělám <b>sám</b>. Pokud se ti líbilo, nesmírně si vážím jakékoli podpory — a hlavně <b>zpětné vazby</b>. Znamená pro mě strašně moc a přímo podle ní ladím, co opravím a dodělám. Díky, že jsi si zahrál.'}</div>
         <div class="demo-end-btns">
-          <a class="demo-end-btn demo-end-btn--buy" href="${BUY_URL}" target="_blank" rel="noopener">${EN ? '▶ GET THE FULL GAME' : '▶ KOUPIT PLNOU VERZI'}</a>
+          <a class="demo-end-btn demo-end-btn--buy" href="${FEEDBACK_URL}" target="_blank" rel="noopener">${EN ? '✍ LEAVE FEEDBACK' : '✍ NAPSAT ZPĚTNOU VAZBU'}</a>
+          <a class="demo-end-btn" href="${SUPPORT_URL}" target="_blank" rel="noopener">${EN ? '♥ SUPPORT / DONATE' : '♥ PODPOŘIT / DONATION'}</a>
           <button class="demo-end-btn" id="demo-end-menu">${EN ? '← MAIN MENU' : '← HLAVNÍ MENU'}</button>
         </div>
       </div>

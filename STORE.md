@@ -55,12 +55,20 @@ card-game, deckbuilder, narrative, singleplayer, story-rich, dystopian, atmosphe
 ## Žánr / kategorie
 Card Game / Visual Novel — hraje se v prohlížeči (HTML5)
 
-## Cena / Pricing
-- Projekt: **Paid, $10** (nebo $9.99)
-- **Demo zdarma** = build s prvními 2 akty (CONFLUX_demo.zip), hratelný v prohlížeči
-- **Plná hra** = CONFLUX_full.zip (odemkne se koupí)
-- Regionální cena pro CZ: ~229 Kč (itch nastaví automaticky, případně uprav)
+## Cena / Pricing — FÁZE 1 (teď): DEMO ZDARMA + donation
+- Projekt: **`$0 or donate`** (itch: *"No payments"* → zaškrtni **"Allow tips/donations"**, nebo *"Name your own price"* s minimem 0). Demo je zdarma, kdo chce, může přispět.
+- Nahrát **`CONFLUX_demo.zip`**, označit **"This file will be played in the browser"**.
+- Plnou placenou verzi přidám **později** podle zpětné vazby.
 
-## Uploady
-1. `CONFLUX_demo.zip` — označit jako **This file will be played in the browser** + **free/demo**
-2. `CONFLUX_full.zip` — plná hra (odměna za koupi)
+## FÁZE 2 (později): plná verze
+- Až z feedbacku doladím, změním na **Paid $10 / ~229 Kč** a nahraju `CONFLUX_full.zip`.
+
+## Blok "Od autora" (přidej na konec popisu stránky)
+**CZ:** CONFLUX dělám **sám, jako solo vývojář**. Tohle je **bezplatné demo** (první 2 akty). Pokud tě chytlo, nesmírně si vážím **jakékoli zpětné vazby** v komentářích — přímo podle ní ladím, co opravím a dodělám. A kdo by chtěl podpořit další vývoj, **donation** mě moc potěší (ale hrát můžeš klidně zdarma). Díky. 🙏
+
+**EN:** I make CONFLUX **solo**. This is a **free demo** (first 2 acts). If it grabbed you, I'd hugely value **any feedback** in the comments — it directly shapes what I fix and finish next. And if you'd like to support further development, a **donation** means a lot (but play free, no worries). Thank you. 🙏
+
+## Uploady (fáze 1)
+1. `cover_630x500.png` → **Cover image**
+2. `promo1_profil.png`, `promo2_karty.png` → **Screenshots/galerie**
+3. `CONFLUX_demo.zip` → **This file will be played in the browser**
