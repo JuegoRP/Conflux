@@ -141,7 +141,9 @@ async function boot() {
   EventBus.on('ui:click', () => AudioSystem.playEffect('sfx_card_play', 0.35));
 
   document.addEventListener('click', e => {
-    // .vn-screen ODEBRÁN — story si zvuk posunu řeší sama (jen při skutečném posunu, ne na každý klik)
+    // Story (.vn-btn/.vn-screen) si zvuk posunu řeší sama přes _goToNode (jeden zvuk/posun).
+    // Sem patří jen menu/battle UI.
+    if(e.target.closest('.vn-btn, .vn-screen')) return;
     if(e.target.closest('button, [data-hand], .m-btn, .db-card-item, .cx-card')) {
       EventBus.emit('ui:click');
     }

@@ -1858,10 +1858,16 @@ const BattleSystem = {
       }
     }
 
-    // Jemný styl-posun: útočné styly boostnou monstrum/fúzi, defensive past/arénu
+    // STAVĚNÍ POLE (Romanův nález: AI nedávala víc karet vedle sebe): když má AI málo monster
+    // na poli, prioritizuj vyložení dalšího monstra (buduj presenci = víc útočníků/cílů).
+    // Fúze pole nezvětší (spotřebuje karty) → thin board preferuje plain monstrum.
+    const eMonsterCount = s.eMonsters.filter(Boolean).length;
+    // Jemný styl-posun + board-building
     for(const c of candidates) {
       if((style === 'aggressive' || style === 'perfect') && (c.t === 'monster' || c.t === 'fuse')) c.score += 150;
       if(style === 'defensive' && (c.t === 'trap' || c.t === 'arena')) c.score += 200;
+      if(c.t === 'monster' && eMonsterCount < 2) c.score += 700;  // řídké pole → radši monstrum
+      else if(c.t === 'monster' && eMonsterCount < 3) c.score += 250;
     }
 
     if(candidates.length) {

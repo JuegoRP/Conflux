@@ -431,6 +431,9 @@ const StoryEngine = {
       const now = Date.now();
       if(this._lastNav && now - this._lastNav < 250) return;
       this._lastNav = now;
+      // JEDEN zvuk posunu příběhu — chokepoint pro všechny manuální přechody uzlů
+      // (dialog→další, volba→další, POKRAČOVAT). Cutscene frame-by-frame má vlastní zvuk.
+      try { AudioSystem?.playEffect?.('sfx_card_play', 0.3); } catch(e){}
     }
     if(!nodeId) return;
 
@@ -736,8 +739,7 @@ const StoryEngine = {
               // Rebind po skip — hráč musí kliknout znovu pro pokračování
               setTimeout(bindNext, 50);
             } else {
-              // skutečný posun příběhu → jeden zvuk
-              try { AudioSystem?.playEffect?.('sfx_card_play', 0.3); } catch(e){}
+              // skutečný posun příběhu → zvuk řeší _goToNode (jeden chokepoint)
               this._goToNode(node.next);
             }
           }, { once: true });
