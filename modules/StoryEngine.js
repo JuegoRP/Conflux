@@ -728,6 +728,7 @@ const StoryEngine = {
           screen.addEventListener('click', () => {
             if(!dwellOk) return;
             if(this._typewriterTimer) {
+              // skip typewriteru — jen dopíše text, ŽÁDNÝ zvuk (není to posun příběhu)
               clearInterval(this._typewriterTimer);
               this._typewriterTimer = null;
               const el = this._container.querySelector('.typewriter-text');
@@ -735,6 +736,8 @@ const StoryEngine = {
               // Rebind po skip — hráč musí kliknout znovu pro pokračování
               setTimeout(bindNext, 50);
             } else {
+              // skutečný posun příběhu → jeden zvuk
+              try { AudioSystem?.playEffect?.('sfx_card_play', 0.3); } catch(e){}
               this._goToNode(node.next);
             }
           }, { once: true });
@@ -834,7 +837,7 @@ const StoryEngine = {
         GameState.trackPlay('story_choice', { ms, side });
 
         EventBus.emit('story:choice', { choiceIndex: idx, nextNode: next });
-        EventBus.emit('ui:click');
+        // (ui:click NEemitujeme — volba je <button>, globální handler zvuk zahraje jednou)
 
         if(next) this._goToNode(next);
       });
@@ -1025,7 +1028,7 @@ const StoryEngine = {
       applyFrame(f);
 
       const MIN_DWELL = f.pause ?? 400;
-      const advance = () => { if(ready) show(); };
+      const advance = () => { if(ready) { try { AudioSystem?.playEffect?.('sfx_card_play', 0.3); } catch(e){} show(); } };
       screen.addEventListener('click', advance, { once: true });
       setTimeout(() => {
         ready = true;

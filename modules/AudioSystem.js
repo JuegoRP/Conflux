@@ -70,8 +70,30 @@ const AudioSystem = {
     audio.volume = 0;
 
     this._current = { key, audio };
-    audio.play().catch(() => {});
-    this._fadeTo(audio, this._musicVolume, fadeIn);
+    audio.play().then(() => {
+      this._fadeTo(audio, this._musicVolume, fadeIn);
+    }).catch(() => {
+      // AUTOPLAY BLOKOVÁN → přehrát na příštím user gestu (jinak hudba vůbec nenaběhne)
+      this._fadeTo(audio, this._musicVolume, fadeIn); // ať je volume připravené
+      this._armAutoplayRetry();
+    });
+  },
+
+  // Jednorázový retry — po prvním kliku/klávese zkusí rozjet aktuální hudbu, pokud stojí
+  _armAutoplayRetry() {
+    if(this._autoplayArmed) return;
+    this._autoplayArmed = true;
+    const retry = () => {
+      document.removeEventListener('click', retry);
+      document.removeEventListener('keydown', retry);
+      document.removeEventListener('touchstart', retry);
+      this._autoplayArmed = false;
+      const a = this._current?.audio;
+      if(a && a.paused) a.play().catch(() => {});
+    };
+    document.addEventListener('click', retry);
+    document.addEventListener('keydown', retry);
+    document.addEventListener('touchstart', retry);
   },
 
   stopMusic(fadeOut = 1000) {
@@ -138,29 +160,42 @@ const AudioSystem = {
   // ZVUKOVÉ EFEKTY
   // ══════════════════════════════════════════════════════════════
 
-  _fxCache: {},
+  _fxPool: {},   // effectKey → [Audio,...] pool přednačtených, ready-to-play elementů
 
+  // Nízká latence: místo klonování (které re-bufferuje) drž pool přednačtených elementů;
+  // přehrání = najdi volný, currentTime=0, play(). Klon měl znatelné zpoždění.
   playEffect(effectKey, volume = null) {
     if(GameState.settings?.sfx === false) return;
     const url = GameState.getMusic(effectKey);
     if(!url) return;
     try {
-      // Cache: první použití stáhne, další hrají okamžitě z klonu (žádné zpoždění fetchem)
-      let base = this._fxCache[effectKey];
-      if(!base) { base = new Audio(url); base.preload = 'auto'; this._fxCache[effectKey] = base; }
-      const audio = base.cloneNode(true);
-      audio.volume = Math.min(1, Math.max(0, volume ?? this._sfxVolume));
-      audio.play().catch(() => {});
+      let pool = this._fxPool[effectKey];
+      if(!pool) { pool = this._fxPool[effectKey] = []; this._makeFx(effectKey, url); }
+      let a = pool.find(x => x.paused || x.ended);
+      if(!a) { a = this._makeFx(effectKey, url); }  // všechny hrají → přidej do poolu (max ~4)
+      a.currentTime = 0;
+      a.volume = Math.min(1, Math.max(0, volume ?? this._sfxVolume));
+      a.play().catch(() => {});
     } catch(e) {}
   },
 
-  // Zahřej cache SFX dopředu (volá MainMenu při startu)
+  _makeFx(key, url) {
+    const pool = this._fxPool[key] || (this._fxPool[key] = []);
+    const a = new Audio(url);
+    a.preload = 'auto';
+    try { a.load(); } catch(e) {}
+    if(pool.length < 4) pool.push(a);
+    return a;
+  },
+
+  // Zahřej pool SFX dopředu (volá MainMenu při startu) — 2 kopie = plynulé rychlé opakování
   preloadEffects(keys) {
     for(const k of keys) {
-      if(this._fxCache[k]) continue;
+      if(this._fxPool[k]) continue;
       const url = GameState.getMusic(k);
       if(!url) continue;
-      try { const a = new Audio(url); a.preload = 'auto'; this._fxCache[k] = a; } catch(e) {}
+      this._fxPool[k] = [];
+      this._makeFx(k, url); this._makeFx(k, url);
     }
   },
 

@@ -135,7 +135,8 @@ async function boot() {
   EventBus.on('ui:click', () => AudioSystem.playEffect('sfx_card_play', 0.35));
 
   document.addEventListener('click', e => {
-    if(e.target.closest('button, [data-hand], .m-btn, .db-card-item, .vn-screen, .cx-card')) {
+    // .vn-screen ODEBRÁN — story si zvuk posunu řeší sama (jen při skutečném posunu, ne na každý klik)
+    if(e.target.closest('button, [data-hand], .m-btn, .db-card-item, .cx-card')) {
       EventBus.emit('ui:click');
     }
   });
