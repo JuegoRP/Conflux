@@ -1687,16 +1687,23 @@ const BattleSystem = {
     // Safety: ensure enemy hand is filled to 5 (should already be done in _startTurn)
     while(s.eHand.length < 5 && s.eDeck.length > 0) this._draw('e');
     const aiStyle = this._enemy?.aiStyle || 'balanced';
-    this._aiPlayCard(aiStyle);
+    // SAFETY NET: jakákoli chyba v AI logice NESMÍ zmrazit hru → zaloguj a dohraj tah.
+    try { this._aiPlayCard(aiStyle); }
+    catch(e) { console.error('[AI] _aiPlayCard chyba:', e); }
     this._render();
     setTimeout(()=>{
       if(s.over) return;
-      // Pre-attack: odhal face-down a přepni do ATK karty co chtějí útočit
-      this._aiPrepareAttackers(aiStyle);
+      try { this._aiPrepareAttackers(aiStyle); }
+      catch(e) { console.error('[AI] _aiPrepareAttackers chyba:', e); }
       this._render();
       setTimeout(()=>{
         if(s.over) return;
-        this._aiAttack(()=>{ this._render(); setTimeout(()=>this._endTurn(),600); });
+        try {
+          this._aiAttack(()=>{ this._render(); setTimeout(()=>this._endTurn(),600); });
+        } catch(e) {
+          console.error('[AI] _aiAttack chyba:', e);
+          this._render(); setTimeout(()=>this._endTurn(),600); // dohraj tah i po chybě
+        }
       }, 300);
     }, 400);
   },
@@ -1743,12 +1750,13 @@ const BattleSystem = {
         if(style === 'reactive') {
           const pMaxAtk = this._pVisMaxAtk(s);
           if((m.card.atk || 0) > pMaxAtk) m.mode = 'atk';
-        } else if(style === 'strategic' || style === 'balanced') {
-          // Přepni jen pokud má šanci vyhrát souboj
+        } else if(style === 'strategic' || style === 'balanced' || style === 'perfect' || style === 'rewrite' || style === 'corruption') {
+          // Přepni do ATK jen pokud má šanci vyhrát (jinak zůstaň v DEF — chrání LP).
+          // (Romanův nález: AI byla i v nevýhodě radši v útoku.)
           const pMaxAtk = this._pVisMaxAtk(s);
           if((m.card.atk || 0) >= pMaxAtk || !s.pMonsters.some(Boolean)) m.mode = 'atk';
         } else {
-          // Aggressive, perfect, rewrite, growth, corruption — vždy ATK
+          // Aggressive, growth — vždy ATK (thematický záměr)
           m.mode = 'atk';
         }
       }
@@ -1975,32 +1983,20 @@ const BattleSystem = {
 
   // ── AI: rozhodnutí jestli fúzovat ─────────────────────────────────────────
   _aiShouldFuse(fusion, style, pMaxAtk, handMonsters, emptySlots) {
-    // Perfect/rewrite/strategic — fúzuj vždy pokud výsledek je lepší
-    if(['perfect','rewrite','strategic'].includes(style)) return true;
+    const r = fusion.result || {};
+    const rVal = Math.max(r.atk || 0, r.def || 0);
+    // Nejlepší monstrum, které by AI JINAK prostě vyložilo (fúze = 2 karty za 1).
+    const bestHand = handMonsters.reduce((mx, c) => Math.max(mx, c.atk || 0, c.def || 0), 0);
+    // ZÁKLADNÍ PRAVIDLO (platí pro všechny styly): fúzuj jen když je výsledek ZŘETELNĚ lepší
+    // než vyložit nejlepší kartu. Dřív perfect/rewrite/strategic/corruption fúzovaly VŽDY —
+    // i na horší kartu — a AI pak nikdy nehrála monstra/spelly/pasti. (Romanův nález)
+    if(rVal < bestHand + 200) return false;
 
-    // Aggressive — fúzuj pokud výsledek má vyšší ATK než cokoliv v ruce
-    if(style === 'aggressive') {
-      const bestHandAtk = handMonsters.reduce((max, c) => Math.max(max, c.atk || 0), 0);
-      return fusion.result.atk > bestHandAtk;
-    }
-
-    // Defensive — fúzuj jen pokud výsledek má vysoký DEF
-    if(style === 'defensive') {
-      return (fusion.result.def || 0) >= 1500;
-    }
-
-    // Accumulator — nefúzuj v prvních 3 tazích
+    if(style === 'defensive')  return (r.def || 0) >= 1400 || (r.def || 0) > bestHand;
     if(style === 'accumulator' && this._state.turnNumber <= 3) return false;
-
-    // Mirror — fúzuj pokud hráč má silnější kartu
-    if(style === 'mirror') return fusion.result.atk > pMaxAtk;
-
-    // Corruption — fúzuj vždy (risk/reward)
-    if(style === 'corruption') return true;
-
-    // Balanced/ostatní — fúzuj pokud výsledek stojí za ztrátu 2 karet
-    const avgHandAtk = handMonsters.reduce((s, c) => s + (c.atk||0), 0) / (handMonsters.length || 1);
-    return fusion.result.atk >= avgHandAtk * 1.4;
+    if(style === 'mirror')     return (r.atk || 0) > pMaxAtk;
+    // aggressive/perfect/rewrite/strategic/corruption/balanced — prošlo-li základní pravidlo, fúzuj
+    return true;
   },
 
   // ── AI: proveď fúzi ───────────────────────────────────────────────────────
@@ -2032,11 +2028,14 @@ const BattleSystem = {
       const [src] = fusion.sources;
       const handIdx = s.eHand.indexOf(src);
       if(handIdx < 0) return false;
+      // Slot na poli mohl mezitím zmizet (zničené monstrum) → nefúzuj, nespadni
+      const fieldEntry = s.eMonsters[fusion.fieldSlot];
+      if(!fieldEntry?.card) return false;
 
       // Odeber z ruky
       s.eGY.push(s.eHand.splice(handIdx, 1)[0]);
       // Odeber z pole do GY
-      s.eGY.push(s.eMonsters[fusion.fieldSlot].card);
+      s.eGY.push(fieldEntry.card);
 
       // Nahraď na poli
       s.eMonsters[fusion.fieldSlot] = {
@@ -2104,6 +2103,14 @@ const BattleSystem = {
       if(lpPct < 0.3 && hasGoodDef) mode = 'def';
       else if(wouldLoseInAtk && hasGoodDef && (best.def||0) >= pMaxAtk) mode = 'def';
       else if(this._state.turnNumber <= 2 && Math.random() < 0.35 && hasGoodDef) mode = 'def';
+    }
+
+    // GENERÁLNÍ OBRANA (Romanův nález): když má hráč silnější kartu, jdi do DEF.
+    // V téhle hře útok na DEF monstrum NEZPŮSOBÍ overflow LP → DEF chrání životy.
+    // Agresivní/growth styly zůstávají v útoku (thematický záměr).
+    if(mode === 'atk' && best && !['aggressive','growth'].includes(style)) {
+      const outmatched = pActive.some(m => (m.card.atk || 0) > (best.atk || 0));
+      if(outmatched) mode = 'def';
     }
 
     return { card: best, mode };
