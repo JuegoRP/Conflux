@@ -50,6 +50,12 @@ if(!root) {
 
 // ── Boot sekvence ─────────────────────────────────────────────────────────────
 async function boot() {
+  // 0. file:// nefunguje — Chrome/Safari blokují ES moduly + media. Hra potřebuje http(s).
+  if(location.protocol === 'file:') {
+    _showFileProtocolWarning();
+    return;
+  }
+
   // 0a. První spuštění → uvítací výběr jazyka (blokuje boot dokud hráč nezvolí)
   if(!Locale.hasChosen()) {
     await _showLanguageGate();
@@ -277,6 +283,23 @@ function _showBootScreen(message, isError = false) {
     <div class="boot-screen ${isError ? 'boot-screen--error' : ''}">
       <div class="boot-logo">CONFLUX</div>
       <div class="boot-message">${message}</div>
+    </div>`;
+}
+
+// ── file:// varování ──────────────────────────────────────────────────────────
+function _showFileProtocolWarning() {
+  root.innerHTML = `
+    <div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+      background:radial-gradient(circle at 50% 40%,#0a1420,#05080c);text-align:center;padding:30px">
+      <div style="max-width:560px;display:flex;flex-direction:column;gap:22px;align-items:center">
+        <div style="font-family:'Press Start 2P',monospace;font-size:clamp(24px,5vw,40px);letter-spacing:5px;color:#dfe9f2">CONFLUX</div>
+        <div style="font-family:'VT323',monospace;font-size:clamp(17px,2.4vw,22px);line-height:1.5;color:#c0cce0">
+          Hru nelze spustit otevřením souboru napřímo — prohlížeč z bezpečnostních důvodů zablokuje načtení.<br><br>
+          <b>Hraj online</b> (itch.io / web), nebo spusť přes lokální server:<br>
+          <span style="font-family:monospace;color:#8fb8d8">python3 -m http.server</span> a otevři <span style="color:#8fb8d8">http://localhost:8000</span><br><br>
+          <span style="color:#8a97a8">The game can't run from a local file — please play it online, or serve it over http.</span>
+        </div>
+      </div>
     </div>`;
 }
 
