@@ -1744,21 +1744,26 @@ const BattleSystem = {
         m.justRevealed = true;
         this._log(`◀ Nepřítel odhalil kartu: [${m.card.name}]`, 'hint');
       }
+      const pMaxAtk = this._pVisMaxAtk(s);
+      const canWin  = (m.card.atk || 0) >= pMaxAtk;
+      const fieldEmpty = !s.pMonsters.some(Boolean);
+
       // Přepni do ATK pokud je v DEF a styl to dovoluje
       if(m.mode === 'def') {
-        // Defensive AI nechá v DEF; reactive přepne jen pokud má dost síly
         if(style === 'reactive') {
-          const pMaxAtk = this._pVisMaxAtk(s);
           if((m.card.atk || 0) > pMaxAtk) m.mode = 'atk';
-        } else if(style === 'strategic' || style === 'balanced' || style === 'perfect' || style === 'rewrite' || style === 'corruption') {
+        } else if(['strategic','balanced','perfect','rewrite','corruption'].includes(style)) {
           // Přepni do ATK jen pokud má šanci vyhrát (jinak zůstaň v DEF — chrání LP).
-          // (Romanův nález: AI byla i v nevýhodě radši v útoku.)
-          const pMaxAtk = this._pVisMaxAtk(s);
-          if((m.card.atk || 0) >= pMaxAtk || !s.pMonsters.some(Boolean)) m.mode = 'atk';
+          if(canWin || fieldEmpty) m.mode = 'atk';
         } else {
           // Aggressive, growth — vždy ATK (thematický záměr)
           m.mode = 'atk';
         }
+      } else if(m.mode === 'atk' && !canWin && !fieldEmpty && !['aggressive','growth'].includes(style)) {
+        // ATK monstrum, které je teď v nevýhodě → do OBRANY (chrání LP, útok na DEF nedělá overflow).
+        // (Romanův nález: AI nechala outmatched kartu v útoku a nešla do obrany.)
+        m.mode = 'def';
+        this._log(`◀ Nepřítel stáhl [${m.card.name}] do obrany.`, 'hint');
       }
     });
   },
@@ -1872,47 +1877,62 @@ const BattleSystem = {
 
     if(candidates.length) {
       candidates.sort((a, b) => b.score - a.score);
-      played = candidates[0].exec();
+      // Zkoušej od nejlepšího dolů — když exec selže (slot zmizel ap.), ber další.
+      for(const c of candidates) {
+        try { if(c.exec()) { played = true; break; } }
+        catch(e) { console.error('[AI] kandidát', c.t, 'selhal:', e); }
+      }
     }
 
-    // ── FORCE PLAY — AI musí zahrát alespoň 1 kartu ──────────────────────
+    // ── FORCE PLAY — zahrání karty je POVINNÉ (stejné pravidlo jako pro hráče:
+    //    _endTurn nepustí hráče dál bez cardPlayedThisTurn). AI to musí dodržet taky.
+    //    Dřív mohla AI ukončit tah naprázdno ("čeká bez reakce") + tiché cesty bez logu.
     if(!played && s.eHand.length > 0) {
-      // Zkus monster na pole
-      if(monsters.length && emptyM.length) {
-        const card = monsters[0];
-        s.eHand.splice(s.eHand.indexOf(card), 1);
-        s.eMonsters[emptyM[0]] = {card:{...card}, mode:'def', hasAttacked:false, revealed:false};
-        this._applyArenaToMonster(s.eMonsters[emptyM[0]]);
-        played = true;
+      // 1) Nejsilnější monstrum na volný slot (do DEF — bezpečná volba)
+      if(!played && emptyM.length) {
+        const best = monsters.reduce((a, b) => (a && (a.atk||0) >= (b.atk||0)) ? a : b, null);
+        if(best) {
+          s.eHand.splice(s.eHand.indexOf(best), 1);
+          s.eMonsters[emptyM[0]] = {card:{...best}, mode:'def', hasAttacked:false, revealed:false};
+          this._applyArenaToMonster(s.eMonsters[emptyM[0]]);
+          this._log('◀ Nepřítel vyložil kartu lícem dolů.', 'hint');
+          played = true;
+        }
       }
-      // Zkus spell/trap na spell slot
+      // 2) JAKÁKOLI spell/trap/arena z ruky na volný spell slot (dřív jen eHand[0] → přehlédnuto)
       if(!played && emptyS.length) {
-        const card = s.eHand[0];
-        if(card && (card.kind === 'spell' || card.kind === 'trap' || card.kind === 'arena')) {
-          s.eHand.splice(0, 1);
+        const idx = s.eHand.findIndex(c => c && (c.kind === 'spell' || c.kind === 'trap' || c.kind === 'arena'));
+        if(idx >= 0) {
+          const card = s.eHand.splice(idx, 1)[0];
           if(card.kind === 'arena') {
             s.eSpells[emptyS[0]] = {card:{...card}, faceDown:false, used:false};
-            this._activateSpell(card, 'e');
+            this._activateSpell(card, 'e');   // uvnitř volá _setArena (stejně jako běžná cesta)
+            this._log(`◀ Nepřítel vyložil arénu [${card.name}]!`, 'warn');
           } else if(card.kind === 'spell') {
             s.eGY.push({...card});
             this._activateSpell(card, 'e');
+            this._log(`◀ Nepřítel použil [${card.name}]!`, 'warn');
           } else {
             s.eSpells[emptyS[0]] = {card:{...card}, faceDown:true, used:false};
+            this._log('◀ Nepřítel nastražil past.', 'hint');
           }
           played = true;
         }
       }
-      // Všechny sloty plné — zahoď nejslabší kartu (force discard)
+      // 3) Všechny sloty plné — zahoď nejslabší kartu (viditelně, ne potichu)
       if(!played) {
         const weakest = s.eHand.reduce((min, c, i) => (!min || (c.atk||0) < (min.c.atk||0)) ? {c, i} : min, null);
         if(weakest) {
           s.eHand.splice(weakest.i, 1);
           s.eGY = s.eGY || [];
           s.eGY.push(weakest.c);
+          this._log('◀ Nepřítel nemá kam hrát — odkládá kartu.', 'hint');
           played = true;
         }
       }
     }
+    if(!played) this._log('◀ Nepřítel nemá karty v ruce.', 'hint');
+    return played;
   },
 
   // ── AI: najdi všechny možné fúze ──────────────────────────────────────────
